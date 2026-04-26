@@ -1,0 +1,13 @@
+{
+  "name": "fsad-training",
+  "version": "0.1.0",
+  "description": "HTML training app for the FSAD workshop intensive lecture block.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "marked": "^12.0.0"
+  }
+}

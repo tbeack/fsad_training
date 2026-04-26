@@ -1,0 +1,3516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSAD Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════════════════
+   VISUAL HIERARCHY CONTRACT (Phase 2)
+   ─────────────────────────────────────────────────────
+   Tier 1 — QUIET DEFAULT: prose, body text, inline code.
+           Neutral colors. No borders. No backgrounds. No glow.
+   Tier 2 — STRUCTURED EXCEPTIONS: callouts, code blocks, tables.
+           Muted 1px borders. Subtle background tints only.
+   Tier 3 — RARE PUNCTUATION: pull-quotes, diagrams, hero.
+           Accent color permitted. Still no glow shadows.
+
+   COLOR SEMANTIC CONTRACT
+   ─────────────────────────────────────────────────────
+   --accent-blue / --accent-violet  → links, active nav, primary buttons
+   --accent-emerald                 → success / positive examples / best-practice
+   --accent-amber                   → caution / warnings / deprecated
+   --accent-rose                    → anti-patterns only (single semantic role)
+   --accent-pink                    → RETIRED (decorative). Use neutral grey.
+   ═══════════════════════════════════════════════════════ */
+  :root {
+    --bg: #08080c;
+    --bg-surface: #0f0f14;
+    --bg-elevated: #16161e;
+    --bg-card: #111115;
+    --border: rgba(255,255,255,0.06);
+    --border-accent: rgba(255,255,255,0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8a8a9a;
+    --text-muted: #5a5a6e;
+    --accent-blue: #6f6fb5;
+    --accent-cyan: #6f6fb5;    /* alias — same identity as --accent-blue; kept for legacy references */
+    --accent-emerald: #34d399;
+    --accent-amber: #fbbf24;
+    --accent-rose: #fb7185;
+    --accent-violet: #6f6fb5;  /* alias — same identity as --accent-blue; kept for legacy references */
+    --accent-pink: #f472b6;
+    --gradient-brand: linear-gradient(135deg, #6f6fb5, #9595c5);
+    --gradient-warm: linear-gradient(135deg, #fbbf24, #fb7185);
+    --gradient-cool: linear-gradient(135deg, #9595c5, #6f6fb5);
+    --font-hero: 'Source Serif 4', Georgia, serif;  /* Phase 5: hero h1 only */
+    --font-display: 'Inter', -apple-system, sans-serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --radius: 14px;
+    --radius-lg: 22px;
+    --sidebar-w: 290px;
+    --glow-purple: rgba(111,111,181,0.04);
+    --glow-pink: rgba(244,114,182,0.03);
+
+    /* Sidebar */
+    --sidebar-bg: #0b0b10;
+    --sidebar-node-bg: #0d0d14;
+
+    /* Overlays */
+    --overlay-bg: rgba(8, 8, 12, 0.9);
+    --overlay-bg-heavy: rgba(8, 8, 12, 0.92);
+    --backdrop-bg: rgba(8, 8, 12, 0.8);
+    --shadow-modal: rgba(0,0,0,0.5);
+
+    /* Card borders — neutral grey (retired pink decorative accent per Phase 2) */
+    --card-border: rgba(255,255,255,0.08);
+    --card-border-hover: rgba(255,255,255,0.16);
+    --card-glow: rgba(0,0,0,0);
+    --card-glow-hover: rgba(0,0,0,0);
+    --card-glow-accent: rgba(0,0,0,0);
+
+    /* Accent glows (consolidated from 6 variants to 3) */
+    --accent-glow-subtle: rgba(111,111,181,0.02);
+    --accent-glow-light: rgba(111,111,181,0.02);
+    --accent-glow-soft: rgba(111,111,181,0.04);
+    --accent-glow-medium: rgba(111,111,181,0.05);
+    --accent-glow-border: rgba(111,111,181,0.12);
+    --accent-glow-strong: rgba(111,111,181,0.08);
+
+    /* Hero (radial glow removed per Phase 1) */
+    --hero-glow: none;
+    --hero-badge-border: rgba(111,111,181,0.25);
+
+    /* Nav coming soon */
+    --nav-coming-soon-bg: rgba(255,255,255,0.06);
+
+    /* Tab sizes */
+    --tab-size-bg: rgba(255,255,255,0.15);
+    --tab-size-bg-active: rgba(255,255,255,0.25);
+
+    /* Phase output */
+    --phase-output-bg: rgba(0,0,0,0.3);
+
+    /* Role badges */
+    --role-pm-bg: rgba(245,158,11,0.12);
+    --role-ux-bg: rgba(111,111,181,0.12);
+    --role-eng-bg: rgba(16,185,129,0.12);
+    --role-eng2-bg: rgba(6,182,212,0.12);
+    --role-agents-bg: rgba(59,130,246,0.12);
+
+    /* Role pills (workflow) */
+    --role-pm-pill: rgba(245,158,11,0.15);
+    --role-ux-pill: rgba(111,111,181,0.15);
+    --role-eng-pill: rgba(16,185,129,0.15);
+    --role-agent-pill: rgba(59,130,246,0.15);
+
+    /* Callouts (retuned to desaturated palette — Phase 4) */
+    --callout-tip-bg: rgba(111,111,181,0.08);
+    --callout-tip-border: rgba(111,111,181,0.2);
+    --callout-warning-bg: rgba(245,158,11,0.08);
+    --callout-warning-border: rgba(245,158,11,0.2);
+    --callout-best-bg: rgba(16,185,129,0.08);
+    --callout-best-border: rgba(16,185,129,0.2);
+
+    /* Anti-pattern card */
+    --anti-card-border: rgba(244,63,94,0.15);
+
+    /* Search result hover */
+    --search-result-hover: rgba(111,111,181,0.1);
+
+    /* Table row hover */
+    --table-row-hover: rgba(111,111,181,0.03);
+
+    /* Collapsible header hover bg */
+    --collapsible-hover-bg: rgba(124, 92, 252, 0.03);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 400;
+  }
+
+  /* ═══════════════════════════════════════
+     UX ENHANCEMENTS (v5)
+     ═══════════════════════════════════════ */
+  .progress-container {
+    position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+    height: 3px; background: transparent; z-index: 1000;
+  }
+  .progress-bar {
+    height: 100%; width: 0%; background: var(--gradient-brand);
+    transition: width 0.1s ease-out;
+  }
+  @media (max-width: 900px) { .progress-container { left: 0; } }
+
+  .page-indicator {
+    position: fixed;
+    top: 3px;
+    left: var(--sidebar-w);
+    right: 0;
+    background: var(--overlay-bg);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    font-size: 0.78rem;
+  }
+  .page-indicator-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 1.5rem;
+  }
+  .page-indicator-brand {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+  .page-indicator-sep { color: var(--border-accent); }
+  .page-indicator-title {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  /* Page indicator pills row retired (Phase 2) — sidebar is the sole section nav */
+  .page-indicator-pills { display: none !important; }
+  .page-indicator-pill {
+    padding: 0.28rem 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .page-indicator-pill:hover {
+    border-color: var(--border-accent);
+    color: var(--text-primary);
+  }
+  .page-indicator-pill.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+  }
+  @media (max-width: 900px) {
+    .page-indicator { left: 0; }
+    .page-indicator-row { padding-left: 3.5rem; }
+    .page-indicator-pills { padding-left: 3.5rem; }
+  }
+
+  .page {
+    display: none;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .page.active {
+    display: block; opacity: 1; transform: translateY(0);
+    padding-top: 62px;
+  }
+
+  /* Sidebar Search */
+  .sidebar-search {
+    position: relative;
+    margin-top: 0.85rem;
+  }
+  .sidebar-search-input-wrap {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .sidebar-search-input-wrap:focus-within {
+    border-color: var(--accent-violet);
+    box-shadow: 0 0 0 2px var(--glow-purple);
+  }
+  .sidebar-search-icon {
+    font-size: 0.85rem; opacity: 0.55; flex-shrink: 0;
+  }
+  .sidebar-search-input {
+    flex: 1; min-width: 0;
+    background: none; border: none; outline: none;
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-family: var(--font-body);
+  }
+  .sidebar-search-input::placeholder { color: var(--text-muted); }
+  .sidebar-search-kbd {
+    font-family: var(--font-mono); font-size: 0.62rem;
+    padding: 0.1rem 0.35rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .sidebar-search-popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    box-shadow: 0 18px 40px var(--shadow-modal);
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding: 0.4rem;
+    z-index: 300;
+    display: none;
+  }
+  .sidebar-search-popover.open { display: block; }
+  .search-result-item {
+    display: block;
+    padding: 0.65rem 0.75rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    cursor: pointer;
+  }
+  .search-result-item:hover, .search-result-item.selected {
+    background: var(--search-result-hover);
+    color: var(--text-primary);
+  }
+  .search-result-item h4 {
+    font-size: 0.78rem;
+    margin-bottom: 0.15rem;
+    color: var(--accent-violet);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .search-result-item h4 span { color: var(--text-muted); font-weight: 500; }
+  .search-result-item p {
+    font-size: 0.72rem;
+    opacity: 0.7;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .search-no-results {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  /* Back to Top */
+  .back-to-top {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    color: var(--text-primary); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 500;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s, border-color 0.3s;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .back-to-top:hover { border-color: var(--accent-blue); transform: translateY(-3px); }
+
+  /* Keyboard hints */
+  .kbd-hint {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    padding: 0.2rem 0.4rem; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: 4px;
+    color: var(--text-muted); margin-left: auto;
+  }
+
+  .sidebar-header {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ═══════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════ */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    z-index: 200;
+    overflow-y: auto;
+    transition: transform 0.3s;
+  }
+  .sidebar-header {
+    padding: 1.5rem 1.4rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-brand {
+    font-family: var(--font-mono);
+    font-size: 1.44rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+  .sidebar-tagline {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* Nav groups */
+  .sidebar-nav {
+    padding: 0.8rem 0;
+    flex: 1;
+  }
+  .nav-group {
+    margin-bottom: 0.3rem;
+  }
+  .nav-group-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem 1.4rem;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .nav-group-toggle:hover {
+    background: var(--accent-glow-light);
+  }
+  .nav-group-toggle.active {
+    background: var(--accent-glow-soft);
+  }
+  .nav-group-toggle.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 3px;
+    background: var(--gradient-brand);
+    border-radius: 0 3px 3px 0;
+  }
+  .nav-group-toggle .nav-icon {
+    font-size: 1rem;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .nav-group-toggle .nav-chevron {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+  }
+  .nav-group-toggle.expanded .nav-chevron {
+    transform: rotate(90deg);
+  }
+  .nav-group-toggle.disabled {
+    color: var(--text-muted);
+    cursor: default;
+  }
+  .nav-group-toggle.disabled:hover {
+    background: none;
+  }
+  .nav-coming-soon {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--nav-coming-soon-bg);
+    color: var(--text-muted);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  /* Sub-items — flow node style */
+  /* Docs-tree sidebar (Phase 2: retired node-graph pills + connector lines) */
+  .nav-sub-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+  .nav-sub-items.open {
+    max-height: 1200px;
+    padding: 0.3rem 0 0.6rem;
+  }
+  .nav-sub-item {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 1.4rem 0.35rem 2rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 400;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-left: 2px solid transparent;
+    border-radius: 0;
+    box-shadow: none;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+  }
+  .nav-sub-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+  }
+  .nav-sub-item.active {
+    color: var(--accent-blue);
+    font-weight: 600;
+    background: transparent;
+    border-left-color: var(--accent-blue);
+  }
+
+  /* Sidebar footer */
+  .sidebar-footer {
+    padding: 1rem 1.4rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+
+  /* Mobile toggle */
+  .sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 300;
+    width: 40px; height: 40px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--backdrop-bg);
+    backdrop-filter: blur(4px);
+    z-index: 199;
+  }
+  .sidebar-backdrop.visible {
+    display: block;
+  }
+
+  /* Changelog modal (Phase 3) */
+  .changelog-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--backdrop-bg);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .changelog-modal.open { display: flex; }
+  .changelog-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    max-width: 620px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px var(--shadow-modal);
+  }
+  .changelog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .changelog-header h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+  .changelog-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.4rem;
+  }
+  .changelog-close:hover { color: var(--text-primary); }
+  .changelog-body {
+    padding: 1rem 1.4rem 1.4rem;
+    overflow-y: auto;
+  }
+  .changelog-body section { margin-bottom: 0.25rem; }
+  .changelog-body section + section { padding-top: 0.25rem; border-top: 1px solid var(--border); }
+  .changelog-body h3 { margin: 0 0 0.15rem !important; }
+  .changelog-body h3 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 0 0 0.35rem;
+    color: var(--text-primary);
+  }
+  .changelog-body .changelog-date {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    margin-left: 0.4rem;
+  }
+  .changelog-body p {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .changelog-body .changelog-foot {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ═══════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════ */
+  .main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* Pages — controlled by JS + UX ENHANCEMENTS CSS above */
+
+  /* ═══════════════════════════════════════
+     SHARED COMPONENT STYLES
+     ═══════════════════════════════════════ */
+  section {
+    padding: 5rem 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    margin-bottom: 1rem;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: 660px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+  .divider {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 5rem 2.5rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 900px;
+    background: var(--hero-glow);
+    pointer-events: none;
+  }
+  .hero-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+    border: 1px solid var(--hero-badge-border);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+  .hero h1 {
+    font-family: var(--font-hero);
+    font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+    line-height: 1.08;
+    max-width: 820px;
+    margin: 0 auto 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-blue);
+    font-weight: 400;
+  }
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+  }
+  .hero-thesis {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 620px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .hero-thesis li {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+  .hero-thesis li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+
+  /* ─── OVERVIEW CARDS ─── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  .overview-card {
+    background: var(--bg-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .overview-card:hover { border-color: var(--card-border-hover); transform: translateY(-2px); box-shadow: 0 0 24px var(--card-glow-hover), 0 8px 32px var(--card-glow-accent); }
+  .overview-card .card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 0.8rem;
+  }
+  .overview-card h3 { font-size: 0.98rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .overview-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; }
+
+  /* ─── WORKFLOW ─── */
+  .workflow-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    overflow-x: auto;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .workflow-phases {
+    display: flex; gap: 0; align-items: stretch; min-width: 800px;
+  }
+  .workflow-phase {
+    flex: 1; position: relative; padding: 1.2rem;
+    border-radius: var(--radius); cursor: pointer;
+    transition: all 0.3s;
+  }
+  .workflow-phase::after {
+    content: '→'; position: absolute; right: -10px; top: 50%;
+    transform: translateY(-50%); font-size: 1.2rem; color: var(--text-muted); z-index: 2;
+  }
+  .workflow-phase:last-child::after { display: none; }
+  .workflow-phase:hover { background: var(--bg-elevated); }
+  .workflow-phase.active { background: var(--bg-elevated); border: 1px solid var(--accent-blue); }
+  .phase-number {
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--accent-cyan); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 0.4rem;
+  }
+  .phase-title { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.35rem; }
+  .phase-who { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .phase-who span {
+    display: inline-block; padding: 0.12rem 0.45rem;
+    border-radius: 100px; font-size: 0.64rem; font-weight: 500;
+    margin-right: 0.25rem; margin-bottom: 0.2rem;
+  }
+  .role-pm { background: var(--role-pm-pill); color: var(--accent-amber); }
+  .role-ux { background: var(--role-ux-pill); color: var(--accent-violet); }
+  .role-eng { background: var(--role-eng-pill); color: var(--accent-emerald); }
+  .role-agent { background: var(--role-agent-pill); color: var(--accent-blue); }
+  .phase-output {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    color: var(--text-secondary); background: var(--phase-output-bg);
+    padding: 0.25rem 0.55rem; border-radius: 6px; display: inline-block;
+  }
+  .workflow-detail {
+    margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: var(--radius); display: none;
+  }
+  .workflow-detail.visible { display: block; animation: fadeIn 0.3s ease forwards; }
+  .workflow-detail h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.6rem; }
+  .workflow-detail p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; }
+  .detail-artifacts { display: flex; gap: 0.6rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .artifact-tag {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    padding: 0.3rem 0.7rem; background: var(--accent-glow-medium);
+    border: 1px solid var(--accent-glow-border); border-radius: 6px; color: var(--accent-blue);
+  }
+
+  /* ─── POD VISUAL (Page 1) ─── */
+  .pod-visual {
+    display: flex; align-items: center; justify-content: center;
+    gap: 2.5rem; padding: 2.5rem; flex-wrap: wrap;
+  }
+  .pod-circle {
+    width: 280px; height: 280px; border-radius: 50%;
+    border: 2px dashed var(--border-accent); position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pod-center {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: var(--gradient-brand);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; z-index: 2;
+  }
+  .pod-center-icon { font-size: 1.4rem; }
+  .pod-center-label {
+    font-family: var(--font-mono); font-size: 0.625rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 0.15rem; font-weight: 500;
+  }
+  .pod-member {
+    position: absolute; width: 72px; height: 72px;
+    border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 600; text-align: center;
+    border: 2px solid; background: var(--bg-surface);
+  }
+  .pod-member .member-icon { font-size: 1.2rem; margin-bottom: 0.15rem; }
+  .pod-member.pm { top: -10px; left: 50%; transform: translateX(-50%); border-color: var(--accent-amber); color: var(--accent-amber); }
+  .pod-member.ux { bottom: 25px; left: -8px; border-color: var(--accent-violet); color: var(--accent-violet); }
+  .pod-member.eng { bottom: 25px; right: -8px; border-color: var(--accent-emerald); color: var(--accent-emerald); }
+  .pod-member.eng2 { bottom: -12px; left: 50%; transform: translateX(-50%); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+  .pod-description { max-width: 380px; }
+  .pod-description h3 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 0.8rem; }
+  .pod-description p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.2rem; }
+  .pod-principle { display: flex; align-items: flex-start; gap: 0.7rem; margin-bottom: 0.8rem; }
+  .pod-principle .bullet {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem;
+    background: var(--text-muted);
+  }
+  .pod-principle p { font-size: 0.85rem; margin-bottom: 0; }
+  .pod-principle strong { color: var(--text-primary); }
+
+  /* ─── MARKDOWN SHOWCASE ─── */
+  .markdown-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .md-example {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .md-example-header {
+    padding: 0.7rem 1rem; background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border); font-family: var(--font-mono);
+    font-size: 0.68rem; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .md-example-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .md-example pre {
+    padding: 1rem; font-family: var(--font-mono); font-size: 0.74rem;
+    line-height: 1.8; color: var(--text-secondary); overflow-x: auto;
+  }
+  .md-example pre .kw { color: var(--accent-blue); }
+  .md-example pre .val { color: var(--accent-emerald); }
+  .md-example pre .cm { color: var(--text-muted); }
+  .md-example pre .hd { color: var(--accent-amber); font-weight: 600; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .comparison-table-wrap { overflow-x: auto; }
+  .comparison-table {
+    width: 100%; border-collapse: separate; border-spacing: 0; min-width: 700px;
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 0.85rem 1rem; text-align: left;
+    border-bottom: 1px solid var(--border); font-size: 0.84rem;
+  }
+  .comparison-table thead th {
+    background: var(--bg-surface); font-weight: 600;
+    font-size: 0.72rem; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--text-secondary);
+    position: sticky; top: 0; z-index: 2;
+  }
+  .comparison-table thead th:first-child { border-radius: var(--radius) 0 0 0; }
+  .comparison-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
+  .comparison-table thead th:nth-child(2) { color: var(--accent-amber); }
+  .comparison-table thead th:nth-child(3) { color: var(--accent-cyan); }
+  .comparison-table tbody tr:hover { background: var(--table-row-hover); }
+  .comparison-table td:first-child { font-weight: 600; color: var(--text-primary); width: 160px; }
+  .comparison-table td { color: var(--text-secondary); line-height: 1.55; }
+
+  /* ─── TIMELINE ─── */
+  .timeline-compare { display: flex; flex-direction: column; gap: 1.5rem; }
+  .timeline-row {
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.3rem 1.5rem;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .timeline-row h4 {
+    font-size: 0.78rem; font-weight: 600; margin-bottom: 0.8rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .timeline-heading--traditional { color: var(--accent-amber); }
+  .timeline-heading--fsad { color: var(--accent-blue); }
+  .timeline-bar-container {
+    display: flex; gap: 2px; height: 44px;
+    border-radius: 8px; overflow: hidden;
+  }
+  .timeline-segment {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.03em;
+    padding: 0 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .timeline-legend { display: flex; gap: 1rem; margin-top: 0.6rem; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.68rem; color: var(--text-secondary); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .timeline-duration { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+  /* Pull-quote component (Phase 6: voice punctuation) */
+  .pullquote {
+    font-family: var(--font-hero);
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+    line-height: 1.4;
+    color: var(--text-primary);
+    max-width: 640px;
+    margin: 2.5rem 0;
+    padding: 0.8rem 0 0.8rem 1.5rem;
+    border-left: 2px solid var(--accent-blue);
+    font-weight: 400;
+  }
+  .pullquote-attribution {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* KPI card rhythm (Phase 6: small-multiples treatment for cited metrics) */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem 2.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .kpi-card { display: flex; flex-direction: column; gap: 0.5rem; }
+  .kpi-card .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .kpi-card .kpi-figure {
+    font-family: var(--font-hero);
+    font-size: clamp(2rem, 3.5vw, 2.6rem);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-primary);
+  }
+  .kpi-card .kpi-figure--positive { color: var(--accent-emerald); }
+  .kpi-card .kpi-figure--warning  { color: var(--accent-amber); }
+  .kpi-card .kpi-context {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  .kpi-card .kpi-source {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  /* Typography: extend Source Serif 4 italic into section subtitle + hero p emphasis */
+  .section-subtitle em,
+  .hero p em {
+    font-family: var(--font-hero);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* ─── ADVANTAGE LIST (Phase 5: single-column prose rhythm) ─── */
+  .adv-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    max-width: 680px;
+    margin: 1.75rem 0 0;
+  }
+  .adv-item { padding: 0; }
+  .adv-item h3 {
+    font-weight: 600; font-size: 1rem;
+    margin-bottom: 0.35rem; color: var(--text-primary);
+  }
+  .adv-item p { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ─── PROS/CONS ─── */
+  .proscons { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .proscons-col {
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.5rem;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .proscons-col h3 {
+    font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .proscons-col.pro h3 { color: var(--accent-emerald); }
+  .proscons-col.con h3 { color: var(--accent-rose); }
+  .proscons-item {
+    padding: 0.7rem 0; border-bottom: 1px solid var(--border);
+    font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6;
+  }
+  .proscons-item:last-child { border-bottom: none; }
+  .proscons-item strong { color: var(--text-primary); display: block; margin-bottom: 0.15rem; font-size: 0.82rem; }
+
+  /* ═══════════════════════════════════════
+     PAGE 2 — POD COMPOSITIONS
+     ═══════════════════════════════════════ */
+  .principle-strip {
+    display: flex; gap: 1px; max-width: 800px; margin: 0 auto;
+    background: var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  .principle-item { flex: 1; background: var(--bg-surface); padding: 1rem 0.8rem; text-align: center; }
+  .principle-item .pi-num {
+    font-family: var(--font-display); font-size: 1.6rem;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    display: block; margin-bottom: 0.2rem;
+  }
+  .principle-item .pi-label {
+    font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-muted); font-weight: 500;
+  }
+
+  /* Pod tabs */
+  .pod-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .pod-tab {
+    padding: 0.5rem 1rem; background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 100px;
+    font-family: var(--font-body); font-size: 0.78rem; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer; transition: all 0.25s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .pod-tab:hover { border-color: var(--border-accent); color: var(--text-primary); }
+  .pod-tab.active { background: var(--accent-blue); border-color: var(--accent-blue); color: white; }
+  .pod-tab .tab-size {
+    font-family: var(--font-mono); font-size: 0.64rem;
+    background: var(--tab-size-bg); padding: 0.08rem 0.35rem; border-radius: 4px;
+  }
+  .pod-tab.active .tab-size { background: var(--tab-size-bg-active); }
+
+  .pod-panel { display: none; }
+  .pod-panel.active { display: block; animation: fadeIn 0.3s ease forwards; }
+
+  .pod-layout { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
+  .pod-visual-wrap {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 2rem;
+    display: flex; flex-direction: column; align-items: center;
+    position: sticky; top: 20px;
+  }
+  .pod-ring {
+    width: 250px; height: 250px; border-radius: 50%;
+    border: 2px dashed var(--border-accent); position: relative;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+  }
+  .pod-core {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--gradient-brand);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; z-index: 2;
+    box-shadow: 0 0 30px var(--accent-glow-strong);
+  }
+  .pod-core-icon { font-size: 1.3rem; }
+  .pod-core-label {
+    font-family: var(--font-mono); font-size: 0.625rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 0.1rem; font-weight: 500;
+  }
+  .member {
+    position: absolute; width: 66px; height: 66px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 0.58rem; font-weight: 600; text-align: center;
+    border: 2px solid; background: var(--bg);
+    transition: transform 0.3s;
+  }
+  .member:hover { transform: scale(1.08); }
+  .member .m-icon { font-size: 1.1rem; margin-bottom: 0.1rem; }
+  .member.pm { border-color: var(--accent-amber); color: var(--accent-amber); }
+  .member.ux { border-color: var(--accent-violet); color: var(--accent-violet); }
+  .member.eng { border-color: var(--accent-emerald); color: var(--accent-emerald); }
+  .member.eng2 { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .member.agents { border-color: var(--accent-blue); color: var(--accent-blue); border-style: dashed; }
+  .pos-top { top: -10px; left: 50%; transform: translateX(-50%); }
+  .pos-right { top: 50%; right: -10px; transform: translateY(-50%); }
+  .pos-bottom { bottom: -10px; left: 50%; transform: translateX(-50%); }
+  .pos-left { top: 50%; left: -10px; transform: translateY(-50%); }
+  .pos-tr { top: 15px; right: 5px; }
+  .pos-br { bottom: 15px; right: 5px; }
+  .pos-bl { bottom: 15px; left: 5px; }
+  .pos-tl { top: 15px; left: 5px; }
+
+  .pod-type-label {
+    font-family: var(--font-mono); font-size: 0.64rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 0.2rem;
+  }
+  .pod-type-name { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 0.15rem; }
+  .pod-type-count { font-size: 0.74rem; color: var(--text-muted); }
+
+  .pod-detail { display: flex; flex-direction: column; gap: 1.5rem; }
+  .pod-detail-intro p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.75; }
+  .detail-section-title {
+    font-family: var(--font-mono); font-size: 0.64rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent-cyan); margin-bottom: 0.6rem;
+  }
+  .role-cards { display: flex; flex-direction: column; gap: 0.6rem; }
+  .role-card {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1rem 1.2rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .role-card:hover { border-color: var(--card-border-hover); box-shadow: 0 0 24px var(--card-glow-hover); }
+  .role-badge {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .role-badge.pm { background: var(--role-pm-bg); }
+  .role-badge.ux { background: var(--role-ux-bg); }
+  .role-badge.eng { background: var(--role-eng-bg); }
+  .role-badge.eng2 { background: var(--role-eng2-bg); }
+  .role-badge.agents { background: var(--role-agents-bg); }
+  .role-card-body h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .role-card-body p { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Workflow phase tabs (Workflows page) */
+  .wf-tabs {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+    margin-bottom: 1.6rem;
+  }
+  .wf-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.3rem; padding: 0.9rem 0.8rem;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-body); cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+    color: var(--text-secondary);
+  }
+  .wf-tab:hover { border-color: var(--border-accent); color: var(--text-primary); }
+  .wf-tab.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+  .wf-tab .wf-tab-label {
+    font-family: var(--font-mono); font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .wf-tab.active .wf-tab-label { color: rgba(255,255,255,0.75); }
+  .wf-tab .wf-tab-title {
+    font-family: var(--font-mono); font-size: 0.88rem; font-weight: 500;
+  }
+  .wf-panel { display: none; }
+  .wf-panel.active { display: block; animation: fadeIn 0.3s ease forwards; }
+  .wf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .wf-card {
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.2rem 1.3rem;
+    box-shadow: 0 0 12px var(--card-glow);
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .wf-card-label {
+    font-family: var(--font-mono); font-size: 0.62rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent-cyan);
+  }
+  .wf-card h4 {
+    font-size: 1rem; font-weight: 600; color: var(--text-primary);
+    line-height: 1.35; margin: 0;
+  }
+  .wf-card p {
+    font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; margin: 0;
+  }
+  .wf-card ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 0.35rem;
+  }
+  .wf-card ul li {
+    font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;
+    padding-left: 0.9rem; position: relative;
+  }
+  .wf-card ul li::before {
+    content: '–'; position: absolute; left: 0; color: var(--text-muted);
+  }
+  .wf-card pre {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.75rem 0.9rem;
+    font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-secondary);
+    line-height: 1.65; overflow-x: auto; margin: 0;
+    white-space: pre;
+  }
+  .wf-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .wf-chip {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    padding: 0.18rem 0.55rem; border-radius: 100px;
+    background: var(--bg-surface); border: 1px solid var(--border-accent);
+    color: var(--text-secondary);
+  }
+  .wf-card-footnote {
+    font-size: 0.78rem; color: var(--text-muted); line-height: 1.6;
+    font-style: italic;
+  }
+  @media (max-width: 780px) {
+    .wf-tabs { grid-template-columns: repeat(2, 1fr); }
+    .wf-grid { grid-template-columns: 1fr; }
+  }
+
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .meta-box {
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.1rem;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .meta-box h4 {
+    font-size: 0.72rem; font-weight: 600; margin-bottom: 0.5rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .meta-box.when h4 { color: var(--accent-amber); }
+  .meta-box.artifacts h4 { color: var(--accent-emerald); }
+  .meta-box.antipattern h4 { color: var(--accent-rose); }
+  .meta-box.strength h4 { color: var(--accent-cyan); }
+  .meta-box ul { list-style: none; }
+  .meta-box ul li {
+    font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6;
+    padding: 0.25rem 0 0.25rem 0.9rem; position: relative;
+  }
+  .meta-box ul li::before {
+    content: ''; position: absolute; left: 0; top: 0.6rem;
+    width: 4px; height: 4px; border-radius: 50%;
+  }
+  .meta-box.when ul li::before { background: var(--accent-amber); }
+  .meta-box.artifacts ul li::before { background: var(--accent-emerald); }
+  .meta-box.antipattern ul li::before { background: var(--accent-rose); }
+  .meta-box.strength ul li::before { background: var(--accent-cyan); }
+
+  /* Sizing table */
+  .sizing-table {
+    width: 100%; border-collapse: separate; border-spacing: 0; min-width: 650px;
+  }
+  .sizing-table th, .sizing-table td {
+    padding: 0.8rem 1rem; text-align: left;
+    border-bottom: 1px solid var(--border); font-size: 0.82rem;
+  }
+  .sizing-table thead th {
+    background: var(--bg-surface); font-weight: 600;
+    font-size: 0.68rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-secondary);
+  }
+  .sizing-table thead th:first-child { border-radius: var(--radius) 0 0 0; }
+  .sizing-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
+  .sizing-table tbody tr:hover { background: var(--table-row-hover); }
+  .sizing-table td { color: var(--text-secondary); line-height: 1.5; }
+  .sizing-table td:first-child { font-weight: 600; color: var(--text-primary); }
+  .config-tag {
+    font-family: var(--font-mono); font-size: 0.66rem;
+    padding: 0.18rem 0.5rem; border-radius: 4px; display: inline-block;
+  }
+
+  /* Anti-pattern cards */
+  .anti-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .anti-card {
+    background: var(--bg-card); border: 1px solid var(--anti-card-border);
+    border-radius: var(--radius); padding: 1.3rem; position: relative; overflow: hidden;
+  }
+  .anti-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent-rose);
+  }
+  .anti-card .anti-icon { font-size: 1.2rem; margin-bottom: 0.5rem; display: block; }
+  .anti-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--accent-rose); }
+  .anti-card p { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border); padding: 2rem 2.5rem;
+    text-align: center; color: var(--text-muted); font-size: 0.75rem;
+  }
+  footer .footer-brand {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.4rem; display: block;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-toggle { display: flex; }
+    .main { margin-left: 0; }
+    .overview-grid, .proscons, .markdown-showcase, .meta-grid { grid-template-columns: 1fr; }
+    .pod-layout { grid-template-columns: 1fr; }
+    .pod-ring { width: min(250px, 70vw); height: min(250px, 70vw); }
+    .pod-visual-wrap { position: static; }
+    .pod-visual { flex-direction: column; }
+    .principle-strip { flex-direction: column; }
+    section { padding: 3rem 1.2rem; }
+  }
+
+  @media (max-width: 600px) {
+    section { padding: 2rem 1rem; }
+    .hero { padding: 3rem 1rem 2rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .workflow-container { padding: 1rem; }
+  }
+
+  /* ─── Inline TOC (Page 3) ─── */
+
+  /* ═══════════════════════════════════════
+     PAGE 3 — BEST PRACTICES COMPONENTS
+     ═══════════════════════════════════════ */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 12px var(--card-glow);
+  }
+  .card:hover { border-color: var(--card-border-hover); transform: translateY(-2px); box-shadow: 0 0 24px var(--card-glow-hover), 0 8px 32px var(--card-glow-accent); }
+  .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .card p { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.65; }
+  .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.2rem; }
+  .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.2rem; }
+
+  .callout { border-radius: var(--radius); padding: 1.1rem 1.3rem; margin: 1.2rem 0; font-size: 0.86rem; line-height: 1.7; }
+  .callout-title { font-weight: 600; font-size: 0.82rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem; }
+  .callout-tip { background: var(--callout-tip-bg); border: 1px solid var(--callout-tip-border); color: var(--text-secondary); }
+  .callout-tip .callout-title { color: var(--accent-blue); }
+  .callout-warning { background: var(--callout-warning-bg); border: 1px solid var(--callout-warning-border); color: var(--text-secondary); }
+  .callout-warning .callout-title { color: var(--accent-amber); }
+  .callout-best-practice { background: var(--callout-best-bg); border: 1px solid var(--callout-best-border); color: var(--text-secondary); }
+  .callout-best-practice .callout-title { color: var(--accent-emerald); }
+
+  .step-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 1.3rem 1.3rem 1.3rem 3.8rem; margin-bottom: 0.8rem; position: relative; box-shadow: 0 0 12px var(--card-glow); }
+  .step-number { position: absolute; left: 1.1rem; top: 1.3rem; width: 30px; height: 30px; border-radius: 50%; background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; font-family: var(--font-mono); }
+  .step-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .step-card p { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.65; }
+
+  .code-block { position: relative; margin: 0.8rem 0; }
+  .code-block pre { background: var(--bg-surface); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.9rem 1.1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.7; color: var(--text-secondary); box-shadow: 0 0 12px var(--card-glow); }
+  .code-block code { font-family: var(--font-mono); font-size: 0.76rem; }
+  .copy-btn { position: absolute; top: 0.4rem; right: 0.4rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.45rem; cursor: pointer; color: var(--text-muted); font-size: 0.68rem; font-family: var(--font-mono); transition: all 0.2s; z-index: 2; }
+  .copy-btn:hover { color: var(--text-primary); border-color: var(--accent-blue); }
+
+  .collapsible { margin-bottom: 0.6rem; }
+  .collapsible-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.1rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: var(--radius); cursor: pointer; transition: all 0.2s; user-select: none; box-shadow: 0 0 12px var(--card-glow); }
+  .collapsible-header:hover { border-color: var(--card-border-hover); background: var(--collapsible-hover-bg); }
+  .collapsible-header h3 { font-size: 0.9rem; font-weight: 600; }
+  .collapsible-chevron { transition: transform 0.3s; color: var(--text-secondary); font-size: 0.85rem; }
+  .collapsible.open .collapsible-chevron { transform: rotate(180deg); }
+  .collapsible-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s ease; overflow: hidden; }
+  .collapsible.open .collapsible-body { grid-template-rows: 1fr; }
+  .collapsible-body > .collapsible-content { overflow: hidden; min-height: 0; visibility: hidden; }
+  .collapsible.open .collapsible-body > .collapsible-content { visibility: visible; }
+  .collapsible-content { padding: 1.1rem; background: var(--bg-surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); }
+  .collapsible.open .collapsible-header { border-radius: var(--radius) var(--radius) 0 0; }
+
+  .styled-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.2rem 0; font-size: 0.82rem; }
+  .styled-table th, .styled-table td { padding: 0.65rem 0.9rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .styled-table thead th { background: var(--bg-surface); font-weight: 600; font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); }
+  .styled-table thead th:first-child { border-radius: var(--radius) 0 0 0; }
+  .styled-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
+  .styled-table tbody tr:hover { background: var(--table-row-hover); }
+  .styled-table td { color: var(--text-secondary); }
+  .styled-table td:first-child { font-weight: 600; color: var(--text-primary); }
+  .table-wrap { overflow-x: auto; }
+
+  .badge { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 100px; font-size: 0.65rem; font-weight: 500; font-family: var(--font-mono); }
+  kbd { display: inline-block; padding: 0.12rem 0.4rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-primary); line-height: 1.4; }
+  :not(pre) > code { font-family: var(--font-mono); font-size: 0.8em; padding: 0.12rem 0.35rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 4px; color: var(--accent-cyan); }
+
+  .resource-link { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1.1rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: var(--radius); text-decoration: none; color: var(--text-primary); transition: all 0.2s; margin-bottom: 0.6rem; box-shadow: 0 0 12px var(--card-glow); }
+  .resource-link:hover { border-color: var(--card-border-hover); transform: translateX(3px); box-shadow: 0 0 24px var(--card-glow-hover); }
+  .resource-link .resource-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .resource-link .resource-title { font-size: 0.86rem; font-weight: 600; }
+  .resource-link .resource-desc { font-size: 0.74rem; color: var(--text-secondary); }
+
+  .framework-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 1.3rem; transition: border-color 0.3s, box-shadow 0.3s; box-shadow: 0 0 12px var(--card-glow); }
+  .framework-card:hover { border-color: var(--card-border-hover); box-shadow: 0 0 24px var(--card-glow-hover); }
+  .framework-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .framework-card h3 a { color: var(--accent-blue); text-decoration: none; }
+  .framework-card h3 a:hover { text-decoration: underline; }
+  .framework-card .framework-desc { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem; line-height: 1.6; }
+  .framework-card .framework-stats { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  /* Page 3 anti-card override */
+  #page-practices .bp-anti-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent-rose); border-radius: var(--radius); padding: 1.1rem; }
+  #page-practices .bp-anti-card h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--accent-rose); }
+  #page-practices .bp-anti-card p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 10000;
+    padding: 0.8rem 1.2rem;
+    background: var(--accent-blue);
+    color: white;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* ═══════════════════════════════════════
+     LIGHT MODE THEME
+     ═══════════════════════════════════════ */
+  [data-theme="light"] {
+    --bg: #f8f8fc;
+    --bg-surface: #ffffff;
+    --bg-elevated: #f0f0f5;
+    --bg-card: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border-accent: rgba(0,0,0,0.14);
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a5e;
+    --text-muted: #7a7a8e;
+    --accent-blue: #5555a0;
+    --accent-cyan: #6b6fb5;
+    --accent-emerald: #059669;
+    --accent-amber: #d97706;
+    --accent-rose: #e11d48;
+    --accent-violet: #6b6fb5;
+    --accent-pink: #db2777;
+    --gradient-brand: linear-gradient(135deg, #5555a0, #6b6fb5);
+    --gradient-warm: linear-gradient(135deg, #d97706, #e11d48);
+    --gradient-cool: linear-gradient(135deg, #6b6fb5, #5555a0);
+    --glow-purple: rgba(85,85,160,0.03);
+    --glow-pink: rgba(219,39,119,0.02);
+
+    --sidebar-bg: #f0f0f5;
+    --sidebar-node-bg: #ffffff;
+
+    --overlay-bg: rgba(248, 248, 252, 0.92);
+    --overlay-bg-heavy: rgba(248, 248, 252, 0.96);
+    --backdrop-bg: rgba(0, 0, 0, 0.3);
+    --shadow-modal: rgba(0,0,0,0.15);
+
+    --card-border: rgba(0,0,0,0.1);
+    --card-border-hover: rgba(0,0,0,0.18);
+    --card-glow: rgba(0,0,0,0);
+    --card-glow-hover: rgba(0,0,0,0);
+    --card-glow-accent: rgba(0,0,0,0);
+
+    --accent-glow-subtle: rgba(74,74,138,0.02);
+    --accent-glow-light: rgba(74,74,138,0.02);
+    --accent-glow-soft: rgba(74,74,138,0.03);
+    --accent-glow-medium: rgba(74,74,138,0.05);
+    --accent-glow-border: rgba(74,74,138,0.1);
+    --accent-glow-strong: rgba(74,74,138,0.06);
+
+    --hero-glow: none;
+    --hero-badge-border: rgba(74,74,138,0.2);
+
+    --nav-coming-soon-bg: rgba(0,0,0,0.05);
+    --tab-size-bg: rgba(0,0,0,0.1);
+    --tab-size-bg-active: rgba(255,255,255,0.3);
+    --phase-output-bg: rgba(0,0,0,0.06);
+
+    --role-pm-bg: rgba(217,119,6,0.1);
+    --role-ux-bg: rgba(109,79,199,0.1);
+    --role-eng-bg: rgba(5,150,105,0.1);
+    --role-eng2-bg: rgba(6,182,212,0.1);
+    --role-agents-bg: rgba(91,63,212,0.1);
+
+    --role-pm-pill: rgba(217,119,6,0.12);
+    --role-ux-pill: rgba(109,79,199,0.12);
+    --role-eng-pill: rgba(5,150,105,0.12);
+    --role-agent-pill: rgba(91,63,212,0.12);
+
+    --callout-tip-bg: rgba(85,85,160,0.06);
+    --callout-tip-border: rgba(85,85,160,0.18);
+    --callout-warning-bg: rgba(217,119,6,0.06);
+    --callout-warning-border: rgba(217,119,6,0.18);
+    --callout-best-bg: rgba(5,150,105,0.06);
+    --callout-best-border: rgba(5,150,105,0.18);
+
+    --anti-card-border: rgba(225,29,72,0.15);
+    --search-result-hover: rgba(85,85,160,0.08);
+    --table-row-hover: rgba(85,85,160,0.03);
+    --collapsible-hover-bg: rgba(85,85,160,0.03);
+  }
+
+  /* Light mode overrides for specific elements */
+  [data-theme="light"] .page-indicator-pill.active { color: #fff; }
+  [data-theme="light"] .pod-tab.active { color: #fff; }
+  [data-theme="light"] .nav-sub-item.active { color: var(--accent-blue); }
+  [data-theme="light"] .sidebar { border-right-color: var(--border); }
+  [data-theme="light"] .search-input { color: var(--text-primary); }
+  [data-theme="light"] .member { background: var(--bg-surface); }
+
+  /* Auto-detect OS preference when no manual override */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --bg: #f8f8fc;
+      --bg-surface: #ffffff;
+      --bg-elevated: #f0f0f5;
+      --bg-card: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --border-accent: rgba(0,0,0,0.14);
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a5e;
+      --text-muted: #7a7a8e;
+      --accent-blue: #5555a0;
+      --accent-cyan: #6b6fb5;
+      --accent-emerald: #059669;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-violet: #6b6fb5;
+      --accent-pink: #db2777;
+      --gradient-brand: linear-gradient(135deg, #5555a0, #6b6fb5);
+      --gradient-warm: linear-gradient(135deg, #d97706, #e11d48);
+      --gradient-cool: linear-gradient(135deg, #6b6fb5, #5555a0);
+      --glow-purple: rgba(85,85,160,0.03);
+      --glow-pink: rgba(219,39,119,0.02);
+      --sidebar-bg: #f0f0f5;
+      --sidebar-node-bg: #ffffff;
+      --overlay-bg: rgba(248, 248, 252, 0.92);
+      --overlay-bg-heavy: rgba(248, 248, 252, 0.96);
+      --backdrop-bg: rgba(0, 0, 0, 0.3);
+      --shadow-modal: rgba(0,0,0,0.15);
+      --card-border: rgba(0,0,0,0.1);
+      --card-border-hover: rgba(0,0,0,0.18);
+      --card-glow: rgba(0,0,0,0);
+      --card-glow-hover: rgba(0,0,0,0);
+      --card-glow-accent: rgba(0,0,0,0);
+      --accent-glow-subtle: rgba(74,74,138,0.02);
+      --accent-glow-light: rgba(74,74,138,0.02);
+      --accent-glow-soft: rgba(74,74,138,0.03);
+      --accent-glow-medium: rgba(74,74,138,0.05);
+      --accent-glow-border: rgba(74,74,138,0.1);
+      --accent-glow-strong: rgba(74,74,138,0.06);
+      --hero-glow: none;
+      --hero-badge-border: rgba(74,74,138,0.2);
+      --nav-coming-soon-bg: rgba(0,0,0,0.05);
+      --tab-size-bg: rgba(0,0,0,0.1);
+      --tab-size-bg-active: rgba(255,255,255,0.3);
+      --phase-output-bg: rgba(0,0,0,0.06);
+      --role-pm-bg: rgba(217,119,6,0.1);
+      --role-ux-bg: rgba(109,79,199,0.1);
+      --role-eng-bg: rgba(5,150,105,0.1);
+      --role-eng2-bg: rgba(6,182,212,0.1);
+      --role-agents-bg: rgba(91,63,212,0.1);
+      --role-pm-pill: rgba(217,119,6,0.12);
+      --role-ux-pill: rgba(109,79,199,0.12);
+      --role-eng-pill: rgba(5,150,105,0.12);
+      --role-agent-pill: rgba(91,63,212,0.12);
+      --callout-tip-bg: rgba(85,85,160,0.06);
+      --callout-tip-border: rgba(85,85,160,0.18);
+      --callout-warning-bg: rgba(217,119,6,0.06);
+      --callout-warning-border: rgba(217,119,6,0.18);
+      --callout-best-bg: rgba(5,150,105,0.06);
+      --callout-best-border: rgba(5,150,105,0.18);
+      --anti-card-border: rgba(225,29,72,0.15);
+      --search-result-hover: rgba(85,85,160,0.08);
+      --table-row-hover: rgba(85,85,160,0.03);
+      --collapsible-hover-bg: rgba(85,85,160,0.03);
+    }
+    :root:not([data-theme]) .page-indicator-pill.active { color: #fff; }
+    :root:not([data-theme]) .pod-tab.active { color: #fff; }
+    :root:not([data-theme]) .nav-sub-item.active { color: var(--accent-blue); }
+    :root:not([data-theme]) .member { background: var(--bg-surface); }
+  }
+
+  /* ═══════════════════════════════════════
+     THEME TOGGLE
+     ═══════════════════════════════════════ */
+  .theme-toggle {
+    margin-left: auto;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-blue);
+  }
+  .theme-toggle-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ─── Claude page: Hub + Topic views ─── */
+  .topic-view[hidden] { display: none; }
+  .practices-hub { margin-top: 1rem; }
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .hub-card {
+    text-align: left;
+    background: var(--card-bg, rgba(255,255,255,0.02));
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  }
+  .hub-card:hover {
+    border-color: var(--accent-violet, #8b5cf6);
+    transform: translateY(-2px);
+    background: rgba(111,111,181,0.04);
+  }
+  .hub-card-icon { font-size: 1.75rem; line-height: 1; }
+  .hub-card h3 { margin: 0.25rem 0 0.25rem; font-family: var(--font-display); font-size: 1.15rem; }
+  .hub-card p { margin: 0 0 0.5rem; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.55; }
+  .hub-card-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: auto; }
+  .hub-card-chips span {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(111,111,181,0.1);
+    color: var(--accent-violet, #8b5cf6);
+    border: 1px solid rgba(111,111,181,0.25);
+    font-family: var(--font-mono, monospace);
+  }
+  .hub-card-depth { display: inline-flex; gap: 4px; margin-top: 0.5rem; }
+  .hub-card-depth .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted, rgba(255,255,255,0.2)); }
+  .hub-card-depth .dot.on { background: var(--accent-emerald, #10b981); }
+  .hub-depth-legend {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .hub-depth-legend .depth-sample { display: inline-flex; gap: 3px; align-items: center; }
+  .hub-depth-legend .depth-sample .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); }
+  .hub-depth-legend .depth-sample .dot.on { background: var(--accent-emerald, #10b981); }
+
+  /* Topic footer (prev / next) — differentiated direction + weight */
+  .topic-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2.5rem 0 1rem;
+    flex-wrap: wrap;
+  }
+  .topic-footer .topic-footer-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+  }
+  .topic-footer .topic-footer-back:hover { color: var(--text-primary); }
+  .topic-footer .topic-footer-next {
+    color: var(--accent-blue);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+  }
+  .topic-footer .topic-footer-next:hover { text-decoration: underline; }
+
+  /* Breadcrumb link in page indicator */
+  .page-indicator-crumb {
+    color: var(--accent-violet, #8b5cf6);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .page-indicator-crumb:hover { text-decoration: underline; }
+
+  /* Sidebar two-level nested sections */
+  .nav-sub-items .nav-topic-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 6px;
+  }
+  .nav-sub-items .nav-topic-header:hover { color: var(--text-primary); background: var(--bg-elevated); }
+  .nav-sub-items .nav-topic-header.active { color: var(--accent-blue); }
+  .nav-sub-items .nav-topic-header .nav-chevron { margin-left: auto; transition: transform 0.15s ease; font-size: 0.75rem; opacity: 0.6; }
+  .nav-sub-items .nav-topic-header.open .nav-chevron { transform: rotate(90deg); }
+  .nav-topic-sections {
+    display: none;
+    padding: 0.1rem 0 0.35rem 0.75rem;
+    margin: 0.15rem 0 0.35rem 0.5rem;
+    border-left: 1px solid var(--border, rgba(255,255,255,0.08));
+    align-items: stretch;
+  }
+  .nav-topic-sections.open { display: flex; flex-direction: column; }
+  /* Nested sections: demote pill styling to plain text links */
+  .nav-topic-sections .nav-sub-item {
+    width: 100%;
+    padding: 0.35rem 0.6rem 0.35rem 0.65rem;
+    text-align: left;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-left: 2px solid transparent;
+    border-radius: 0;
+    box-shadow: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    transform: none !important;
+  }
+  .nav-topic-sections .nav-sub-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+  .nav-topic-sections .nav-sub-item.active {
+    color: var(--accent-blue);
+    background: transparent;
+    border-left-color: var(--accent-blue);
+    box-shadow: none;
+  }
+  /* Remove connector-line motif inside nested group */
+  .nav-topic-sections .nav-sub-item + .nav-sub-item { margin-top: 0; }
+  .nav-topic-sections .nav-sub-item + .nav-sub-item::before,
+  .nav-topic-sections .nav-sub-item + .nav-sub-item::after { display: none; }
+
+  /* 3rd-level leaf nav (sub-topics within a section) */
+  .nav-sub-item-wrap { display: flex; flex-direction: column; }
+  .nav-leaf-sections {
+    display: flex;
+    flex-direction: column;
+    padding: 0.1rem 0 0.25rem 0.85rem;
+    margin: 0.1rem 0 0.25rem 0.65rem;
+    border-left: 1px solid var(--border, rgba(255,255,255,0.08));
+  }
+  .nav-leaf-item {
+    display: block;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    border-radius: 0;
+    line-height: 1.35;
+    opacity: 0.85;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+  .nav-leaf-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+    opacity: 1;
+  }
+  .nav-leaf-item.active {
+    color: var(--accent-blue);
+    border-left-color: var(--accent-blue);
+    opacity: 1;
+  }
+
+  /* Hub entry: lightweight row, not a primary pill */
+  .nav-sub-items[data-group="practices"] > .nav-sub-item[href="#practices"] {
+    width: calc(100% - 1.5rem);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    background: transparent;
+    box-shadow: none;
+  }
+  .nav-sub-items[data-group="practices"] > .nav-sub-item[href="#practices"]:hover {
+    background: var(--bg-elevated);
+    transform: none;
+    box-shadow: none;
+  }
+  .nav-sub-items[data-group="practices"] > .nav-sub-item[href="#practices"] + .nav-topic-header { margin-top: 0.3rem; }
+  /* Suppress connector lines that would appear above the first topic header */
+  .nav-sub-items[data-group="practices"] .nav-sub-item + .nav-topic-header::before,
+  .nav-sub-items[data-group="practices"] .nav-sub-item + .nav-topic-header::after { display: none; }
+
+  @media (max-width: 960px) {
+    .hub-grid { grid-template-columns: 1fr; }
+    .topic-footer { flex-direction: column; }
+  }
+
+  /* ═══════════════════════════════════════
+     SECTION 4 — DEEP-DIVE STEPPER
+     ═══════════════════════════════════════ */
+  .deepdive-stepper {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+  }
+  .deepdive-step {
+    flex: 1 0 auto;
+    min-width: 140px;
+    padding: 0.85rem 1.1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font: inherit;
+    color: var(--text-secondary);
+    text-align: left;
+  }
+  .deepdive-step:hover { background: var(--bg-elevated); color: var(--text-primary); }
+  .deepdive-step.active {
+    background: var(--bg-elevated);
+    border-color: var(--accent-violet);
+    color: var(--text-primary);
+  }
+  .deepdive-step.completed { color: var(--text-muted); }
+  .deepdive-step-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .deepdive-step.active .deepdive-step-num { color: var(--accent-violet); }
+  .deepdive-step-name { font-weight: 600; font-size: 0.92rem; }
+
+  .deepdive-pane {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .deepdive-desc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  .deepdive-desc h3 { font-size: 1.05rem; margin-bottom: 0.6rem; color: var(--text-primary); }
+  .deepdive-desc p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
+  .deepdive-desc-block { display: none; }
+  .deepdive-desc-block.active { display: block; }
+  .deepdive-desc-meta {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .deepdive-desc-meta-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+  }
+  .deepdive-desc-meta-value {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .deepdive-artifact {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    min-height: 320px;
+  }
+  .deepdive-artifact-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+  }
+  .md-artifact { display: none; }
+  .md-artifact.active { display: block; }
+  .md-artifact h1, .md-artifact h2, .md-artifact h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.55rem;
+    color: var(--text-primary);
+  }
+  .md-artifact > :first-child { margin-top: 0; }
+  .md-artifact h1 { font-size: 1.18rem; font-weight: 600; }
+  .md-artifact h2 { font-size: 1.02rem; font-weight: 600; }
+  .md-artifact h3 { font-size: 0.92rem; font-weight: 600; color: var(--text-secondary); }
+  .md-artifact p { font-size: 0.86rem; color: var(--text-secondary); margin: 0.55rem 0; line-height: 1.72; }
+  .md-artifact ul, .md-artifact ol {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    padding-left: 1.4rem;
+    line-height: 1.75;
+    margin: 0.5rem 0;
+  }
+  .md-artifact li { margin: 0.25rem 0; }
+  .md-artifact code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    color: var(--text-primary);
+  }
+  .md-artifact pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1.05rem;
+    overflow-x: auto;
+    margin: 0.7rem 0;
+  }
+  .md-artifact pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .md-artifact blockquote {
+    border-left: 2px solid var(--accent-violet);
+    padding-left: 1rem;
+    margin: 0.7rem 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+  .md-artifact strong { color: var(--text-primary); font-weight: 600; }
+  .md-artifact hr { border: 0; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+  .deepdive-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .deepdive-controls button {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.95rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    transition: all 0.2s;
+  }
+  .deepdive-controls button:hover {
+    border-color: var(--accent-violet);
+    color: var(--text-primary);
+  }
+  .deepdive-controls button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .deepdive-counter {
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 900px) {
+    .deepdive-pane { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<!-- MOBILE TOGGLE -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+
+<!-- ═══════════════════════════════════════
+     LEFT SIDEBAR
+     ═══════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-brand">FSAD Training</span>
+    <span class="sidebar-tagline">Workshop Companion</span>
+    <div class="sidebar-search">
+      <div class="sidebar-search-input-wrap">
+        <span class="sidebar-search-icon" aria-hidden="true">🔍</span>
+        <input type="search" class="sidebar-search-input" id="sidebarSearchInput" placeholder="Search…" autocomplete="off" spellcheck="false" oninput="handleSidebarSearch(this.value)" onfocus="handleSidebarSearch(this.value)">
+        <span class="sidebar-search-kbd">/</span>
+      </div>
+      <div class="sidebar-search-popover" id="sidebarSearchPopover" role="listbox"></div>
+    </div>
+  </div>
+
+
+  <nav class="sidebar-nav">
+
+    <!-- GROUP 1: Workflow orientation -->
+    <div class="nav-group">
+      <button class="nav-group-toggle active expanded" onclick="navigateTo('workflow', this)" data-page="workflow">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Workflow Orientation
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items open" data-group="workflow">
+        <a class="nav-sub-item active" href="#workflow/workflow-hero" onclick="scrollToSection('workflow-hero')">Overview</a>
+        <a class="nav-sub-item" href="#workflow/loop" onclick="scrollToSection('loop')">The Loop</a>
+        <a class="nav-sub-item" href="#workflow/why" onclick="scrollToSection('why')">Why It Matters</a>
+      </div>
+    </div>
+
+    <!-- GROUP 2: Claude Code basics -->
+    <div class="nav-group">
+      <button class="nav-group-toggle" onclick="navigateTo('basics', this)" data-page="basics">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Claude Code Basics
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items" data-group="basics">
+        <a class="nav-sub-item" href="#basics/basics-hero" onclick="scrollToSection('basics-hero')">Overview</a>
+        <a class="nav-sub-item" href="#basics/launch" onclick="scrollToSection('launch')">Launch</a>
+        <a class="nav-sub-item" href="#basics/permissions" onclick="scrollToSection('permissions')">Permissions</a>
+        <a class="nav-sub-item" href="#basics/model-effort" onclick="scrollToSection('model-effort')">Model &amp; Effort</a>
+        <a class="nav-sub-item" href="#basics/statusline" onclick="scrollToSection('statusline')">Statusline</a>
+      </div>
+    </div>
+
+    <!-- GROUP 3: Slash commands -->
+    <div class="nav-group">
+      <button class="nav-group-toggle" onclick="navigateTo('commands', this)" data-page="commands">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Slash Commands
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items" data-group="commands">
+        <a class="nav-sub-item" href="#commands/commands-hero" onclick="scrollToSection('commands-hero')">Overview</a>
+        <a class="nav-sub-item" href="#commands/reference" onclick="scrollToSection('reference')">Reference</a>
+      </div>
+    </div>
+
+    <!-- GROUP 4: Workflow deep-dive -->
+    <div class="nav-group">
+      <button class="nav-group-toggle" onclick="navigateTo('deepdive', this)" data-page="deepdive">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Workflow Deep-Dive
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items" data-group="deepdive">
+        <a class="nav-sub-item" href="#deepdive/deepdive-hero" onclick="scrollToSection('deepdive-hero')">Overview</a>
+        <a class="nav-sub-item" href="#deepdive/stepper" onclick="scrollToSection('stepper')">Step Through</a>
+      </div>
+    </div>
+
+    <!-- GROUP 5: Single-shot vs spec-driven -->
+    <div class="nav-group">
+      <button class="nav-group-toggle" onclick="navigateTo('compare', this)" data-page="compare">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Single-shot vs Spec-Driven
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items" data-group="compare">
+        <a class="nav-sub-item" href="#compare/compare-hero" onclick="scrollToSection('compare-hero')">Overview</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    Spec-driven &amp; agentic development with Claude Code
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════ -->
+<div class="main" id="main-content">
+
+<!-- PROGRESS BAR -->
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="page-indicator" id="pageIndicator">
+  <div class="page-indicator-row">
+    <span class="page-indicator-brand">FSAD</span>
+    <span class="page-indicator-sep">/</span>
+    <span class="page-indicator-title" id="pageTitle">Workflow Orientation</span>
+    <button class="theme-toggle" id="themeToggle" onclick="cycleTheme()" title="Toggle theme">
+      <span id="themeIcon">◑</span>
+      <span class="theme-toggle-label" id="themeLabel">Auto</span>
+    </button>
+  </div>
+  <div class="page-indicator-pills" id="pageIndicatorPills"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1: WORKFLOW ORIENTATION
+     ═══════════════════════════════════════════════════════ -->
+<div class="page active" id="page-workflow">
+
+  <div class="hero" id="workflow-hero">
+    <div class="hero-badge">FSAD Training · Section 1</div>
+    <h1>Workflow <em>Orientation</em></h1>
+    <p>Six phases, one loop. Spec-driven development with Claude Code is a tight feedback cycle where every phase produces a checkable artifact before the next one starts.</p>
+  </div>
+  <hr class="divider">
+
+  <section id="loop">
+    <span class="section-label">01 — The Loop</span>
+    <h2 class="section-title">Research → Spec → Plan → Implement → Verify → Iterate</h2>
+    <p class="section-subtitle">Each phase narrows ambiguity. You leave it with an artifact you can point at — not a vibe, not a hand-wave. The loop closes when iteration produces no new questions.</p>
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(111,111,181,0.12);">🔍</div><h3>1 — Research</h3><p>Map the territory. What exists, what's known, what's unknown. Output: a research note that anchors every decision downstream.</p></div>
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(245,158,11,0.12);">📐</div><h3>2 — Spec</h3><p>Lock <em>what</em> we're building and <em>why</em>. Falsifiable requirements, no implementation. Output: a spec the team agrees on.</p></div>
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(59,130,246,0.12);">🗺️</div><h3>3 — Plan</h3><p>Decide <em>how</em>. Decompose into ordered tasks, name files, surface unknowns. Output: a plan you could hand to anyone.</p></div>
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(16,185,129,0.12);">⚙️</div><h3>4 — Implement</h3><p>Execute the plan. Atomic commits, one task at a time. Output: working code that traces back to the spec.</p></div>
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(244,114,182,0.12);">✅</div><h3>5 — Verify</h3><p>Prove it works against the spec, not against itself. Tests, manual checks, edge cases. Output: a verification report.</p></div>
+      <div class="overview-card"><div class="card-icon" aria-hidden="true" style="background: rgba(111,111,181,0.12);">🔁</div><h3>6 — Iterate</h3><p>What did we learn? Update the spec, queue the next loop. Output: a clean handoff into the next phase or back to research.</p></div>
+    </div>
+
+    <blockquote class="pullquote">
+      The artifact is the contract. If you can't point at one, you skipped a phase.
+      <span class="pullquote-attribution">FSAD discipline</span>
+    </blockquote>
+  </section>
+  <hr class="divider">
+
+  <section id="why">
+    <span class="section-label">02 — Why It Matters</span>
+    <h2 class="section-title">The Cost of Skipping Phases</h2>
+    <p class="section-subtitle">Every phase you skip becomes a guess the agent has to make for you — usually badly, usually expensively, usually only visible once the code already exists.</p>
+
+    <div class="callout callout-warning" style="margin-top: 1.5rem;">
+      <div class="callout-title">⚠ Skip the spec, the agent invents one</div>
+      It will ship something that compiles, runs, and is wrong. The wrongness is implicit, in the gap between what you meant and what it inferred. Each downstream phase amplifies the gap.
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠ Skip the plan, the agent improvises</div>
+      Improvisation produces sprawling diffs that touch files you didn't expect. Reviewability collapses. Atomic commits become a single 2,000-line PR.
+    </div>
+
+    <div class="callout callout-best-practice">
+      <div class="callout-title">✓ Run the loop, the agent stays on rails</div>
+      With a spec and a plan in hand, implementation is mechanical. You spend your attention on the parts that need a human — the spec and the verification — and let the agent compress the parts that don't.
+    </div>
+  </section>
+  <hr class="divider">
+
+  <section id="how-to-start">
+    <span class="section-label">03 — Getting Started</span>
+    <h2 class="section-title">How to Get Started</h2>
+    <p class="section-subtitle">You don't need every tool. You need the discipline of producing an artifact at each phase. The tooling is downstream of the discipline.</p>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">→ The minimum viable loop</div>
+      A research note (even one paragraph), a spec (even a checklist), a plan (even a numbered list), code, a verification pass (even a smoke test), and a follow-up. That's the loop. Tools come second.
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">→ Where Claude Code fits</div>
+      Claude Code is the agent that executes phases 3–5 well, and helps draft phases 1–2. Sections 2 and 3 cover how to launch it; section 4 walks the loop with real artifacts.
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2: CLAUDE CODE BASICS
+     ═══════════════════════════════════════════════════════ -->
+<div class="page" id="page-basics">
+
+  <div class="hero" id="basics-hero">
+    <div class="hero-badge">FSAD Training · Section 2</div>
+    <h1>Claude Code <em>Basics</em></h1>
+    <p>Four things to know before you press enter: how to launch, how permissions work, how to pick a model and effort level, and how to read the statusline.</p>
+  </div>
+  <hr class="divider">
+
+  <section id="launch">
+    <span class="section-label">01 — Launching</span>
+    <h2 class="section-title">Launch</h2>
+    <p class="section-subtitle">Claude Code runs in your terminal. From any project directory, type <code>claude</code> and you're in. The session inherits the cwd as the project root.</p>
+
+    <div class="code-block"><pre><code>cd ~/path/to/project
+claude</code></pre></div>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">→ First-time setup</div>
+      Run <code>/login</code> to authenticate, then <code>/init</code> from the project root to generate a starter <code>CLAUDE.md</code> — the file Claude reads on every session to understand your project.
+    </div>
+  </section>
+  <hr class="divider">
+
+  <section id="permissions">
+    <span class="section-label">02 — Permissions</span>
+    <h2 class="section-title">Basic Permissions</h2>
+    <p class="section-subtitle">Claude asks before running shell commands or editing files. You can approve once, approve always for a category, or deny. Three knobs you'll care about:</p>
+
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+      <div class="overview-card"><h3>Allow once</h3><p>Approves the exact command this turn. Safest. Use it when you're unsure or the command looks unfamiliar.</p></div>
+      <div class="overview-card"><h3>Allow always</h3><p>Approves the command pattern for the whole session and saves it to your settings. Use it for the routines you trust — <code>npm test</code>, <code>git status</code>, <code>ls</code>.</p></div>
+      <div class="overview-card"><h3>Deny</h3><p>Blocks the command and tells Claude to try something else. Use it as a redirection signal, not just a refusal.</p></div>
+    </div>
+
+    <div class="callout callout-best-practice" style="margin-top: 1.5rem;">
+      <div class="callout-title">✓ Lean toward "allow always" for read-only commands</div>
+      Approving every <code>cat</code>, <code>grep</code>, and <code>ls</code> by hand burns concentration. Save approvals for anything that writes, deletes, pushes, or hits a network endpoint.
+    </div>
+  </section>
+  <hr class="divider">
+
+  <section id="model-effort">
+    <span class="section-label">03 — Model &amp; Effort</span>
+    <h2 class="section-title">Model &amp; Effort Settings</h2>
+    <p class="section-subtitle">Two dials: which model thinks, and how hard. Pick them up front; switch on the fly with <code>/model</code> when the task profile changes.</p>
+
+    <div class="overview-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem;">
+      <div class="overview-card"><h3>Model</h3><p><strong>Opus</strong> for hard reasoning, architecture, and gnarly debugging. <strong>Sonnet</strong> for everyday coding. <strong>Haiku</strong> for quick rewrites and simple chores.</p></div>
+      <div class="overview-card"><h3>Effort</h3><p>Controls how much thinking the model does before responding. Default works for most tasks. Bump it for plans, specs, and reviews; lower it for mechanical edits.</p></div>
+    </div>
+
+    <div class="callout callout-tip" style="margin-top: 1.5rem;">
+      <div class="callout-title">→ Rule of thumb</div>
+      If the task is "make it work," default effort. If the task is "decide what to do," raise effort. If the task is "rename this var across the file," drop it.
+    </div>
+  </section>
+  <hr class="divider">
+
+  <section id="statusline">
+    <span class="section-label">04 — Statusline</span>
+    <h2 class="section-title">Reading the Statusline</h2>
+    <p class="section-subtitle">The bottom-of-terminal status row tells you where Claude is, what it's doing, and what context it's burning. A glance is usually enough.</p>
+
+    <div class="overview-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem;">
+      <div class="overview-card"><h3>Model + effort</h3><p>Confirms which brain you're talking to. If the answer feels off, check this first — you may be on a smaller model than you think.</p></div>
+      <div class="overview-card"><h3>Context window</h3><p>How full the conversation is. When it nears capacity, run <code>/compact</code> or <code>/clear</code> before asking for anything that needs the full picture.</p></div>
+      <div class="overview-card"><h3>Permission mode</h3><p>Default, accept-edits, plan, or bypass. Tells you at a glance whether actions still need approval.</p></div>
+      <div class="overview-card"><h3>Working directory</h3><p>Sanity check. If you're in the wrong directory, fix it before any command runs against the wrong project.</p></div>
+    </div>
+
+    <div class="callout callout-warning" style="margin-top: 1.5rem;">
+      <div class="callout-title">⚠ Watch the context bar</div>
+      Once it turns yellow, you're a few turns from auto-compaction. Compact at a natural pause, not mid-task — the summary is more accurate when the current thought is wrapped.
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3: SLASH COMMANDS
+     ═══════════════════════════════════════════════════════ -->
+<div class="page" id="page-commands">
+
+  <div class="hero" id="commands-hero">
+    <div class="hero-badge">FSAD Training · Section 3</div>
+    <h1>Slash <em>Commands</em></h1>
+    <p>The eleven commands you'll touch most. Type <code>/</code> in any session to see the full list — these are the ones worth committing to muscle memory.</p>
+  </div>
+  <hr class="divider">
+
+  <section id="reference">
+    <span class="section-label">01 — Reference</span>
+    <h2 class="section-title">Daily Drivers</h2>
+    <p class="section-subtitle">Grouped by what they do, not alphabetically. Memorize the four in the first row; the rest you'll learn by hitting them when you need them.</p>
+
+    <h3 style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Context management</h3>
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.8rem;">
+      <div class="overview-card"><h3><code>/clear</code></h3><p>Wipes conversation history. Start fresh when context is wrong, polluted, or no longer relevant. Files and project state stay.</p></div>
+      <div class="overview-card"><h3><code>/context</code></h3><p>Shows what's currently loaded — files, system prompt, memory. Use it when an answer feels surprising and you suspect Claude is missing something.</p></div>
+      <div class="overview-card"><h3><code>/compact</code></h3><p>Summarizes the conversation in place. Use it when the context bar is getting full but the work isn't done — at a natural pause, not mid-task.</p></div>
+    </div>
+
+    <h3 style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Workflow</h3>
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.8rem;">
+      <div class="overview-card"><h3><code>/plan</code></h3><p>Enters plan mode — read-only exploration with a written plan you approve before any edits happen. The single most useful command in this list.</p></div>
+      <div class="overview-card"><h3><code>/resume</code></h3><p>Picks up a previous session by ID. Useful when a long task spilled across days, or when you want to fork from a known-good state.</p></div>
+      <div class="overview-card"><h3><code>/init</code></h3><p>Generates a starter <code>CLAUDE.md</code> for the current project — Claude's persistent project memory. Run it once per repo.</p></div>
+    </div>
+
+    <h3 style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Configuration</h3>
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.8rem;">
+      <div class="overview-card"><h3><code>/skills</code></h3><p>Lists installed skills — reusable capability bundles Claude can invoke. Browse to discover what's available without leaving the session.</p></div>
+      <div class="overview-card"><h3><code>/plugin</code></h3><p>Manage plugins: install, configure, enable, disable. Plugins ship commands, skills, hooks, and agents as a unit.</p></div>
+      <div class="overview-card"><h3><code>/doctor</code></h3><p>Self-diagnostic. Checks config, network, permissions, and known issues. Run this first when something feels broken.</p></div>
+    </div>
+
+    <h3 style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Session</h3>
+    <div class="overview-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 0.8rem;">
+      <div class="overview-card"><h3><code>/login</code></h3><p>Authenticate with your Anthropic account. You'll run this once per machine, and again whenever the token expires or you switch accounts.</p></div>
+      <div class="overview-card"><h3><code>exit</code></h3><p>Quit Claude Code. No slash — just type it. Use <code>Ctrl+C</code> twice as the keyboard equivalent.</p></div>
+    </div>
+
+    <div class="callout callout-tip" style="margin-top: 2rem;">
+      <div class="callout-title">→ Discover the rest</div>
+      Type <code>/</code> on its own to fuzzy-search every command — built-ins plus the ones your installed plugins add. Highest-leverage way to find a command whose name you can't quite remember.
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 4: WORKFLOW DEEP-DIVE
+     ═══════════════════════════════════════════════════════ -->
+<div class="page" id="page-deepdive">
+
+  <div class="hero" id="deepdive-hero">
+    <div class="hero-badge">FSAD Training · Section 4</div>
+    <h1>Workflow <em>Deep-Dive</em></h1>
+    <p>Walk the loop with the artifact each phase produces. Click a step or use ← → to advance.</p>
+  </div>
+  <hr class="divider">
+
+  <section id="stepper">
+    <span class="section-label">01 — Step Through</span>
+    <h2 class="section-title">Each Phase, With Its Artifact</h2>
+    <p class="section-subtitle">Six phases. Six artifacts. Each one short enough to read in a minute and concrete enough to argue with.</p>
+
+    <div class="deepdive-stepper" role="tablist" aria-label="Workflow phases">
+      <button class="deepdive-step active" role="tab" data-step="0" data-md="research" aria-selected="true">
+        <span class="deepdive-step-num">01</span>
+        <span class="deepdive-step-name">Research</span>
+      </button>
+      <button class="deepdive-step" role="tab" data-step="1" data-md="spec" aria-selected="false">
+        <span class="deepdive-step-num">02</span>
+        <span class="deepdive-step-name">Spec</span>
+      </button>
+      <button class="deepdive-step" role="tab" data-step="2" data-md="plan" aria-selected="false">
+        <span class="deepdive-step-num">03</span>
+        <span class="deepdive-step-name">Plan</span>
+      </button>
+      <button class="deepdive-step" role="tab" data-step="3" data-md="implement" aria-selected="false">
+        <span class="deepdive-step-num">04</span>
+        <span class="deepdive-step-name">Implement</span>
+      </button>
+      <button class="deepdive-step" role="tab" data-step="4" data-md="verify" aria-selected="false">
+        <span class="deepdive-step-num">05</span>
+        <span class="deepdive-step-name">Verify</span>
+      </button>
+      <button class="deepdive-step" role="tab" data-step="5" data-md="iterate" aria-selected="false">
+        <span class="deepdive-step-num">06</span>
+        <span class="deepdive-step-name">Iterate</span>
+      </button>
+    </div>
+
+    <div class="deepdive-pane">
+
+      <div class="deepdive-desc">
+        <div class="deepdive-desc-block active" data-step="0">
+          <h3>1 — Research</h3>
+          <p>Map the territory before you commit to anything. Read the existing code, the bug tracker, prior specs, related docs. Surface unknowns before they become assumptions you discover three commits in.</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">research.md</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">You can describe what's already there in one paragraph.</span>
+          </div>
+        </div>
+
+        <div class="deepdive-desc-block" data-step="1">
+          <h3>2 — Spec</h3>
+          <p>Lock <em>what</em> we're building and <em>why</em>. Write requirements you could falsify. Defer all "how." If a requirement isn't checkable, it isn't a requirement yet.</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">spec.md</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">A reviewer could say "this requirement isn't met" with evidence.</span>
+          </div>
+        </div>
+
+        <div class="deepdive-desc-block" data-step="2">
+          <h3>3 — Plan</h3>
+          <p>Decompose into ordered, atomic tasks. Name files. Surface unknowns the plan exposes that the spec didn't. The plan is where "how" becomes specific.</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">plan.md</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">A teammate could pick up any task without asking you anything.</span>
+          </div>
+        </div>
+
+        <div class="deepdive-desc-block" data-step="3">
+          <h3>4 — Implement</h3>
+          <p>Execute the plan. One task per commit. Stay close to the plan; if you find yourself improvising, stop and update the plan first — improvisation now is a deviation that's hard to review later.</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">code + atomic commits</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">Every commit traces to a task; every task to a requirement.</span>
+          </div>
+        </div>
+
+        <div class="deepdive-desc-block" data-step="4">
+          <h3>5 — Verify</h3>
+          <p>Prove the spec is met. Run the tests, exercise the edges, do a manual pass. Anything not verified is unverified — even if it "should work." Especially if it "should work."</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">verification.md</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">Every requirement has a checkmark with evidence next to it.</span>
+          </div>
+        </div>
+
+        <div class="deepdive-desc-block" data-step="5">
+          <h3>6 — Iterate</h3>
+          <p>What did we learn? Update the spec, queue follow-ups, surface new unknowns for the next loop. The loop closes only when there's nothing left to surface.</p>
+          <div class="deepdive-desc-meta">
+            <span class="deepdive-desc-meta-label">Output</span>
+            <span class="deepdive-desc-meta-value">followup.md</span>
+            <span class="deepdive-desc-meta-label">Done when</span>
+            <span class="deepdive-desc-meta-value">The next loop has a clear starting artifact — even if it says "we're done."</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="deepdive-artifact">
+        <div class="deepdive-artifact-label">Example artifact · markdown</div>
+        <div class="md-artifact" data-md="research"><h1>research.md — Add CSV export to the report dashboard</h1>
+<h2>What exists</h2>
+<ul>
+<li>Dashboard at <code>src/dashboard/index.tsx</code> renders charts via <code>recharts</code>.</li>
+<li>Data fetched from <code>GET /api/reports/:id</code> (returns JSON, paginated).</li>
+<li>No existing export — users currently screenshot panels.</li>
+<li>One related ticket: BUG-412 &quot;exported PNGs are illegible at large data sizes.&quot;</li>
+</ul>
+<h2>What&#39;s known</h2>
+<ul>
+<li>Volume: top-end report = ~120k rows, 18 columns.</li>
+<li>Auth: dashboard uses session cookie; same-origin works.</li>
+<li>Backend already has a <code>to_csv()</code> helper in <code>lib/serializers.py</code> used by the admin tool.</li>
+</ul>
+<h2>What&#39;s unknown</h2>
+<ul>
+<li>Do we need streaming for the 120k-row case, or is in-memory fine?</li>
+<li>Should the export honor the dashboard&#39;s active filters, or always export the full report?</li>
+<li>File naming convention — does product care?</li>
+</ul>
+<h2>Constraints</h2>
+<ul>
+<li>No new dependencies if avoidable.</li>
+<li>Must not change the existing JSON endpoint contract.</li>
+<li>Browser support: latest Chrome, Firefox, Safari.</li>
+</ul>
+<h2>Next phase needs</h2>
+<ul>
+<li>Decide: full report vs filtered export (PM call).</li>
+<li>Decide: streaming threshold (Eng call).</li>
+</ul>
+</div>
+        <div class="md-artifact" data-md="spec"><h1>spec.md — CSV export for the report dashboard</h1>
+<h2>Goal</h2>
+<p>Let dashboard users download the current report as a CSV that opens cleanly in Excel and Google Sheets.</p>
+<h2>Requirements</h2>
+<ol>
+<li><strong>Export button</strong> appears in the dashboard toolbar, right of the existing &quot;Refresh&quot; button.</li>
+<li><strong>Click triggers download</strong> of a <code>.csv</code> file named <code>&lt;report-slug&gt;-&lt;YYYY-MM-DD&gt;.csv</code>.</li>
+<li><strong>CSV content</strong> matches the report&#39;s currently applied filters — not the full dataset.</li>
+<li><strong>Column order</strong> matches the on-screen table column order.</li>
+<li><strong>Header row</strong> is the column display names, not internal field IDs.</li>
+<li><strong>Values are RFC 4180 escaped</strong> — quotes doubled, fields with commas/newlines wrapped.</li>
+<li><strong>Empty filter state</strong> exports the full report.</li>
+<li><strong>Reports &gt;50k rows</strong> show a &quot;preparing export…&quot; toast and stream the response.</li>
+<li><strong>Errors</strong> surface as a toast, not a silent failure.</li>
+</ol>
+<h2>Out of scope (explicitly)</h2>
+<ul>
+<li>XLSX export</li>
+<li>Scheduled / email exports</li>
+<li>Per-user export history</li>
+</ul>
+<h2>Non-goals</h2>
+<ul>
+<li>We are not changing the JSON endpoint.</li>
+<li>We are not adding column selection in v1.</li>
+</ul>
+<h2>Done when</h2>
+<ul>
+<li>All 9 requirements have a verification entry.</li>
+<li>A user can export a 100k-row report without the page freezing.</li>
+</ul>
+</div>
+        <div class="md-artifact" data-md="plan"><h1>plan.md — CSV export</h1>
+<h2>Approach</h2>
+<p>Add a new <code>GET /api/reports/:id/export.csv</code> endpoint that reuses the existing report query. Stream the response when row count exceeds threshold. Front-end adds a button that calls the endpoint with current filter params.</p>
+<h2>Tasks</h2>
+<ol>
+<li><p><strong>Backend: add CSV serializer wrapper</strong></p>
+<ul>
+<li>File: <code>lib/serializers.py</code></li>
+<li>Reuse <code>to_csv()</code>; add <code>stream_csv()</code> for chunked output.</li>
+<li>Acceptance: unit test covers empty, single row, 1k rows, special characters.</li>
+</ul>
+</li>
+<li><p><strong>Backend: add <code>/api/reports/:id/export.csv</code> endpoint</strong></p>
+<ul>
+<li>File: <code>api/reports.py</code></li>
+<li>Reuse existing report query; pass <code>format=&#39;csv&#39;</code> flag.</li>
+<li>Stream when <code>row_count &gt; 50_000</code>.</li>
+<li>Acceptance: integration test against the staging report.</li>
+</ul>
+</li>
+<li><p><strong>Frontend: add Export button</strong></p>
+<ul>
+<li>File: <code>src/dashboard/Toolbar.tsx</code></li>
+<li>Place right of Refresh; uses existing <code>IconButton</code>.</li>
+<li>Triggers <code>&lt;a download&gt;</code> with current filter querystring.</li>
+</ul>
+</li>
+<li><p><strong>Frontend: streaming-aware loading state</strong></p>
+<ul>
+<li>File: <code>src/dashboard/useExport.ts</code> (new)</li>
+<li>Show toast on click; remove on download start.</li>
+<li>Handle error toast.</li>
+</ul>
+</li>
+<li><p><strong>Verify cross-browser</strong></p>
+<ul>
+<li>Chrome, Firefox, Safari latest.</li>
+<li>Verify Excel + Google Sheets open the file cleanly.</li>
+</ul>
+</li>
+</ol>
+<h2>Files to touch</h2>
+<ul>
+<li><code>lib/serializers.py</code> — modify</li>
+<li><code>api/reports.py</code> — modify</li>
+<li><code>src/dashboard/Toolbar.tsx</code> — modify</li>
+<li><code>src/dashboard/useExport.ts</code> — new</li>
+<li><code>tests/api/test_reports_export.py</code> — new</li>
+</ul>
+<h2>Risks</h2>
+<ul>
+<li>120k-row export could exceed default request timeout. Mitigation: streaming + raised timeout for this route.</li>
+</ul>
+</div>
+        <div class="md-artifact" data-md="implement"><h1>Implementation notes</h1>
+<p>Atomic commits, one per task in the plan. The agent walks tasks in order; each commit is reviewable on its own.</p>
+<h2>Commit log (so far)</h2>
+<pre><code>feat(serializers): add stream_csv chunked writer
+feat(api): add GET /api/reports/:id/export.csv
+feat(dashboard): add Export button to toolbar
+feat(dashboard): add useExport hook with streaming-aware toast
+test(api): cover export endpoint with empty + 100k row fixtures
+</code></pre>
+<h2>Deviations from plan</h2>
+<ul>
+<li><strong>Task 1 added a helper <code>csv_chunk_iter()</code></strong> — not in plan, but <code>stream_csv()</code> was getting unwieldy. Plan updated post-hoc.</li>
+<li><strong>Task 4: used existing <code>useToast</code> hook</strong> instead of creating a new one. Cleaner; plan didn&#39;t specify and the existing one fits.</li>
+</ul>
+<h2>What stayed faithful</h2>
+<ul>
+<li>Endpoint shape exactly as planned.</li>
+<li>File names exactly as planned.</li>
+<li>Streaming threshold = 50k as specced.</li>
+</ul>
+<h2>Notes for verify phase</h2>
+<ul>
+<li>Manual test: 100k-row export on staging took 4.2s end-to-end (acceptable).</li>
+<li>Toast timing felt slightly delayed — verify that&#39;s not jarring under real network conditions.</li>
+</ul>
+</div>
+        <div class="md-artifact" data-md="verify"><h1>verification.md — CSV export</h1>
+<h2>Requirements check</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Requirement</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Export button in toolbar</td>
+<td>✅</td>
+<td>Screenshot: dashboard-toolbar.png</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Click downloads <code>.csv</code> named <code>&lt;slug&gt;-&lt;date&gt;.csv</code></td>
+<td>✅</td>
+<td>Manual: downloaded <code>q1-revenue-2026-04-25.csv</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Content matches active filters</td>
+<td>✅</td>
+<td>Test: <code>test_export_respects_filters</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Column order matches table</td>
+<td>✅</td>
+<td>Manual: side-by-side compare</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Header row uses display names</td>
+<td>✅</td>
+<td>Test: <code>test_export_headers</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>RFC 4180 escaping</td>
+<td>✅</td>
+<td>Test: <code>test_export_rfc4180</code> (commas, quotes, newlines)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Empty filters exports full report</td>
+<td>✅</td>
+<td>Manual: 120k-row download</td>
+</tr>
+<tr>
+<td>8</td>
+<td>&gt;50k rows streams with toast</td>
+<td>✅</td>
+<td>Manual: network panel shows chunked response</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Errors show toast</td>
+<td>✅</td>
+<td>Manual: forced 500, toast fired</td>
+</tr>
+</tbody></table>
+<h2>Browser pass</h2>
+<ul>
+<li>Chrome 134 ✅</li>
+<li>Firefox 128 ✅</li>
+<li>Safari 17.5 ✅</li>
+</ul>
+<h2>Spreadsheet pass</h2>
+<ul>
+<li>Excel for Mac ✅</li>
+<li>Google Sheets ✅</li>
+<li>Numbers ✅ (one quirk: opens with comma delimiter detected automatically)</li>
+</ul>
+<h2>Performance</h2>
+<ul>
+<li>120k rows: 4.2s end-to-end ✅</li>
+<li>1k rows: 180ms ✅</li>
+<li>Memory: no spike — streaming path confirmed ✅</li>
+</ul>
+<h2>Outstanding</h2>
+<p>None blocking. Two items queued for iterate phase.</p>
+</div>
+        <div class="md-artifact" data-md="iterate"><h1>followup.md — CSV export, post-ship</h1>
+<h2>What we learned</h2>
+<ul>
+<li>Streaming threshold of 50k was right. No reports we measured needed a lower threshold.</li>
+<li>The &quot;preparing export…&quot; toast felt slow at small sizes; users on &lt;5k rows expected an instant download.</li>
+<li>Two product asks landed within a day of ship — both reasonable, neither in v1 spec.</li>
+</ul>
+<h2>Queued for next loop</h2>
+<ol>
+<li><strong>Smart toast suppression</strong> — skip the &quot;preparing…&quot; toast when row count is below ~5k. Trivial change to <code>useExport.ts</code>.</li>
+<li><strong>Column selection</strong> (deferred from v1 spec) — let users pick which columns to export. Needs a small UI affordance + querystring param.</li>
+<li><strong>XLSX format</strong> (deferred) — product re-confirmed they want it. Worth its own spec.</li>
+</ol>
+<h2>Spec deltas</h2>
+<ul>
+<li>Add NFR: &quot;exports under 5k rows must not show preparation toast.&quot;</li>
+<li>Move &quot;column selection&quot; from out-of-scope to v2 scope.</li>
+</ul>
+<h2>Open questions for next research phase</h2>
+<ul>
+<li>Is XLSX worth the dependency cost (<code>openpyxl</code>), or do we punt to a lib we already have?</li>
+<li>Do enterprise customers want scheduled exports? (Sales has anecdotes; we don&#39;t have data.)</li>
+</ul>
+<h2>Loop status</h2>
+<p>Ready to start a new loop on the column-selection follow-up. Research phase next.</p>
+</div>
+      </div>
+
+    </div>
+
+    <div class="deepdive-controls">
+      <button id="deepdivePrev" type="button" disabled>← Previous phase</button>
+      <span class="deepdive-counter" id="deepdiveCounter">1 of 6</span>
+      <button id="deepdiveNext" type="button">Next phase →</button>
+    </div>
+
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 5: SINGLE-SHOT vs SPEC-DRIVEN
+     ═══════════════════════════════════════════════════════ -->
+<div class="page" id="page-compare">
+
+  <div class="hero" id="compare-hero">
+    <div class="hero-badge">FSAD Training · Section 5</div>
+    <h1>Single-shot <em>vs</em> Spec-Driven</h1>
+    <p>The contrast that motivates the whole loop, on one screen.</p>
+  </div>
+  <hr class="divider">
+
+  <section id="compare-overview">
+    <span class="section-label">01 — Concept In Development</span>
+    <h2 class="section-title">Infographic Coming</h2>
+    <p class="section-subtitle">This section will hold the centerpiece visual: a side-by-side of what happens when you prompt an agent without context vs. when you walk it through the loop.</p>
+
+    <div class="callout callout-tip" style="margin-top: 1.5rem;">
+      <div class="callout-title">→ What's coming</div>
+      A single visual that contrasts: <strong>single-shot prompting</strong> (one big ask, agent improvises, output drifts from intent) against <strong>spec-driven, context-managed interactions</strong> (artifacts at every phase, drift surfaces early, output traces back to intent). The visual concept is being designed; this section is wired up so it slots in cleanly when ready.
+    </div>
+
+    <div class="callout callout-best-practice">
+      <div class="callout-title">✓ The TL;DR until then</div>
+      Single-shot is fast at first and slow at the end — you spend the savings on debugging what the agent assumed. Spec-driven feels slower at first and is faster at the end — the artifacts catch divergence while it's still cheap to fix.
+    </div>
+  </section>
+
+</div>
+
+</div><!-- /.main -->
+<script>
+  // ─── CHANGELOG MODAL ───
+  function openChangelog() {
+    const m = document.getElementById('changelogModal');
+    if (!m) return;
+    m.classList.add('open');
+    m.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeChangelog() {
+    const m = document.getElementById('changelogModal');
+    if (!m) return;
+    m.classList.remove('open');
+    m.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeChangelog();
+  });
+
+  // ─── THEME TOGGLE ───
+  function getEffectiveTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme() {
+    const effective = getEffectiveTheme();
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    document.documentElement.setAttribute('data-theme', effective);
+    if (icon) icon.textContent = effective === 'light' ? '☀' : '☾';
+    if (label) label.textContent = effective === 'light' ? 'Light' : 'Dark';
+  }
+
+  function cycleTheme() {
+    // 2-state toggle (Phase 3): light ↔ dark. Default on first load follows OS.
+    const current = getEffectiveTheme();
+    localStorage.setItem('theme', current === 'light' ? 'dark' : 'light');
+    applyTheme();
+  }
+
+  // Apply theme immediately to prevent flash
+  applyTheme();
+
+  // ─── SECTION TO PAGE MAPPING ───
+  const sectionToPageMap = {
+    'fsad-hero': 'fsad', 'overview': 'fsad', 'workflow': 'fsad', 'pod': 'fsad', 'markdown': 'fsad', 'comparison': 'fsad', 'advantages': 'fsad', 'tradeoffs': 'fsad', 'closing-fsad': 'fsad',
+    'pods-hero': 'pods', 'pod-explorer': 'pods', 'sizing': 'pods', 'antipatterns': 'pods',
+    'workflows-hero': 'workflows', 'project-initialize-context': 'workflows', 'project-create-spec': 'workflows', 'add-task-skill': 'workflows', 'commit-changes-skill': 'workflows',
+    'practices-hero': 'practices', 'practices-hub': 'practices', 'getting-started': 'practices', 'claude-setup': 'practices', 'config-cascade': 'practices', 'integrations': 'practices', 'code-review': 'practices', 'security-review': 'practices', 'building-skills': 'practices', 'best-practices': 'practices', 'model-effort': 'practices', 'cheat-sheet': 'practices', 'power-usage': 'practices', 'hooks-deep-dive': 'practices', 'monitoring': 'practices', 'open-source': 'practices',
+    'hub': 'practices', 'foundations': 'practices', 'skills-hooks': 'practices', 'operations': 'practices', 'reference': 'practices',
+    'codex-hero': 'codex', 'codex-best-practices': 'codex', 'codex-project-anatomy': 'codex', 'codex-integrations': 'codex', 'codex-code-review': 'codex', 'codex-building-skills': 'codex', 'codex-guidelines': 'codex', 'codex-cheat-sheet': 'codex', 'codex-power-usage': 'codex',
+    'kpis-hero': 'kpis', 'fsad-metrics': 'kpis'
+  };
+
+  // ─── ROUTING & NAVIGATION ───
+  function initRouter() {
+    window.addEventListener('hashchange', handleRoute);
+    if (window.location.hash) {
+      handleRoute();
+    } else {
+      navigateTo('workflow');
+    }
+  }
+
+  function handleRoute() {
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+
+    const [pageId, sectionId, leafSlug] = hash.split('/');
+    const navBtn = document.querySelector(`.nav-group-toggle[data-page="${pageId}"]`);
+
+    if (navBtn) {
+      switchPage(pageId, navBtn);
+    } else if (sectionToPageMap[pageId]) {
+      // Direct section reference in hash (e.g. #overview)
+      switchPage(sectionToPageMap[pageId], document.querySelector(`.nav-group-toggle[data-page="${sectionToPageMap[pageId]}"]`));
+      if (sectionToPageMap[pageId] === 'practices') {
+        const topic = TOPIC_IDS.includes(pageId) ? pageId : (sectionToTopicMap[pageId] || 'hub');
+        showTopic(topic);
+        if (!TOPIC_IDS.includes(pageId)) setTimeout(() => scrollToId(pageId), 120);
+      } else {
+        scrollToId(pageId);
+      }
+      return;
+    }
+
+    if (pageId === 'practices') {
+      // Second segment may be a topic or a section
+      if (sectionId && TOPIC_IDS.includes(sectionId)) {
+        showTopic(sectionId);
+        return;
+      }
+      if (sectionId && sectionToTopicMap[sectionId]) {
+        const topic = sectionToTopicMap[sectionId];
+        showTopic(topic);
+        // Third segment: open a specific collapsible within the section
+        if (leafSlug) {
+          const leafId = `${sectionId}--${leafSlug}`;
+          setTimeout(() => openAndScrollToLeaf(leafId, topic), 140);
+        } else {
+          setTimeout(() => scrollToId(sectionId), 120);
+        }
+        return;
+      }
+      showTopic('hub');
+      return;
+    }
+
+    if (sectionId) {
+      setTimeout(() => scrollToId(sectionId), 100);
+    }
+  }
+
+  function navigateTo(pageId, btn) {
+    if (window.location.hash.substring(1).split('/')[0] === pageId) {
+       // Already on this page, just go to hero
+       window.location.hash = `${pageId}/${pageId}-hero`;
+    } else {
+       window.location.hash = pageId;
+    }
+    if (btn) switchPage(pageId, btn);
+  }
+
+  function switchPage(pageId, btn) {
+    window.scrollTo(0, 0);
+
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('active');
+      p.style.display = 'none';
+      p.style.opacity = '';
+      p.style.transform = '';
+    });
+
+    const targetPage = document.getElementById('page-' + pageId);
+    if (targetPage) {
+      targetPage.style.display = 'block';
+      targetPage.style.opacity = '0';
+      targetPage.style.transform = 'translateY(10px)';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          targetPage.style.opacity = '';
+          targetPage.style.transform = '';
+          targetPage.classList.add('active');
+          reinitAnimObserver(targetPage);
+          reinitSectionObserver(targetPage);
+        });
+      });
+    }
+
+    document.querySelectorAll('.nav-group-toggle').forEach(t => t.classList.remove('active', 'expanded'));
+    if (btn && !btn.classList.contains('disabled')) {
+      btn.classList.add('active', 'expanded');
+    }
+
+    document.querySelectorAll('.nav-sub-items').forEach(s => s.classList.remove('open'));
+    const subItems = document.querySelector(`.nav-sub-items[data-group="${pageId}"]`);
+    if (subItems) subItems.classList.add('open');
+
+    document.getElementById('sidebar').classList.remove('open');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (backdrop) backdrop.classList.remove('visible');
+    const pageTitles = { workflow: 'Workflow Orientation', basics: 'Claude Code Basics', commands: 'Slash Commands', deepdive: 'Workflow Deep-Dive', compare: 'Single-shot vs Spec-Driven' };
+    const titleEl = document.getElementById('pageTitle');
+    if (titleEl) titleEl.textContent = pageTitles[pageId] || '';
+    if (pageId === 'practices' && !window.__currentTopic) {
+      showTopic('hub');
+    } else {
+      buildIndicatorPills(pageId);
+    }
+    initCopyButtons();
+  }
+
+  // ─── CLAUDE PAGE: Hub + Topic views ───
+  const TOPIC_IDS = ['hub', 'foundations', 'integrations', 'skills-hooks', 'operations', 'reference'];
+  const TOPIC_ORDER = ['foundations', 'integrations', 'skills-hooks', 'operations', 'reference'];
+  const TOPIC_LABELS = {
+    'hub': 'Hub',
+    'foundations': 'Foundations',
+    'integrations': 'Integrations & Review',
+    'skills-hooks': 'Skills & Hooks',
+    'operations': 'Operations',
+    'reference': 'Reference'
+  };
+  const sectionToTopicMap = {};
+
+  function buildSectionToTopicMap() {
+    document.querySelectorAll('#page-practices .topic-view[data-topic]').forEach(view => {
+      const topic = view.dataset.topic;
+      view.querySelectorAll('section[id]').forEach(sec => {
+        sectionToTopicMap[sec.id] = topic;
+      });
+    });
+  }
+
+  function showTopic(topicId) {
+    if (!TOPIC_IDS.includes(topicId)) topicId = 'hub';
+    window.__currentTopic = topicId;
+    document.querySelectorAll('#page-practices .topic-view').forEach(v => {
+      v.hidden = (v.dataset.topic !== topicId);
+    });
+    renderTopicFooter(topicId);
+    updatePracticesBreadcrumb(topicId);
+    const practicesEl = document.getElementById('page-practices');
+    if (practicesEl) reinitSectionObserver(practicesEl);
+    buildIndicatorPills('practices');
+    updateSidebarTopicActive(topicId);
+    // Update hash without triggering full route handling
+    const currentHash = window.location.hash.substring(1);
+    const desired = topicId === 'hub' ? 'practices' : `practices/${topicId}`;
+    if (currentHash.split('/')[0] === 'practices' && currentHash !== desired) {
+      history.replaceState(null, '', '#' + desired);
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+
+  function updatePracticesBreadcrumb(topicId) {
+    const titleEl = document.getElementById('pageTitle');
+    if (!titleEl) return;
+    if (topicId === 'hub' || !topicId) {
+      titleEl.textContent = 'Claude Best Practices';
+      return;
+    }
+    titleEl.innerHTML = '';
+    const crumb = document.createElement('a');
+    crumb.className = 'page-indicator-crumb';
+    crumb.textContent = 'Claude';
+    crumb.href = '#practices';
+    crumb.addEventListener('click', (e) => { e.preventDefault(); showTopic('hub'); });
+    const sep = document.createElement('span');
+    sep.textContent = ' / ';
+    sep.style.color = 'var(--text-muted)';
+    const label = document.createElement('span');
+    label.textContent = TOPIC_LABELS[topicId] || topicId;
+    titleEl.appendChild(crumb);
+    titleEl.appendChild(sep);
+    titleEl.appendChild(label);
+  }
+
+  function renderTopicFooter(topicId) {
+    // Remove any existing footers across topic-views
+    document.querySelectorAll('#page-practices .topic-footer').forEach(f => f.remove());
+    if (topicId === 'hub') return;
+    const view = document.querySelector(`#page-practices .topic-view[data-topic="${topicId}"]:not([hidden])`);
+    if (!view) return;
+    const idx = TOPIC_ORDER.indexOf(topicId);
+    const next = TOPIC_ORDER[(idx + 1) % TOPIC_ORDER.length];
+    const footer = document.createElement('div');
+    footer.className = 'topic-footer';
+    const back = document.createElement('a');
+    back.className = 'topic-footer-back';
+    back.textContent = '← All Topics';
+    back.href = '#practices';
+    back.addEventListener('click', (e) => { e.preventDefault(); showTopic('hub'); });
+    const fwd = document.createElement('a');
+    fwd.className = 'topic-footer-next';
+    fwd.textContent = `Next: ${TOPIC_LABELS[next]} →`;
+    fwd.href = '#practices/' + next;
+    fwd.addEventListener('click', (e) => { e.preventDefault(); showTopic(next); });
+    footer.appendChild(back);
+    footer.appendChild(fwd);
+    view.appendChild(footer);
+  }
+
+  function updateSidebarTopicActive(topicId) {
+    document.querySelectorAll('.nav-topic-header').forEach(h => {
+      const match = h.dataset.topic === topicId;
+      h.classList.toggle('active', match);
+    });
+    document.querySelectorAll('.nav-topic-sections').forEach(s => {
+      s.classList.toggle('open', s.dataset.topicSections === topicId);
+    });
+    document.querySelectorAll('.nav-topic-header').forEach(h => {
+      h.classList.toggle('open', h.dataset.topic === topicId);
+    });
+  }
+
+  function toggleTopicNav(btn, topicId) {
+    showTopic(topicId);
+  }
+
+  function scrollToSection(sectionId) {
+    const el = document.getElementById(sectionId);
+    const page = el ? el.closest('.page') : null;
+    const targetPage = page ? page.id.replace(/^page-/, '') : 'workflow';
+    window.location.hash = `${targetPage}/${sectionId}`;
+  }
+
+  function scrollToId(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const headerOffset = 80;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
+  }
+
+  // Open a collapsible (3rd-level leaf) and scroll to it. Ensures the right
+  // practices topic view is visible first so getBoundingClientRect is sane.
+  function openAndScrollToLeaf(collapsibleId, topicId) {
+    const el = document.getElementById(collapsibleId);
+    if (!el) return;
+    if (topicId && TOPIC_IDS.includes(topicId) && window.__currentTopic !== topicId) {
+      showTopic(topicId);
+    }
+    el.classList.add('open');
+    setTimeout(() => scrollToId(collapsibleId), 140);
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarBackdrop').classList.toggle('visible');
+  }
+
+  // ─── SEARCH SYSTEM ───
+  let searchIndex = [];
+  let selectedResultIndex = -1;
+  function buildSearchIndex() {
+    document.querySelectorAll('section, .hero').forEach(sec => {
+      const title = sec.querySelector('.section-title, h1, h2')?.textContent || '';
+      const label = sec.querySelector('.section-label, .hero-badge')?.textContent || '';
+      if (title && sec.id) {
+        searchIndex.push({
+          id: sec.id,
+          title: title.trim(),
+          label: label.trim(),
+          text: sec.textContent.substring(0, 5000).replace(/\s+/g, ' ').trim()
+        });
+      }
+      // Index collapsible headers within sections for deeper search hits
+      sec.querySelectorAll('.collapsible').forEach(col => {
+        const colTitle = col.querySelector('.collapsible-header h3')?.textContent || '';
+        const colText = col.textContent.substring(0, 5000).replace(/\s+/g, ' ').trim();
+        if (colTitle && sec.id) {
+          searchIndex.push({
+            id: sec.id,
+            title: colTitle.trim(),
+            label: label.trim(),
+            text: colText
+          });
+        }
+      });
+    });
+  }
+
+  function closeSidebarSearch() {
+    const popover = document.getElementById('sidebarSearchPopover');
+    if (popover) popover.classList.remove('open');
+    selectedResultIndex = -1;
+  }
+
+  function handleSidebarSearch(query) {
+    const popover = document.getElementById('sidebarSearchPopover');
+    if (!popover) return;
+    selectedResultIndex = -1;
+    popover.innerHTML = '';
+
+    if (!query || query.trim().length < 2) {
+      popover.classList.remove('open');
+      return;
+    }
+
+    const q = query.toLowerCase();
+    const filtered = searchIndex.filter(item =>
+      item.title.toLowerCase().includes(q) ||
+      item.text.toLowerCase().includes(q) ||
+      item.label.toLowerCase().includes(q)
+    ).slice(0, 8);
+
+    if (filtered.length === 0) {
+      popover.innerHTML = '<div class="search-no-results">No results for "' + query.replace(/[<>"'&]/g, '') + '"</div>';
+      popover.classList.add('open');
+      return;
+    }
+
+    filtered.forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'search-result-item';
+      a.href = `#${sectionToPageMap[item.id]}/${item.id}`;
+      a.onclick = (e) => {
+        e.preventDefault();
+        const targetPage = sectionToPageMap[item.id];
+        const navBtn = document.querySelector(`.nav-group-toggle[data-page="${targetPage}"]`);
+        switchPage(targetPage, navBtn);
+        if (targetPage === 'practices' && sectionToTopicMap[item.id]) {
+          showTopic(sectionToTopicMap[item.id]);
+        }
+        setTimeout(() => scrollToId(item.id), 150);
+        const input = document.getElementById('sidebarSearchInput');
+        if (input) { input.value = ''; input.blur(); }
+        closeSidebarSearch();
+      };
+      a.innerHTML = `<h4>${item.label ? '<span>' + item.label + '</span> — ' : ''}${item.title}</h4><p>${item.text.substring(0, 120)}...</p>`;
+      popover.appendChild(a);
+    });
+    popover.classList.add('open');
+  }
+
+  function handleSidebarSearchKeydown(e) {
+    const popover = document.getElementById('sidebarSearchPopover');
+    if (!popover || !popover.classList.contains('open')) return;
+    const results = popover.querySelectorAll('.search-result-item');
+    if (!results.length) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedResultIndex = Math.min(selectedResultIndex + 1, results.length - 1);
+      updateSelectedResult(results);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedResultIndex = Math.max(selectedResultIndex - 1, 0);
+      updateSelectedResult(results);
+    } else if (e.key === 'Enter' && selectedResultIndex >= 0) {
+      e.preventDefault();
+      results[selectedResultIndex].click();
+    }
+  }
+
+  function updateSelectedResult(results) {
+    results.forEach((r, i) => r.classList.toggle('selected', i === selectedResultIndex));
+    if (results[selectedResultIndex]) results[selectedResultIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  // ─── UTILITIES & SCROLL ───
+  function updateScrollProgress() {
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const pageTop = activePage.offsetTop;
+    const pageHeight = activePage.scrollHeight;
+    const viewportHeight = document.documentElement.clientHeight;
+    const scrollInPage = Math.max(0, winScroll - pageTop);
+    const maxScroll = Math.max(1, pageHeight - viewportHeight);
+    const scrolled = Math.min(100, (scrollInPage / maxScroll) * 100);
+    document.getElementById("progressBar").style.width = scrolled + "%";
+
+    // Back to top visibility
+    const btt = document.getElementById('backToTop');
+    if (winScroll > 500) { btt.classList.add('visible'); }
+    else { btt.classList.remove('visible'); }
+  }
+
+  // ─── WORKFLOW PHASES ───
+  function showPhase(index) {
+    document.querySelectorAll('.workflow-phase').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.workflow-detail').forEach(d => d.classList.remove('visible'));
+    document.querySelector(`.workflow-phase[data-phase="${index}"]`).classList.add('active');
+    document.getElementById('detail-' + index).classList.add('visible');
+  }
+
+  // ─── POD SWITCHER ───
+  function switchPod(podId) {
+    document.querySelectorAll('.pod-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.pod-tab[data-pod="${podId}"]`).classList.add('active');
+    document.querySelectorAll('.pod-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('pod-' + podId).classList.add('active');
+  }
+
+  function switchWorkflow(wfId) {
+    document.querySelectorAll('.wf-tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector(`.wf-tab[data-wf="${wfId}"]`);
+    if (tab) tab.classList.add('active');
+    document.querySelectorAll('.wf-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('wf-' + wfId);
+    if (panel) panel.classList.add('active');
+  }
+
+  // ─── INDICATOR PILLS ───
+  function buildIndicatorPills(pageId) {
+    const container = document.getElementById('pageIndicatorPills');
+    if (!container) return;
+    container.innerHTML = '';
+    if (pageId === 'practices') {
+      const topic = window.__currentTopic || 'hub';
+      if (topic === 'hub') return;
+      const visibleSections = document.querySelectorAll(`#page-practices .topic-view[data-topic="${topic}"]:not([hidden]) section[id]`);
+      visibleSections.forEach(sec => {
+        const pill = document.createElement('a');
+        pill.className = 'page-indicator-pill';
+        const heading = sec.querySelector('.section-title');
+        pill.textContent = heading ? heading.textContent.trim().slice(0, 40) : sec.id;
+        pill.href = `#practices/${sec.id}`;
+        pill.dataset.section = sec.id;
+        pill.addEventListener('click', (e) => {
+          e.preventDefault();
+          scrollToId(sec.id);
+        });
+        container.appendChild(pill);
+      });
+      return;
+    }
+    const subItems = document.querySelectorAll(`.nav-sub-items[data-group="${pageId}"] .nav-sub-item`);
+    subItems.forEach(item => {
+      const pill = document.createElement('a');
+      pill.className = 'page-indicator-pill';
+      pill.textContent = item.textContent;
+      pill.href = item.getAttribute('href') || '#';
+      const onclick = item.getAttribute('onclick') || '';
+      const match = onclick.match(/scrollToSection\('([^']+)'\)/);
+      if (match) pill.dataset.section = match[1];
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (match) scrollToSection(match[1]);
+      });
+      if (item.classList.contains('active')) pill.classList.add('active');
+      container.appendChild(pill);
+    });
+  }
+
+  // ─── SCROLL SPY ───
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      const isLeaf = entry.target.classList.contains('collapsible');
+      if (isLeaf) {
+        // A collapsible became visible → highlight the matching leaf nav item
+        document.querySelectorAll('.nav-leaf-item').forEach(item => {
+          item.classList.toggle('active', item.dataset.leaf === id);
+        });
+        return;
+      }
+      // A section became visible → highlight matching section nav item
+      document.querySelectorAll('.nav-sub-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('onclick')?.includes(id)) {
+          item.classList.add('active');
+        }
+      });
+      document.querySelectorAll('.page-indicator-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.dataset.section === id);
+      });
+    });
+  }, { threshold: 0.1, rootMargin: '-60px 0px -60% 0px' });
+
+  function reinitSectionObserver(pageEl) {
+    // Unobserve everything we might have been watching
+    document.querySelectorAll('section[id], .hero[id], .collapsible[id]').forEach(s => sectionObserver.unobserve(s));
+    // On practices page, scope to the visible topic-view only
+    if (pageEl.id === 'page-practices') {
+      const visible = pageEl.querySelector('.topic-view:not([hidden])');
+      if (visible) {
+        visible.querySelectorAll('section[id]').forEach(s => sectionObserver.observe(s));
+        // Also observe collapsibles for 3rd-level active-leaf highlighting
+        visible.querySelectorAll('.collapsible[id]').forEach(c => sectionObserver.observe(c));
+      }
+      const hero = pageEl.querySelector('.hero[id]');
+      if (hero) sectionObserver.observe(hero);
+      return;
+    }
+    pageEl.querySelectorAll('section[id], .hero[id]').forEach(s => sectionObserver.observe(s));
+  }
+
+  // ─── COLLAPSIBLE ───
+  document.addEventListener('click', (e) => {
+    const header = e.target.closest('.collapsible-header');
+    if (!header) return;
+    header.closest('.collapsible').classList.toggle('open');
+  });
+
+  // ─── COPY BUTTONS ───
+  function initCopyButtons() {
+    document.querySelectorAll('.code-block pre').forEach(pre => {
+      if (pre.querySelector('.copy-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', () => {
+        const code = pre.querySelector('code') ? pre.querySelector('code').textContent : pre.textContent;
+        navigator.clipboard.writeText(code).then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        });
+      });
+      pre.style.position = 'relative';
+      pre.appendChild(btn);
+    });
+  }
+
+  // ─── ANIMATE ON SCROLL ───
+  let initialLoadComplete = false;
+  const animObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  function reinitAnimObserver(pageEl) {
+    if (!initialLoadComplete) return; // Skip on first load — DOMContentLoaded handles it
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    pageEl.querySelectorAll('.overview-card, .proscons-col, .anti-card, .role-card, .meta-box, .card, .step-card, .framework-card, .bp-anti-card').forEach(el => {
+      animObserver.unobserve(el);
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(14px)';
+      el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      animObserver.observe(el);
+    });
+  }
+
+  // ─── INITIALIZATION ───
+  window.addEventListener('scroll', updateScrollProgress);
+  window.addEventListener('keydown', (e) => {
+    const tag = document.activeElement.tagName;
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+    if (e.key === '/' && !isTyping) {
+      e.preventDefault();
+      const input = document.getElementById('sidebarSearchInput');
+      if (input) { input.focus(); input.select(); }
+      return;
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const input = document.getElementById('sidebarSearchInput');
+      if (input) { input.focus(); input.select(); }
+      return;
+    }
+    if (e.key === 'Escape') {
+      const input = document.getElementById('sidebarSearchInput');
+      if (input && document.activeElement === input) {
+        input.value = '';
+        closeSidebarSearch();
+        input.blur();
+      } else {
+        closeSidebarSearch();
+      }
+    }
+  });
+
+  // Sidebar search keyboard nav (scoped to input)
+  document.addEventListener('keydown', (e) => {
+    if (document.activeElement && document.activeElement.id === 'sidebarSearchInput') {
+      handleSidebarSearchKeydown(e);
+    }
+  });
+
+  // Dismiss popover on outside click
+  document.addEventListener('mousedown', (e) => {
+    const searchWrap = document.querySelector('.sidebar-search');
+    if (searchWrap && !searchWrap.contains(e.target)) {
+      closeSidebarSearch();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    buildSectionToTopicMap();
+    initRouter();
+    buildSearchIndex();
+    initCopyButtons();
+    
+    document.querySelectorAll('section[id], .hero[id]').forEach(s => sectionObserver.observe(s));
+    
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('.overview-card, .proscons-col, .anti-card, .role-card, .meta-box, .card, .step-card, .framework-card, .bp-anti-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(14px)';
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        animObserver.observe(el);
+      });
+    }
+    initialLoadComplete = true;
+  });
+
+  // ─── SECTION 4: DEEP-DIVE STEPPER ───
+  (function () {
+    const stepper = document.querySelector('.deepdive-stepper');
+    if (!stepper) return;
+    const steps = Array.from(stepper.querySelectorAll('.deepdive-step'));
+    const descBlocks = Array.from(document.querySelectorAll('#page-deepdive .deepdive-desc-block'));
+    const artifacts = Array.from(document.querySelectorAll('#page-deepdive .md-artifact'));
+    const prevBtn = document.getElementById('deepdivePrev');
+    const nextBtn = document.getElementById('deepdiveNext');
+    const counter = document.getElementById('deepdiveCounter');
+    let active = 0;
+
+    function setActive(i) {
+      if (i < 0 || i >= steps.length) return;
+      active = i;
+      const targetMd = steps[i].dataset.md;
+      steps.forEach((s, idx) => {
+        s.classList.toggle('active', idx === i);
+        s.classList.toggle('completed', idx < i);
+        s.setAttribute('aria-selected', idx === i ? 'true' : 'false');
+      });
+      descBlocks.forEach((b) => b.classList.toggle('active', Number(b.dataset.step) === i));
+      artifacts.forEach((a) => a.classList.toggle('active', a.dataset.md === targetMd));
+      if (prevBtn) prevBtn.disabled = i === 0;
+      if (nextBtn) nextBtn.disabled = i === steps.length - 1;
+      if (counter) counter.textContent = `${i + 1} of ${steps.length}`;
+    }
+
+    steps.forEach((step, idx) => step.addEventListener('click', () => setActive(idx)));
+    if (prevBtn) prevBtn.addEventListener('click', () => setActive(active - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => setActive(active + 1));
+
+    document.addEventListener('keydown', (e) => {
+      const onDeepdive = document.getElementById('page-deepdive')?.classList.contains('active');
+      if (!onDeepdive) return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); setActive(active + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); setActive(active - 1); }
+    });
+
+    setActive(0);
+  })();
+</script>
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">↑</button>
+
+</body>
+</html>
