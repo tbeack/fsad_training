@@ -9,9 +9,9 @@
 - [x] `FSD_Train-007` Add a the replay of the verify step to the `Implement` step in section 4 → [task-fsd_train-007.md](../completed/task-fsd_train-007.md)
 - [x] `FSD_Train-008` Add a the `todo.md` step to the `Iterate` step in section 4 → [task-fsd_train-008.md](../completed/task-fsd_train-008.md)
 - [ ] `FSD_Train-009` Add a skills section to the training material
-- [ ] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section
+- [x] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section
 - [ ] `FSD_Train-011` Link the `FSAD Training` material with the `FSAD Playbook`
 - [x] `FSD_Train-012` Reduce the amount of wasted white space at the top of every section → [task-fsd_train-012.md](../completed/task-fsd_train-012.md)
 - [x] `FSD_Train-013` - Add an example `Claude.md` section to the `Claude Code Basic` section
 - [x] `FSD_Train-014` - Append the `Status Line` section with an example prompt to create/modify the status line in claude → [task-fsd_train-014.md](../completed/task-fsd_train-014.md)
-- [ ] `FSD_Train-015` - How to track your Context usage. Show the command the example output.
+- [x] `FSD_Train-015` - How to track your Context usage. Show the command the example output. → [task-fsd_train-015.md](../completed/task-fsd_train-015.md)

@@ -4,6 +4,19 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.8 — 2026-04-27
+
+**Section 2 basics: "How to manage your context window" subsection (FSD_Train-015)**
+
+Adds a new §05 subsection to Claude Code Basics — between Statusline and CLAUDE.md (now §06) — teaching attendees to track, compact, and clear their context window.
+
+- **FSD_Train-015 — Context Window section.** New `<section id="context-window">` with three overview cards (`/context`, `/compact`, `/clear`), a tip callout explaining when to use `/context` for diagnostics, and a visual example of the real `/context` output. The example renders the actual two-column terminal layout: a 10×10 coin-icon grid on the left (⛁/⛀/⛶/⛝ icons color-coded by category — system prompt in grey, system tools in medium grey, custom agents in lavender, memory in orange, skills in amber, messages in purple, free space and autocompact buffer in muted grey), and the per-category token breakdown on the right (system prompt 6.6k, system tools 8.1k, custom agents 5.6k, memory 2.4k, skills 7.3k, messages 22.2k, free 114.8k, autocompact 33k). A warning callout closes the section: compact at a natural pause, not mid-task.
+- **Sidebar nav.** "Context Window" link added between Statusline and CLAUDE.md.
+- **CLAUDE.md section** renumbered from §05 → §06.
+- **Hero subtitle** updated from "Four things…" → "Five things…" to include context window management.
+
+---
+
 ### v1.7 — 2026-04-27
 
 **Section 2 basics: statusline customization examples (FSD_Train-014)**

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.7)</title>
+<title>FSAD Training (v1.8)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -2038,7 +2038,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.7</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.8</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -2080,6 +2080,7 @@
         <a class="nav-sub-item" href="#basics/permissions" onclick="scrollToSection('permissions')">Permissions</a>
         <a class="nav-sub-item" href="#basics/model-effort" onclick="scrollToSection('model-effort')">Model &amp; Effort</a>
         <a class="nav-sub-item" href="#basics/statusline" onclick="scrollToSection('statusline')">Statusline</a>
+        <a class="nav-sub-item" href="#basics/context-window" onclick="scrollToSection('context-window')">Context Window</a>
         <a class="nav-sub-item" href="#basics/claude-md" onclick="scrollToSection('claude-md')">CLAUDE.md</a>
       </div>
     </div>
@@ -2231,7 +2232,7 @@
   <div class="hero" id="basics-hero">
     <div class="hero-badge">FSAD Training · Section 2</div>
     <h1>Claude Code <em>Basics</em></h1>
-    <p>Four things to know before you press enter: how to launch, how permissions work, how to pick a model and effort level, and how to read the statusline.</p>
+    <p>Five things to know before you press enter: how to launch, how permissions work, how to pick a model and effort level, how to read the statusline, and how to manage your context window.</p>
   </div>
   <hr class="divider">
 
@@ -2341,8 +2342,72 @@ claude</code></pre></div>
   </section>
   <hr class="divider">
 
+  <section id="context-window">
+    <span class="section-label">05 — Context Window</span>
+    <h2 class="section-title">How to Manage Your Context Window</h2>
+    <p class="section-subtitle">Every Claude session has a fixed token budget. When it fills, Claude starts forgetting earlier turns. Three commands let you stay in control — check, compact, or clear — before the window manages you.</p>
+
+    <div class="overview-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+      <div class="overview-card"><h3><code>/context</code></h3><p>Prints a breakdown of what's loaded and how many tokens each source is consuming. Use it whenever an answer feels like Claude is missing something.</p></div>
+      <div class="overview-card"><h3><code>/compact</code></h3><p>Summarizes the conversation in place and replaces history with that summary. Run it at a natural pause — mid-task summaries lose detail.</p></div>
+      <div class="overview-card"><h3><code>/clear</code></h3><p>Wipes conversation history entirely. Best when the current thread is done or so polluted that a clean slate is faster than compacting.</p></div>
+    </div>
+
+    <div class="callout callout-tip" style="margin-top: 1.5rem;">
+      <div class="callout-title">→ Use <code>/context</code> to diagnose surprising answers</div>
+      If Claude gives an answer that feels off — wrong file, outdated assumption, missing constraint — run <code>/context</code> first. You'll often see that the relevant file wasn't read, or the system prompt is consuming most of the budget.
+    </div>
+
+    <h3 style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Example: running <code>/context</code></h3>
+    <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.5rem 0 1.25rem; line-height: 1.65;">Type <code>/context</code> at the prompt — no arguments needed. Claude prints a live breakdown of what's currently loaded:</p>
+
+    <div style="background: var(--bg-surface); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: baseline; gap: 0.75rem; padding: 0.65rem 1rem; border-bottom: 1px solid var(--card-border);">
+        <span style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-family: var(--font-mono); flex-shrink: 0;">Prompt</span>
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-primary);">/context</span>
+      </div>
+      <div style="padding: 1rem 1.25rem; background: #12121e; display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+        <!-- Left: coin grid -->
+        <div style="font-family: var(--font-mono); font-size: 1rem; line-height: 1.7; letter-spacing: 0.05em; flex-shrink: 0;">
+          <div><span style="color:#888888;">⛁ ⛁ ⛁ </span><span style="color:#999999;">⛁ ⛁ ⛁ ⛁ </span><span style="color:#b1b9f9;">⛁ ⛁ ⛁</span></div>
+          <div><span style="color:#d77757;">⛁ </span><span style="color:#ffc107;">⛁ ⛁ ⛁ ⛀ </span><span style="color:#9333ea;">⛁ ⛁ ⛁ ⛁ ⛁</span></div>
+          <div><span style="color:#9333ea;">⛁ ⛁ ⛁ ⛁ ⛁ ⛁ </span><span style="color:#999999;">⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶ ⛶</span></div>
+          <div><span style="color:#999999;">⛶ ⛶ ⛶ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝</span></div>
+          <div><span style="color:#999999;">⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝ ⛝</span></div>
+        </div>
+        <!-- Right: text breakdown -->
+        <div style="font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.85; color: #9090c0; min-width: 220px;">
+          <div style="color: var(--text-primary); font-weight: 600; font-size: 0.84rem;">Context Usage</div>
+          <div style="color: #999999; margin-bottom: 0.25rem;">Sonnet 4.6</div>
+          <div style="color: #999999; margin-bottom: 0.25rem;">claude-sonnet-4-6</div>
+          <div style="color: var(--text-primary); margin-bottom: 0.75rem;">46.4k/200k tokens (23%)</div>
+          <div style="color: #999999; font-style: italic; font-size: 0.73rem; margin-bottom: 0.35rem;">Estimated usage by category</div>
+          <div><span style="color:#888888;">⛁</span> System prompt: <span style="color:#999999;">6.6k tokens (3.3%)</span></div>
+          <div><span style="color:#999999;">⛁</span> System tools: <span style="color:#999999;">8.1k tokens (4.0%)</span></div>
+          <div><span style="color:#b1b9f9;">⛁</span> Custom agents: <span style="color:#999999;">5.6k tokens (2.8%)</span></div>
+          <div><span style="color:#d77757;">⛁</span> Memory files: <span style="color:#999999;">2.4k tokens (1.2%)</span></div>
+          <div><span style="color:#ffc107;">⛁</span> Skills: <span style="color:#999999;">7.3k tokens (3.6%)</span></div>
+          <div><span style="color:#9333ea;">⛁</span> Messages: <span style="color:#999999;">22.2k tokens (11.1%)</span></div>
+          <div><span style="color:#999999;">⛶</span> Free space: <span style="color:#999999;">114.8k (57.4%)</span></div>
+          <div><span style="color:#999999;">⛝</span> Autocompact buffer: <span style="color:#999999;">33k tokens (16.5%)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-warning" style="margin-top: 0.5rem;">
+      <div class="callout-title">⚠ Compact at a natural pause, not mid-task</div>
+      The compaction summary is only as good as the state it captures. If you compact while Claude is mid-implementation, the summary will be incomplete. Finish the current thought, then compact.
+    </div>
+  </section>
+  <hr class="divider">
+
   <section id="claude-md">
-    <span class="section-label">05 — CLAUDE.md</span>
+    <span class="section-label">06 — CLAUDE.md</span>
     <h2 class="section-title">Your Project's Persistent Memory</h2>
     <p class="section-subtitle"><code>CLAUDE.md</code> is loaded into every session automatically. It's where you tell Claude about your project conventions, preferred stack, what not to do, and how you like to work — so you don't repeat yourself every session.</p>
 
