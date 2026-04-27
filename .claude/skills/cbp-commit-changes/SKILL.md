@@ -1,6 +1,6 @@
 ---
 name: cbp-commit-changes
-description: Finalize a batch of completed FSD_Train tasks for the FSAD Training app and commit them to git. Re-bundles `dist/fsad-training.html` if any source files changed, stages the relevant files (training app source, planning artifacts, todo.md), writes a scoped commit message referencing each FSD_Train task, and pushes. Use whenever the user says "/commit-cbp-changes", "commit these changes to git", "ship these FSD_Train changes", "push the training updates", "finalize this batch", or any similar phrasing that follows finishing a task. This is the natural step that runs AFTER `cbp-add-task` tasks have been implemented — so even if the user just says "we're done, commit it", trigger this skill.
+description: Finalize a batch of completed FSD_Train tasks for the FSAD Training app and commit them to git. Re-bundles `dist/fsad-training.html` if any source files changed, archives shipped task files from `planning/to do/` into `planning/completed/` via `git mv` (and updates the link in `todo.md` while keeping the line), stages the relevant files (training app source, planning artifacts, todo.md), writes a scoped commit message referencing each FSD_Train task, and pushes. Use whenever the user says "/commit-cbp-changes", "commit these changes to git", "ship these FSD_Train changes", "push the training updates", "finalize this batch", or any similar phrasing that follows finishing a task. This is the natural step that runs AFTER `cbp-add-task` tasks have been implemented — so even if the user just says "we're done, commit it", trigger this skill.
 argument-hint: `[optional commit subject override]`
 ---
 
@@ -50,22 +50,41 @@ Visually sanity-check:
 
 If anything looks off, fix it before proceeding. If you can't tell, ask the user.
 
-## Step 4 — Stage scoped files
+## Step 4 — Archive completed task files to `planning/completed/`
 
-Stage only the files you intentionally changed. Do not use `git add -A` — `planning/` often contains work-in-progress notes the user may not want shipped. Typical stage list:
+For each FSD_Train task being shipped, move its task file from `planning/to do/` to `planning/completed/` so the archive grows alongside ship history. Use `git mv` so the rename is part of the upcoming commit (a single atomic event: task done + file archived).
+
+1. Create the destination directory if it doesn't exist yet:
+   ```bash
+   mkdir -p "planning/completed"
+   ```
+2. For each `FSD_Train-NNN` in this batch, run:
+   ```bash
+   git mv "planning/to do/task-fsd_train-NNN.md" "planning/completed/task-fsd_train-NNN.md"
+   ```
+3. Update `planning/to do/todo.md` so the link for each archived task points to its new location. **Keep the line in the file** — only the link target changes (the `- [x]` and the title stay):
+   ```
+   - [x] `FSD_Train-NNN` Title → [task-fsd_train-NNN.md](../completed/task-fsd_train-NNN.md)
+   ```
+   The relative link works because `todo.md` lives in `planning/to do/` and the file is now at `planning/completed/`.
+
+Only move files for FSD_Trains being shipped in this batch — leave in-progress task files in `planning/to do/`.
+
+## Step 5 — Stage scoped files
+
+Stage only the files you intentionally changed. Do not use `git add -A` — `planning/` often contains work-in-progress notes the user may not want shipped. The `git mv` calls in Step 4 already staged the renamed task files, so don't re-add those paths. Typical stage list:
 
 ```bash
 git add \
   src/index.html \
   "src/markdown/*.md" \
   dist/fsad-training.html \
-  "planning/to do/todo.md" \
-  "planning/to do/task-fsd_train-NNN.md"
+  "planning/to do/todo.md"
 ```
 
-Include task files for the FSD_Trains being shipped (they often contain final notes) and the updated `todo.md` if completion checkboxes changed. Adjust the list based on what `git status` actually shows — don't blindly stage files that weren't touched.
+Adjust the list based on what `git status` actually shows — don't blindly stage files that weren't touched.
 
-## Step 5 — Commit
+## Step 6 — Commit
 
 Match the project's existing commit style (see `git log` if there's prior history; otherwise use a clean conventional default):
 
@@ -80,7 +99,7 @@ If the user passed `$ARGUMENTS`, use that as the commit subject instead.
 
 Use a HEREDOC and include the Claude co-author trailer per the user's global conventions.
 
-## Step 6 — Push
+## Step 7 — Push
 
 ```bash
 git push
@@ -88,7 +107,7 @@ git push
 
 If the branch has no upstream, set it with `git push -u origin <branch>`. If the push fails (non-fast-forward, auth, hooks), stop and report — do not force-push.
 
-## Step 7 — Report back
+## Step 8 — Report back
 
 Tell the user:
 - FSD_Train tasks included
