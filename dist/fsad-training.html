@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.4)</title>
+<title>FSAD Training (v1.5)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -2037,7 +2037,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.4</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.5</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -3891,31 +3891,54 @@ Phase 8 is verified when **all** of the following hold:
 **Total: 52 checks across 8 groups.** All 52 must be green before ship.
 </code></pre>
 </div>
-        <div class="md-artifact" data-md="iterate"><h1>followup.md — CSV export, post-ship</h1>
-<h2>What we learned</h2>
+        <div class="md-artifact" data-md="iterate"><h1>Iterate — PacHangman</h1>
+<h2>Prompt</h2>
+<blockquote>
+<p>Update <code>planning/todo.md</code> to:</p>
 <ul>
-<li>Streaming threshold of 50k was right. No reports we measured needed a lower threshold.</li>
-<li>The &quot;preparing export…&quot; toast felt slow at small sizes; users on &lt;5k rows expected an instant download.</li>
-<li>Two product asks landed within a day of ship — both reasonable, neither in v1 spec.</li>
+<li>Mark phases 1–8 as complete</li>
+<li>Add a v2 backlog section with the deferred features from <code>planning/design/hangman_spec.md</code></li>
+<li>Note any post-ship observations from the verify phase</li>
 </ul>
-<h2>Queued for next loop</h2>
-<ol>
-<li><strong>Smart toast suppression</strong> — skip the &quot;preparing…&quot; toast when row count is below ~5k. Trivial change to <code>useExport.ts</code>.</li>
-<li><strong>Column selection</strong> (deferred from v1 spec) — let users pick which columns to export. Needs a small UI affordance + querystring param.</li>
-<li><strong>XLSX format</strong> (deferred) — product re-confirmed they want it. Worth its own spec.</li>
-</ol>
-<h2>Spec deltas</h2>
-<ul>
-<li>Add NFR: &quot;exports under 5k rows must not show preparation toast.&quot;</li>
-<li>Move &quot;column selection&quot; from out-of-scope to v2 scope.</li>
-</ul>
-<h2>Open questions for next research phase</h2>
-<ul>
-<li>Is XLSX worth the dependency cost (<code>openpyxl</code>), or do we punt to a lib we already have?</li>
-<li>Do enterprise customers want scheduled exports? (Sales has anecdotes; we don&#39;t have data.)</li>
-</ul>
-<h2>Loop status</h2>
-<p>Ready to start a new loop on the column-selection follow-up. Research phase next.</p>
+</blockquote>
+<hr>
+<p><strong>Output:</strong> <a href="../demo/plan/hangman_todo.md"><code>./demo/plan/hangman_todo.md</code></a></p>
+<hr>
+<h2>hangman_todo.md</h2>
+<pre><code class="language-markdown"># PacHangman — Todo
+
+## v1 — Shipped ✓
+
+- [x] Phase 1: Project scaffold, word lists, core game state
+- [x] Phase 2: Alphabet pellet grid + Pac-Man traversal animation
+- [x] Phase 3: Ghost house — emerge sequence, 6-miss death
+- [x] Phase 4: Win condition — maze strobe, victory loop, score formula
+- [x] Phase 5: Word-guess CTA, already-guessed ping, duplicate-guess guard
+- [x] Phase 6: Persistence — streak, best streak, high score, recent words
+- [x] Phase 7: Mobile layout (375×667), reduced-motion support, accessibility
+- [x] Phase 8: Verification — 52 checks across AC, browser matrix, E2E, unit tests
+
+## v2 — Backlog (deferred from spec)
+
+- [ ] Real audio: chomp, miss, win, loss, title chiptune
+- [ ] Daily challenge mode (fixed word per day, shareable result)
+- [ ] Hint power-pellets (spend score to reveal a letter)
+- [ ] Frightened-ghost mode (bonus round after eating a power pellet)
+- [ ] Column selection for word-guess modal
+- [ ] Stats screen: win rate, average guesses, streak history
+- [ ] Achievements + leaderboard
+- [ ] Multi-theme switcher (classic, neon, retro)
+- [ ] XLSX export of word-guess history
+- [ ] Multiplayer / async challenge (send a word to a friend)
+- [ ] i18n (first target: Spanish word lists)
+
+## Post-ship notes
+
+- Streaming threshold of 50 words/category is right — no reports needed lower.
+- `prefers-reduced-motion` fix was the highest-impact a11y win from verify.
+- Two product asks landed within 24 h of ship: audio and daily challenge — both already in v2 backlog.
+- Start next loop with audio: small scope, high visible impact, unblocks daily challenge chiptune.
+</code></pre>
 </div>
       </div>
 

@@ -1,21 +1,3 @@
-# Iterate — PacHangman
-
-## Prompt
-
-> Update `planning/todo.md` to:
-> - Mark phases 1–8 as complete
-> - Add a v2 backlog section with the deferred features from `planning/design/hangman_spec.md`
-> - Note any post-ship observations from the verify phase
-
----
-
-**Output:** [`./demo/plan/hangman_todo.md`](../demo/plan/hangman_todo.md)
-
----
-
-## hangman_todo.md
-
-````markdown
 # PacHangman — Todo
 
 ## v1 — Shipped ✓
@@ -49,4 +31,3 @@
 - `prefers-reduced-motion` fix was the highest-impact a11y win from verify.
 - Two product asks landed within 24 h of ship: audio and daily challenge — both already in v2 backlog.
 - Start next loop with audio: small scope, high visible impact, unblocks daily challenge chiptune.
-````

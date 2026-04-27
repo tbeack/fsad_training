@@ -4,6 +4,18 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.5 — 2026-04-27
+
+**Section 4 deep-dive: real-world PacHangman example for Iterate step; example CLAUDE.md staged (FSD_Train-008)**
+
+Replaces the generic CSV-export `followup.md` placeholder in the Section 4 Iterate step with the actual iterate prompt, a rendered `hangman_todo.md`, and post-ship notes. Also stages the example `CLAUDE.md` artifact for FSD_Train-010.
+
+- **FSD_Train-008 — Iterate step.** `06-iterate.md` replaced with the "update planning/todo.md" iterate prompt, a rendered code block of `demo/plan/hangman_todo.md` (v1 phases 1–8 all marked complete, 11-item v2 backlog of deferred features, post-ship observations), and a link to the source file.
+- **example_claude.md staged.** Copied from `fsad_playbook/example_claude.md` into `src/markdown/09-example-claude.md` — unused by the bundler until FSD_Train-010 wires it up.
+- **Backlog additions.** `planning/to do/todo.md` gains three new tasks: FSD_Train-013 (CLAUDE.md example in Section 2), FSD_Train-014 (status line example prompt in Section 2), FSD_Train-015 (context usage tracking in Section 2).
+
+---
+
 ### v1.4 — 2026-04-27
 
 **Section 4 deep-dive: real-world PacHangman example for Verify step (FSD_Train-007)**
