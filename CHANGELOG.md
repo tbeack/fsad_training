@@ -4,6 +4,16 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.7 — 2026-04-27
+
+**Section 2 basics: statusline customization examples (FSD_Train-014)**
+
+Extends the Statusline section with a "Customizing the statusline" subsection showing three prompt→display examples, so attendees know they can configure the statusline with a plain-language ask.
+
+- **FSD_Train-014 — Statusline examples.** Three card-style prompt+display pairs added after the context-bar warning callout. Each card shows the user's natural-language prompt (monospace, surface background) and a dark terminal-strip rendering of the resulting statusline. Examples cover: default full setup (model + context + mode + dir), minimal (model + context only), and git-aware (model + context + branch + mode + dir with branch highlighted in emerald).
+
+---
+
 ### v1.6 — 2026-04-27
 
 **Section 2 basics: CLAUDE.md example section (FSD_Train-013)**
