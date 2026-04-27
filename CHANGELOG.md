@@ -4,6 +4,18 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.1 — 2026-04-27
+
+**Section 4 deep-dive: real-world PacHangman examples for Research, Spec, and Plan steps (FSD_Train-003, FSD_Train-004, FSD_Train-005)**
+
+Replaces generic CSV-export placeholder artifacts in the Section 4 stepper with the actual prompts, outputs, and session replays from the PacHangman build session. Each step now shows the presenter's exact prompt, a rendered code block of the output artifact, and a link to the full session replay.
+
+- **FSD_Train-003 — Research step.** `01-research.md` replaced with the PacHangman research prompt and `hangman_research.md` output (game concept, visual style, mechanics, word list strategy, tech stack). Session replay: *Hangman - Start the Research and Spec*.
+- **FSD_Train-004 — Spec step.** `02-spec.md` replaced with the `/plan` spec prompt and the full `hangman_spec.md` design document (palette, layout, game mechanics, state shape, acceptance criteria). Source artifact added at `demo/design/hangman_spec.md`. Session replay: *Hangman - Start the Research and Spec*.
+- **FSD_Train-005 — Plan step.** `03-plan.md` replaced with the `/clear` + `/plan` implementation prompt and the full `hang_implementation_plan.md` (9 phases, pinned implementation calls, critical files reference, end-to-end verification recipe). Source artifact added at `demo/plan/hang_implementation_plan.md`. Session replay: *Hangman - Develop Implementation Plan*.
+
+---
+
 ### v1 — 2026-04-27
 
 **Section 5 build-out: single-shot vs spec-driven contrast (FSD_Train-001, FSD_Train-002)**
