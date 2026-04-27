@@ -4,6 +4,21 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.2 — 2026-04-27
+
+**Layout: reduce hero and section whitespace (FSD_Train-012)**
+
+Tightened the vertical rhythm across all pages. The hero area and section headers now sit much closer to the visible viewport, removing roughly half the top-of-page dead space and eliminating the large gap below the hero paragraph.
+
+- **Hero top padding** reduced from `5rem` → `1.25rem`
+- **Hero bottom padding** reduced from `4rem` → `1.5rem`
+- **Hero badge margin-bottom** reduced from `1.5rem` → `0.6rem`
+- **Hero h1 margin-bottom** reduced from `1.2rem` → `0.6rem`
+- **Hero p margin-bottom** removed (was `2.5rem`; `p` is always the last hero element)
+- **Section top padding** reduced from `5rem` → `1.5rem`
+
+---
+
 ### v1.1 — 2026-04-27
 
 **Section 4 deep-dive: real-world PacHangman examples for Research, Spec, and Plan steps (FSD_Train-003, FSD_Train-004, FSD_Train-005)**

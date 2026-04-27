@@ -11,3 +11,4 @@
 - [ ] `FSD_Train-009` Add a skills section to the training material
 - [ ] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section
 - [ ] `FSD_Train-011` Link the `FSAD Training` material with the `FSAD Playbook`
+- [x] `FSD_Train-012` Reduce the amount of wasted white space at the top of every section → [task-fsd_train-012.md](../completed/task-fsd_train-012.md)
