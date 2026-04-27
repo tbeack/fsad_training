@@ -6,7 +6,7 @@
 - [x] `FSD_Train-004` Add the `hangman_spec.md` file to the `Spec` step in section 4 → [task-fsd_train-004.md](../completed/task-fsd_train-004.md)
 - [x] `FSD_Train-005` Add a the `hangman_plan.md` file to the `Plan` step in section 4 → [task-fsd_train-005.md](../completed/task-fsd_train-005.md)
 - [x] `FSD_Train-006` Add a the replay of the implement step to the `Implement` step in section 4 → [task-fsd_train-006.md](../completed/task-fsd_train-006.md)
-- [ ] `FSD_Train-007` Add a the replay of the verify step to the `Implement` step in section 4
+- [x] `FSD_Train-007` Add a the replay of the verify step to the `Implement` step in section 4 → [task-fsd_train-007.md](../completed/task-fsd_train-007.md)
 - [ ] `FSD_Train-008` Add a the `todo.md` step to the `Iterate` step in section 4
 - [ ] `FSD_Train-009` Add a skills section to the training material
 - [ ] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section

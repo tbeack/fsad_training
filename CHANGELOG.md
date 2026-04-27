@@ -4,6 +4,16 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.4 — 2026-04-27
+
+**Section 4 deep-dive: real-world PacHangman example for Verify step (FSD_Train-007)**
+
+Replaces the generic CSV-export verification placeholder in the Section 4 Verify step with the actual multi-agent prompt, the full Phase 8 verification plan, and a session replay link.
+
+- **FSD_Train-007 — Verify step.** `05-verify.md` replaced with the multi-agent prompt that spawned three parallel agents (phases 6, 7, 8), a rendered code block of `hangman_verification_phase_08.md` (52 checks across 8 groups: 15 ACs, browser matrix, word counts, E2E scenarios, unit tests, visual polish), and a link to the source plan file. Session replay: *Hangman - Multi-agent team create Verification and Test Plan*.
+
+---
+
 ### v1.3 — 2026-04-27
 
 **Section 4 deep-dive: real-world PacHangman example for Implement step (FSD_Train-006)**
