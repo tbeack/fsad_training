@@ -4,6 +4,19 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.6 — 2026-04-27
+
+**Section 2 basics: CLAUDE.md example section (FSD_Train-013)**
+
+Adds a fifth sub-section to the Claude Code Basics page showing what a real `CLAUDE.md` looks like, rendered as raw markdown in the same styled artifact panel used by the Section 4 deep-dive.
+
+- **FSD_Train-013 — CLAUDE.md section.** New "05 — CLAUDE.md" section added after Statusline. Includes two callouts — one pointing to `/init` for generating a starter file, one framing the example — and the full raw markdown source of a real-world `CLAUDE.md` (workflow orchestration rules, task management conventions, core principles) displayed in a `deepdive-artifact` panel with monospace code-block formatting.
+- **Sidebar nav.** "CLAUDE.md" link added as a fifth sub-item under the Claude Code Basics group.
+- **CSS.** Added `.md-artifact-wrap .md-artifact { display: block }` so artifacts placed in a `md-artifact-wrap` container are always visible without the stepper's `.active` toggle (benefits the compare-page inline explainers).
+- **Bundler.** `09-example-claude.md` removed; content is now hardcoded as a raw `<pre><code>` block. Artifact count drops from 9 → 8.
+
+---
+
 ### v1.5 — 2026-04-27
 
 **Section 4 deep-dive: real-world PacHangman example for Iterate step; example CLAUDE.md staged (FSD_Train-008)**

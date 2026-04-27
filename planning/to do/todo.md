@@ -12,6 +12,6 @@
 - [ ] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section
 - [ ] `FSD_Train-011` Link the `FSAD Training` material with the `FSAD Playbook`
 - [x] `FSD_Train-012` Reduce the amount of wasted white space at the top of every section → [task-fsd_train-012.md](../completed/task-fsd_train-012.md)
-- [ ] - [ ] `FSD_Train-013` - Add an example `Claude.md` section to the `Claude Code Basic` section
+- [x] `FSD_Train-013` - Add an example `Claude.md` section to the `Claude Code Basic` section
 - [ ] `FSD_Train-014` - Append the `Status Line` section with an example prompt to create/modify the status line in claude
 - [ ] `FSD_Train-015` - How to track your Context usage. Show the command the example output.

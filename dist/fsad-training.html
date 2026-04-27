@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.5)</title>
+<title>FSAD Training (v1.6)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -1938,6 +1938,7 @@
   }
   .md-artifact { display: none; }
   .md-artifact.active { display: block; }
+  .md-artifact-wrap .md-artifact { display: block; }
   .md-artifact h1, .md-artifact h2, .md-artifact h3 {
     margin-top: 1rem;
     margin-bottom: 0.55rem;
@@ -2037,7 +2038,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.5</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.6</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -2079,6 +2080,7 @@
         <a class="nav-sub-item" href="#basics/permissions" onclick="scrollToSection('permissions')">Permissions</a>
         <a class="nav-sub-item" href="#basics/model-effort" onclick="scrollToSection('model-effort')">Model &amp; Effort</a>
         <a class="nav-sub-item" href="#basics/statusline" onclick="scrollToSection('statusline')">Statusline</a>
+        <a class="nav-sub-item" href="#basics/claude-md" onclick="scrollToSection('claude-md')">CLAUDE.md</a>
       </div>
     </div>
 
@@ -2298,6 +2300,81 @@ claude</code></pre></div>
     <div class="callout callout-warning" style="margin-top: 1.5rem;">
       <div class="callout-title">⚠ Watch the context bar</div>
       Once it turns yellow, you're a few turns from auto-compaction. Compact at a natural pause, not mid-task — the summary is more accurate when the current thought is wrapped.
+    </div>
+  </section>
+  <hr class="divider">
+
+  <section id="claude-md">
+    <span class="section-label">05 — CLAUDE.md</span>
+    <h2 class="section-title">Your Project's Persistent Memory</h2>
+    <p class="section-subtitle"><code>CLAUDE.md</code> is loaded into every session automatically. It's where you tell Claude about your project conventions, preferred stack, what not to do, and how you like to work — so you don't repeat yourself every session.</p>
+
+    <div class="callout callout-tip" style="margin-top: 1.5rem;">
+      <div class="callout-title">→ Generate a starter with <code>/init</code></div>
+      Run <code>/init</code> from the project root and Claude will inspect the repo and draft a <code>CLAUDE.md</code> tuned to what it finds. Edit it from there — it's just markdown.
+    </div>
+
+    <div class="callout callout-best-practice" style="margin-top: 1rem;">
+      <div class="callout-title">✓ Example CLAUDE.md</div>
+      The file below is a real <code>CLAUDE.md</code> from a live project. Note the three parts that carry the most weight: workflow orchestration rules, task management conventions, and core principles.
+    </div>
+
+    <div class="deepdive-pane">
+      <div class="deepdive-artifact">
+        <div class="deepdive-artifact-label">Example artifact · CLAUDE.md</div>
+        <div class="code-block"><pre><code>## Workflow Orchestration
+
+### 1. Plan Mode Default
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- If something goes sideways, STOP and re-plan immediately — don't keep pushing
+- Use plan mode for verification steps, not just building
+- Write detailed specs upfront to reduce ambiguity
+
+### 2. Subagent Strategy
+- Use subagents liberally to keep main context window clean
+- Offload research, exploration, and parallel analysis to subagents
+- For complex problems, throw more compute at it via subagents
+- One task per subagent for focused execution
+
+### 3. Self-Improvement Loop
+- After ANY correction from the user: update `tasks/lessons.md` with the pattern
+- Write rules for yourself that prevent the same mistake
+- Ruthlessly iterate on these lessons until mistake rate drops
+- Review lessons at session start for relevant project
+
+### 4. Verification Before Done
+- Never mark a task complete without proving it works
+- Diff behavior between main and your changes when relevant
+- Ask yourself: "Would a staff engineer approve this?"
+- Run tests, check logs, demonstrate correctness
+
+### 5. Demand Elegance (Balanced)
+- For non-trivial changes: pause and ask "is there a more elegant way?"
+- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
+- Skip this for simple, obvious fixes — don't over-engineer
+- Challenge your own work before presenting it
+
+### 6. Autonomous Bug Fixing
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point at logs, errors, failing tests — then resolve them
+- Zero context switching required from the user
+- Go fix failing CI tests without being told how
+
+## Task Management
+
+1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
+2. **Verify Plan**: Check in before starting implementation
+3. **Track Progress**: Mark items complete as you go
+4. **Explain Changes**: High-level summary at each step
+5. **Document Results**: Add review section to `tasks/todo.md`
+6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
+
+## Core Principles
+
+- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
+- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.</code></pre></div>
+      </div>
     </div>
   </section>
 
