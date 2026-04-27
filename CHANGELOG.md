@@ -4,6 +4,16 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.3 — 2026-04-27
+
+**Section 4 deep-dive: real-world PacHangman example for Implement step (FSD_Train-006)**
+
+Replaces the generic CSV-export implementation notes placeholder in the Section 4 Implement step with the actual prompt, plan excerpt, and session replay from the PacHangman build session.
+
+- **FSD_Train-006 — Implement step.** `04-implement.md` replaced with the `/clear` + `execute phase 0 and 1` prompt, a rendered code block of the implementation plan preamble (progress table, pinned implementation calls, Phase 0 — Repo scaffold, Phase 1 — Pure logic + persistence), and a link to the source plan file. Session replay: *Hangman - Start the Implementation*.
+
+---
+
 ### v1.2 — 2026-04-27
 
 **Layout: reduce hero and section whitespace (FSD_Train-012)**

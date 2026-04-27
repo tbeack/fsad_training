@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.2)</title>
+<title>FSAD Training (v1.3)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -2037,7 +2037,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.2</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.3</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -3179,31 +3179,186 @@ Nine phases, each with a clear verify step before moving to the next.
 8. `node --test tests/` → all pass
 </code></pre>
 </div>
-        <div class="md-artifact" data-md="implement"><h1>Implementation notes</h1>
-<p>Atomic commits, one per task in the plan. The agent walks tasks in order; each commit is reviewable on its own.</p>
-<h2>Commit log (so far)</h2>
-<pre><code>feat(serializers): add stream_csv chunked writer
-feat(api): add GET /api/reports/:id/export.csv
-feat(dashboard): add Export button to toolbar
-feat(dashboard): add useExport hook with streaming-aware toast
-test(api): cover export endpoint with empty + 100k row fixtures
+        <div class="md-artifact" data-md="implement"><h1>Implement — PacHangman</h1>
+<h2>Prompt</h2>
+<blockquote>
+<p><code>/clear</code></p>
+<p><code>execute phase 0 and 1</code></p>
+</blockquote>
+<hr>
+<p><strong>Output:</strong> <a href="../demo/plan/hang_implementation_plan.md"><code>./demo/plan/hang_implementation_plan.md</code></a></p>
+<p><a href="../session-replay/Hangman%20-%20Start%20the%20Implementation.html">View session replay →</a></p>
+<hr>
+<h2>hang_implementation_plan.md — Phases 0 &amp; 1</h2>
+<pre><code class="language-markdown"># PacHangman — Implementation Plan
+
+&gt; Source of truth: `planning/design/hangman_spec.md` (v2 Draft, 2026-04-27).
+&gt; Scope: v1 only — vanilla stack, zero build step required to play.
+&gt; Ship target: `python3 -m http.server 8000` from repo root, all 14 acceptance criteria from spec §10 passing in Chrome, Firefox, and Safari.
+
+---
+
+## Progress
+
+**46 / 68 steps complete**
+
+`█████████████████████████████░░░░░░░░░░░` 68%
+
+| Phase | Steps | Done |
+|---|---|---|
+| Phase 0 — Repo scaffold | 5 | 5 ✓ |
+| Phase 1 — Pure logic + persistence | 9 | 9 ✓ |
+| Phase 2 — Word list build pipeline | 5 | 5 ✓ |
+| Phase 3 — Theme + screens shell | 10 | 10 ✓ |
+| Phase 4 — Maze + sprite sheet | 7 | 7 ✓ |
+| Phase 5 — Game screen + interactions | 5 | 5 ✓ |
+| Phase 6 — Animations | 6 | 0 |
+| Phase 7 — Audio stub, edge cases, mobile, a11y | 5 | 5 ✓ |
+| Phase 8 — Final acceptance pass | 17 | 0 |
+| **Total** | **69** | **29** |
+
+---
+
+## 1. Pinned Implementation Calls
+
+These resolve the &quot;low-stakes defaults&quot; from spec §9. Do not revisit during build.
+
+| Call | Value |
+|---|---|
+| Module system | Native ES modules — `&lt;script type=&quot;module&quot; src=&quot;src/main.js&quot;&gt;` in `index.html` |
+| `package.json` role | `&quot;type&quot;: &quot;module&quot;` + `&quot;scripts&quot;: { &quot;build-words&quot;: &quot;node tools/build-wordlists.js&quot; }` only. No runtime deps. |
+| Dev server | `python3 -m http.server 8000` |
+| Test runner | Node built-in `node:test` — zero deps, no Jest, no Vitest |
+| Seed file size | ~50 core seeds per category; expand to 200 only if a tier under-fills 900 words |
+| READY! duration | 1.5s |
+| Pac-Man traversal | 300ms per leg (to pellet, back to home) |
+| Ghost emerge | 600ms ease-in-out |
+| Win maze strobe | 6 flashes × 80ms each |
+| Profanity blocklist | LDNOOBW en JSON (download at build time) |
+| Gitignored paths | `tools/cache/` (downloaded source dictionaries) |
+
+---
+
+## 2. Phases
+
+---
+
+### Phase 0 — Repo scaffold
+
+- [x] **Phase 0 complete**
+
+**Goal:** Clean directory tree + `index.html` shell that loads error-free in a browser.
+
+**Steps:**
+- [x] Create directory tree: `styles/`, `src/render/`, `assets/`, `words/`, `tools/seeds/`, `tools/cache/` (.gitignored), `tests/`
+- [x] `index.html` — skeleton with Press Start 2P link, inline `&lt;svg id=&quot;sprites&quot;&gt;` block, `&lt;div id=&quot;app&quot; data-screen=&quot;title&quot;&gt;` with three screen sections, `sr-announce` region
+- [x] `.gitignore` — `tools/cache/`, `.DS_Store`
+- [x] `package.json` — `&quot;type&quot;: &quot;module&quot;`, `&quot;build-words&quot;` script
+- [x] **Verify:** `python3 -m http.server 8000` → `localhost:8000` renders a blank white page, DevTools console is clean
+
+**`index.html` required structure:**
+```html
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+  &lt;title&gt;PacHangman&lt;/title&gt;
+  &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+  &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+  &lt;!-- styles linked here in phase 3 --&gt;
+  &lt;script type=&quot;module&quot; src=&quot;src/main.js&quot; defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Inline SVG sprite sheet — populated in phase 4 --&gt;
+  &lt;svg id=&quot;sprites&quot; style=&quot;display:none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+  &lt;/svg&gt;
+
+  &lt;!-- Aria-live region for screen reader announcements --&gt;
+  &lt;div class=&quot;sr-only&quot; aria-live=&quot;polite&quot; aria-atomic=&quot;true&quot; id=&quot;sr-announce&quot;&gt;&lt;/div&gt;
+
+  &lt;div id=&quot;app&quot; data-screen=&quot;title&quot;&gt;
+    &lt;section class=&quot;screen screen--title&quot; data-screen-id=&quot;title&quot;&gt;&lt;/section&gt;
+    &lt;section class=&quot;screen screen--game&quot;  data-screen-id=&quot;game&quot;&gt;&lt;/section&gt;
+    &lt;section class=&quot;screen screen--result&quot; data-screen-id=&quot;result&quot;&gt;&lt;/section&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+```
+
+**`package.json`:**
+```json
+{
+  &quot;name&quot;: &quot;pachangman&quot;,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;build-words&quot;: &quot;node tools/build-wordlists.js&quot;
+  }
+}
+```
+
+---
+
+### Phase 1 — Pure logic + persistence
+
+- [x] **Phase 1 complete**
+
+**Goal:** All game rules, state transitions, and persistence coded as pure/isolated modules — no DOM, no globals, unit-tested in Node.
+
+**Spec references:** §4.1 (state shape), §4.2 (transitions), §4.3 (persistence), §5.1–5.4 (rules + scoring), §5.6 (score formula).
+
+**Steps:**
+- [x] `src/state.js` — `initialState` object + `reduce(state, action) → state` pure reducer
+- [x] `src/game.js` — `guessLetter`, `guessWord`, `isWin`, `isLoss`, `computeScore`
+- [x] `src/words.js` — `loadCategory(category, wordsCache, setCache)`, `pickWord({ difficulty, category, recentWords, wordsCache })`
+- [x] `src/persist.js` — `load() → slice | defaults`, `save(slice) → void` against key `pachangman_v1`
+- [x] `tests/game.test.js` — hit, miss, repeat-letter, win, loss, full-word correct + wrong, score formula
+- [x] `tests/words.test.js` — avoids recentWords, falls back to full pool, returns correct tier
+- [x] `tests/state.test.js` — START_GAME init, GUESS_LETTER flow, QUIT resets streak, reducer is pure
+- [x] `tests/persist.test.js` — load defaults/parse-fail/missing-fields, save shape, wordsCache exclusion, round-trip
+- [x] **Verify:** `npm test` exits 0, all 47 test cases green
+
+#### `src/state.js`
+
+Actions to handle:
+
+| Action type | Payload | Effect |
+|---|---|---|
+| `START_GAME` | `{ word, difficulty, category }` | Set word, reset revealed/guessed/lives/outcome; bump level |
+| `GUESS_LETTER` | `{ letter }` | Reveal positions or decrement lives; set outcome if terminal |
+| `GUESS_WORD` | `{ word }` | WIN or decrement lives; set outcome if terminal |
+| `QUIT` | — | Set screen to `&#39;title&#39;`; reset streak (loss) |
+| `RESTART` | `{ word }` | Same difficulty+category; new word; bump level |
+| `SET_SCREEN` | `{ screen }` | Transition screen |
+
+#### `src/game.js`
+
+```js
+export function guessLetter(state, letter) → Partial&lt;state&gt;
+export function guessWord(state, word) → Partial&lt;state&gt;
+export function isWin(revealed) → boolean
+export function isLoss(lives) → boolean
+export function computeScore({ difficulty, lives, word }) → number
+  // base(difficulty) × lives × (1 + (word.length - minLength) × 0.1)
+  // base: easy=10, normal=20, hard=40
+```
+
+#### `src/words.js`
+
+```js
+export async function loadCategory(category, wordsCache, setCache)
+export function pickWord({ difficulty, category, recentWords, wordsCache }) → string
+```
+
+#### `src/persist.js`
+
+```js
+export function load() → persistedSlice | defaults
+  // Persisted fields: streak, bestStreak, highScore, recentWords, settings
+export function save(slice) → void
+// wordsCache is NOT persisted (spec §4.3)
+```
 </code></pre>
-<h2>Deviations from plan</h2>
-<ul>
-<li><strong>Task 1 added a helper <code>csv_chunk_iter()</code></strong> — not in plan, but <code>stream_csv()</code> was getting unwieldy. Plan updated post-hoc.</li>
-<li><strong>Task 4: used existing <code>useToast</code> hook</strong> instead of creating a new one. Cleaner; plan didn&#39;t specify and the existing one fits.</li>
-</ul>
-<h2>What stayed faithful</h2>
-<ul>
-<li>Endpoint shape exactly as planned.</li>
-<li>File names exactly as planned.</li>
-<li>Streaming threshold = 50k as specced.</li>
-</ul>
-<h2>Notes for verify phase</h2>
-<ul>
-<li>Manual test: 100k-row export on staging took 4.2s end-to-end (acceptable).</li>
-<li>Toast timing felt slightly delayed — verify that&#39;s not jarring under real network conditions.</li>
-</ul>
 </div>
         <div class="md-artifact" data-md="verify"><h1>verification.md — CSV export</h1>
 <h2>Requirements check</h2>
