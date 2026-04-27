@@ -1918,41 +1918,7 @@
   .deepdive-step-name { font-weight: 600; font-size: 0.92rem; }
 
   .deepdive-pane {
-    display: grid;
-    grid-template-columns: 2fr 3fr;
-    gap: 1.5rem;
     margin-top: 1.5rem;
-  }
-  .deepdive-desc {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-  }
-  .deepdive-desc h3 { font-size: 1.05rem; margin-bottom: 0.6rem; color: var(--text-primary); }
-  .deepdive-desc p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
-  .deepdive-desc-block { display: none; }
-  .deepdive-desc-block.active { display: block; }
-  .deepdive-desc-meta {
-    margin-top: 1.2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.78rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .deepdive-desc-meta-label {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-  }
-  .deepdive-desc-meta-value {
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    margin-bottom: 0.35rem;
   }
 
   .deepdive-artifact {
@@ -2056,7 +2022,6 @@
   }
 
   @media (max-width: 900px) {
-    .deepdive-pane { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -2435,74 +2400,6 @@ claude</code></pre></div>
     </div>
 
     <div class="deepdive-pane">
-
-      <div class="deepdive-desc">
-        <div class="deepdive-desc-block active" data-step="0">
-          <h3>1 — Research</h3>
-          <p>Map the territory before you commit to anything. Read the existing code, the bug tracker, prior specs, related docs. Surface unknowns before they become assumptions you discover three commits in.</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">research.md</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">You can describe what's already there in one paragraph.</span>
-          </div>
-        </div>
-
-        <div class="deepdive-desc-block" data-step="1">
-          <h3>2 — Spec</h3>
-          <p>Lock <em>what</em> we're building and <em>why</em>. Write requirements you could falsify. Defer all "how." If a requirement isn't checkable, it isn't a requirement yet.</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">spec.md</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">A reviewer could say "this requirement isn't met" with evidence.</span>
-          </div>
-        </div>
-
-        <div class="deepdive-desc-block" data-step="2">
-          <h3>3 — Plan</h3>
-          <p>Decompose into ordered, atomic tasks. Name files. Surface unknowns the plan exposes that the spec didn't. The plan is where "how" becomes specific.</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">plan.md</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">A teammate could pick up any task without asking you anything.</span>
-          </div>
-        </div>
-
-        <div class="deepdive-desc-block" data-step="3">
-          <h3>4 — Implement</h3>
-          <p>Execute the plan. One task per commit. Stay close to the plan; if you find yourself improvising, stop and update the plan first — improvisation now is a deviation that's hard to review later.</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">code + atomic commits</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">Every commit traces to a task; every task to a requirement.</span>
-          </div>
-        </div>
-
-        <div class="deepdive-desc-block" data-step="4">
-          <h3>5 — Verify</h3>
-          <p>Prove the spec is met. Run the tests, exercise the edges, do a manual pass. Anything not verified is unverified — even if it "should work." Especially if it "should work."</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">verification.md</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">Every requirement has a checkmark with evidence next to it.</span>
-          </div>
-        </div>
-
-        <div class="deepdive-desc-block" data-step="5">
-          <h3>6 — Iterate</h3>
-          <p>What did we learn? Update the spec, queue follow-ups, surface new unknowns for the next loop. The loop closes only when there's nothing left to surface.</p>
-          <div class="deepdive-desc-meta">
-            <span class="deepdive-desc-meta-label">Output</span>
-            <span class="deepdive-desc-meta-value">followup.md</span>
-            <span class="deepdive-desc-meta-label">Done when</span>
-            <span class="deepdive-desc-meta-value">The next loop has a clear starting artifact — even if it says "we're done."</span>
-          </div>
-        </div>
-      </div>
 
       <div class="deepdive-artifact">
         <div class="deepdive-artifact-label">Example artifact · markdown</div>
@@ -3978,7 +3875,6 @@ claude</code></pre></div>
     const stepper = document.querySelector('.deepdive-stepper');
     if (!stepper) return;
     const steps = Array.from(stepper.querySelectorAll('.deepdive-step'));
-    const descBlocks = Array.from(document.querySelectorAll('#page-deepdive .deepdive-desc-block'));
     const artifacts = Array.from(document.querySelectorAll('#page-deepdive .md-artifact'));
     const prevBtn = document.getElementById('deepdivePrev');
     const nextBtn = document.getElementById('deepdiveNext');
@@ -3994,7 +3890,6 @@ claude</code></pre></div>
         s.classList.toggle('completed', idx < i);
         s.setAttribute('aria-selected', idx === i ? 'true' : 'false');
       });
-      descBlocks.forEach((b) => b.classList.toggle('active', Number(b.dataset.step) === i));
       artifacts.forEach((a) => a.classList.toggle('active', a.dataset.md === targetMd));
       if (prevBtn) prevBtn.disabled = i === 0;
       if (nextBtn) nextBtn.disabled = i === steps.length - 1;
