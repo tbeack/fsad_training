@@ -2,6 +2,16 @@
 
 HTML app for the most intensive lecture block of a 3-day FSAD workshop. Sibling to `fsad_playbook` — same visual language, same self-contained single-file distribution. Complements the playbook rather than duplicating it.
 
+## Version
+
+| Field | Value |
+|-------|-------|
+| **Current version** | v1 |
+| **Date updated** | 2026-04-27 |
+| **File** | `dist/fsad-training.html` |
+
+See [CHANGELOG.md](CHANGELOG.md) for the detailed history of changes by version.
+
 ## Usage
 
 Attendees: open `dist/fsad-training.html` in a browser. No server, no install.
