@@ -2510,91 +2510,674 @@ for themed category rounds when online.
 8. **Word validation feedback** — show wrong full-word guess crossed out before clearing
 </code></pre>
 </div>
-        <div class="md-artifact" data-md="spec"><h1>spec.md — CSV export for the report dashboard</h1>
-<h2>Goal</h2>
-<p>Let dashboard users download the current report as a CSV that opens cleanly in Excel and Google Sheets.</p>
-<h2>Requirements</h2>
-<ol>
-<li><strong>Export button</strong> appears in the dashboard toolbar, right of the existing &quot;Refresh&quot; button.</li>
-<li><strong>Click triggers download</strong> of a <code>.csv</code> file named <code>&lt;report-slug&gt;-&lt;YYYY-MM-DD&gt;.csv</code>.</li>
-<li><strong>CSV content</strong> matches the report&#39;s currently applied filters — not the full dataset.</li>
-<li><strong>Column order</strong> matches the on-screen table column order.</li>
-<li><strong>Header row</strong> is the column display names, not internal field IDs.</li>
-<li><strong>Values are RFC 4180 escaped</strong> — quotes doubled, fields with commas/newlines wrapped.</li>
-<li><strong>Empty filter state</strong> exports the full report.</li>
-<li><strong>Reports &gt;50k rows</strong> show a &quot;preparing export…&quot; toast and stream the response.</li>
-<li><strong>Errors</strong> surface as a toast, not a silent failure.</li>
-</ol>
-<h2>Out of scope (explicitly)</h2>
-<ul>
-<li>XLSX export</li>
-<li>Scheduled / email exports</li>
-<li>Per-user export history</li>
-</ul>
-<h2>Non-goals</h2>
-<ul>
-<li>We are not changing the JSON endpoint.</li>
-<li>We are not adding column selection in v1.</li>
-</ul>
-<h2>Done when</h2>
-<ul>
-<li>All 9 requirements have a verification entry.</li>
-<li>A user can export a 100k-row report without the page freezing.</li>
-</ul>
+        <div class="md-artifact" data-md="spec"><h1>Spec — PacHangman</h1>
+<h2>Prompt</h2>
+<blockquote>
+<p><code>/plan</code>
+Next create a design document to develop the overall app experience and design choices. write the design/requirements to <code>./planning/design/hangman_spec.md</code>.</p>
+</blockquote>
+<hr>
+<p><strong>Output:</strong> <a href="../demo/design/hangman_spec.md"><code>./demo/design/hangman_spec.md</code></a></p>
+<p><a href="../session-replay/Hangman%20-%20Start%20the%20Research%20and%20Spec.html">View session replay →</a></p>
+<hr>
+<h2>hangman_spec.md</h2>
+<pre><code class="language-markdown"># PacHangman — Design Specification
+
+&gt; Design + requirements for **PacHangman**, a Pac-Man–inspired browser Hangman.
+&gt; Date: 2026-04-27. Owner: Theo Beack. Status: Draft v2.
+&gt; Inputs: `planning/research/hangman_research.md` + confirmed decisions (personal project, vanilla stack, arcade-enthusiast audience).
+
+---
+
+## 1. Goals &amp; Non-Goals
+
+### Goals (v1)
+- Single-page browser game served via a local static server, zero build step required to play.
+- **Classic Arcade Pixel** visual theme: the game *feels* like a retro Pac-Man arcade cabinet — maze playfield, animated character, ghost house, alphabet-as-pellets.
+- **Hangman rules** with Pac-Man mechanics: lives = ghosts emerging from ghost house, not a stick figure.
+- **3 difficulty tiers** (Easy / Normal / Hard) and **3 categories** (Arcade, Sci-Tech, Movies), 1,000 words per difficulty per category.
+- Words shipped as static plain JSON, lazy-loaded per category at run start.
+- Keyboard + mouse/touch input.
+- Streak persistence in `localStorage`.
+
+### Non-goals (v1)
+- Daily challenge (v2).
+- Hint power-pellets / frightened-ghost mode (v2).
+- Sound (v2 — stub wired in, real audio ships later).
+- Multi-theme switcher / Synthwave + Modern Cute themes (v2).
+- Stats screen, achievements, leaderboard, share-result (v3).
+- Random category, more than 3 categories (v2+).
+- gzip word bundle compression (v2 deferred optimization).
+- Accounts, backend, multiplayer.
+- Internationalisation.
+
+---
+
+## 2. User Experience
+
+### 2.1 Screens
+Three screens. Single HTML page, screens toggled via `data-screen` attribute on a root container.
+
+| Screen | Purpose |
+|---|---|
+| **Title** | Splash + brand. Difficulty + category selectors. &quot;INSERT COIN&quot; CTA. Shows current streak + high score. |
+| **Game** | Active gameplay — maze playfield, Pac-Man character, ghost house with 4 ghosts, word display, alphabet pellets. |
+| **Result** | Win or lose state. Reveal full word, show streak update, &quot;PLAY AGAIN&quot; / &quot;CHANGE CATEGORY&quot; / &quot;QUIT&quot; CTAs. |
+
+No router; state-driven visibility. Title ↔ Game ↔ Result.
+
+### 2.2 Primary user flow
+
+```
+Title
+  ├─ pick Difficulty (radio: Easy | Normal | Hard) — defaults to Normal
+  ├─ pick Category (select: Arcade | Sci-Tech | Movies)
+  │     └─ on change: lazy-fetch words/&lt;category&gt;.json (preload, cache)
+  └─ press SPACE / click &quot;INSERT COIN&quot;
+        ↓
+Game                         &quot;READY!&quot; interstitial (1.5s) → play
+  ├─ guess letters (A–Z keyboard, click alphabet pellets)
+  │     ├─ HIT: Pac-Man traverses to pellet, eats it, letter revealed
+  │     └─ MISS: ghost emerges from house, advances; letter dims
+  ├─ guess full word (Enter → modal input → Submit)
+  ├─ ESC → confirm → return to Title
+  └─ all letters revealed (WIN) OR 6 misses (LOSS)
+        ↓
+Result
+  ├─ reveal word + category + lives left
+  ├─ streak: +1 (win) or reset to 0 (loss)
+  ├─ &quot;PLAY AGAIN&quot; (same difficulty + category, level ticks up)
+  ├─ &quot;CHANGE CATEGORY&quot;
+  └─ &quot;QUIT&quot; → Title
+```
+
+### 2.3 Edge-case behaviour
+| Case | Behaviour |
+|---|---|
+| Letter already guessed | Visual ping on the pellet tile; &quot;ALREADY EATEN&quot; flash. No penalty; no state change. |
+| Wrong full-word guess | Costs 1 miss → one ghost advances. |
+| ESC mid-game | Confirm dialog: &quot;QUIT RUN? STREAK WILL BE LOST&quot;. |
+| Tab + Space | Space triggers focused button only; does not double-fire as a guess action. |
+| Repeated letter in word | All positions revealed on hit. |
+| Window resize / mobile rotate | Layout reflows; Pac-Man snaps back to home position. |
+| Category JSON load fails | Show &quot;NETWORK ERROR — PLEASE REFRESH&quot; overlay; game blocked. |
+| Category JSON loading (&gt;150ms) | Show &quot;LOADING…&quot; blinking text in INSERT COIN button. |
+
+---
+
+## 3. Visual Design System
+
+Theme: **Classic Arcade Pixel** (research §3, Direction #1). The game must feel like a Pac-Man arcade cabinet running a Hangman mode — not a hangman game with Pac-Man stickers on it. The maze *is* the play area.
+
+### 3.1 Palette (CSS custom properties)
+```css
+:root {
+  --bg:           #000000;   /* arcade black */
+  --maze:         #2121DE;   /* maze wall blue */
+  --pac:          #FFFF00;   /* Pac-Man yellow */
+  --dot:          #FFB8AE;   /* pellet peach */
+  --ghost-blinky: #FF0000;   /* red */
+  --ghost-pinky:  #FFB8DE;   /* pink */
+  --ghost-inky:   #00FFDE;   /* cyan */
+  --ghost-clyde:  #FFB847;   /* orange */
+  --frightened:   #2121DE;   /* blue ghost (v2) */
+  --text:         #FFFFFF;
+  --text-dim:     #555555;
+  --hit:          #00FF66;   /* correct guess flash */
+  --miss:         #FF0044;   /* wrong guess flash */
+  --hud:          #FFB8AE;   /* HUD label color (peach) */
+}
+```
+
+### 3.2 Typography
+- All text: **Press Start 2P** — Google Fonts CDN, single `&lt;link&gt;` tag in `&lt;head&gt;`. Fallback: `monospace`.
+- Font sizes: 24px for word letters, 12px for HUD labels, 10px for fine chrome.
+- All caps everywhere — arcade convention.
+- Letter-spacing: `0.05em` for word display, `0` for HUD numbers.
+
+### 3.3 SVG Sprite Sheet (`assets/sprites.svg`)
+Single inline `&lt;svg&gt;` embedded in `index.html` with `display:none`. All characters defined as `&lt;symbol&gt;` elements; instances via `&lt;use href=&quot;#id&quot;&gt;`.
+
+| Symbol ID | Content | Size |
+|---|---|---|
+| `#pacman-open` | Pac-Man, mouth open (240° arc facing right) | 16×16 |
+| `#pacman-closed` | Pac-Man, mouth closed (full circle) | 16×16 |
+| `#ghost` | Ghost body + two eyes (coloured via `currentColor`) | 16×16 |
+| `#ghost-frightened` | Blue ghost with white dot eyes | 16×16 |
+| `#pellet` | Small dot (4×4 circle) | 8×8 |
+| `#power-pellet` | Large blinking dot (10×10 circle) | 14×14 |
+| `#ghost-door` | Horizontal pink bar (ghost house entry) | 16×4 |
+
+Ghost colour controlled by CSS `color` property on the wrapping `&lt;use&gt;` element — one symbol, four colours. Pac-Man chomp animation: alternates `#pacman-open` / `#pacman-closed` via CSS `animation` toggling `display`.
+
+### 3.4 Layout — Game Screen
+
+```
+┌──────────────────────────────────────────────────────┐
+│ 1UP      HIGH SCORE    CATEGORY: ARCADE   LEVEL: 03  │  ← HUD row
+│ 0150       07820                                     │
+├──────────────────────────────────────────────────────┤
+│ ╔════════════════════════════════════════════════╗   │
+│ ║ ┌──┐ ┌────┐ ┌──┐                  ┌──┐ ┌──┐   ║   │
+│ ║ └──┘ └────┘ └──┘  ┌────────────┐  └──┘ └──┘   ║   │
+│ ║                   │ 👻 👻 👻 👻  │               ║   │  ← ghost house (center)
+│ ║                   │            │               ║   │
+│ ║                   └─────╥──────┘               ║   │
+│ ║                         ║                      ║   │
+│ ║       _ _ _ _ _ _ _ _ _ _ _ _                  ║   │  ← word display
+│ ║                                                ║   │
+│ ║  •A •B •C •D •E •F •G •H •I •J •K •L •M       ║   │
+│ ║  •N •O •P •Q •R •S •T •U •V •W •X •Y •Z       ║   │  ← alphabet pellets
+│ ║                                                ║   │
+│ ║  🟡                                            ║   │  ← Pac-Man at home (bottom-left)
+│ ╚════════════════════════════════════════════════╝   │
+│  [ GUESS WORD ]                      [ QUIT (ESC) ]  │
+└──────────────────────────────────────────────────────┘
+```
+
+**Maze walls:** CSS `border` with `border-radius: 4px` for rounded corners on each corridor section, colour `--maze`. Walls are structural `&lt;div&gt;`s; no canvas.
+
+**Ghost house:** centred `&lt;div&gt;` with blue walls and a `#ghost-door` SVG across the opening. Ghosts are positioned inside it with `position: absolute`; emerge via `transform: translateY` animation down through the door.
+
+**Pac-Man home position:** bottom-left corner of the maze. This is the rest position after each guess.
+
+### 3.5 Lives System — Maze + Ghost House
+
+Replaces the &quot;chase row&quot;. 6 misses = 4 ghost emergences + 2 advance steps:
+
+| Miss | Event |
+|---|---|
+| 1 | Blinky exits ghost house, enters maze (slides down through door). |
+| 2 | Blinky advances one maze segment toward Pac-Man. |
+| 3 | Pinky exits ghost house. |
+| 4 | Pinky advances toward Pac-Man. |
+| 5 | Inky exits ghost house. |
+| 6 | Inky reaches Pac-Man → **death animation** (Pac-Man rotation-collapse over 1.2s); Clyde never leaves the house. |
+
+Each emergence: CSS `@keyframes` translating the ghost sprite along a fixed path (down from ghost house → into maze corridors → toward Pac-Man at bottom-left). Duration 600ms ease-in-out.
+
+On miss 6: Pac-Man death animation (`@keyframes pacman-death` — rotate 0° → 360° while scale shrinks to 0, 1.2s), then transition to Result screen after 1.5s.
+
+Frightened mode (ghosts turn blue) reserved for v2 power-pellet hints.
+
+### 3.6 Word Display
+
+Located in the center-upper area of the maze, inside a `&lt;div class=&quot;word-area&quot;&gt;`.
+
+- Each letter slot: a flex column of `&lt;span class=&quot;letter&quot;&gt;` (character) + `&lt;span class=&quot;underline&quot;&gt;` (pellet-bar underneath).
+- Blank letter: underline shows `--dot` colour; letter `&lt;span&gt;` hidden.
+- Revealed letter: `--pac` yellow, letter fades in (`opacity 0 → 1`, 200ms). Underline disappears with `@keyframes pellet-eat` (scale 1 → 0, 150ms simultaneous).
+- Spaces in multi-word entries (v2): wider gap, no underline, auto-revealed.
+
+### 3.7 Alphabet Pellets
+
+26 `&lt;button&gt;` elements arranged as two rows of 13 across the lower maze paths.
+
+States:
+| State | Visual |
+|---|---|
+| Default | `--dot` pellet background, white letter, maze-blue border. |
+| Hover/focus | Scale 1.1, `text-shadow` glow (`--pac`). |
+| Hit (just guessed, correct) | Flash `--hit` green 300ms → settles to `--text-dim`, opacity 0.4. |
+| Miss (just guessed, wrong) | Flash `--miss` red 300ms → settles to `--text-dim`, opacity 0.4. |
+| Already guessed | Opacity 0.25, `pointer-events: none`, `aria-disabled=&quot;true&quot;`. |
+
+On any guess:
+1. Pac-Man animates from home to the selected pellet (`transform: translate(x, y)`, 300ms ease-in-out, disabled under `prefers-reduced-motion`).
+2. Pac-Man plays chomp animation (open/close, 150ms each × 2 cycles).
+3. Pac-Man returns to home position (300ms).
+4. HIT or MISS visual applied to the pellet.
+5. MISS also triggers ghost emergence.
+
+Mobile (≤480px width): maze collapses to a compact view — ghost house at top, word display in middle, alphabet in a 6-column grid at the bottom. Pac-Man traversal animation skipped.
+
+### 3.8 Animation Budget
+
+| Event | Animation |
+|---|---|
+| Game start / new word | &quot;READY!&quot; text blinks for 1.5s in maze center, then disappears; Pac-Man animates in. |
+| Letter hit | Pac-Man eats pellet; pellet underline shrinks; letter fades in. |
+| Letter miss | Ghost emerge path; miss-flash on pellet. |
+| Win | Maze walls strobe blue → white (6 rapid cycles, 80ms each). Pac-Man victory loop (circles once). |
+| Loss | Pac-Man death rotation (1.2s). Ghosts flash. &quot;GAME OVER&quot; text blinks. |
+| Level up (play again) | Level number ticks up in HUD; &quot;READY!&quot; plays again. |
+| Power pellet (v2) | Ghost turns `--frightened` blue, wobbles. |
+
+All animations respect `@media (prefers-reduced-motion: reduce)` — disable transforms, replace strobe with instant colour change, replace Pac-Man traverse with instant eat.
+
+---
+
+## 4. Information Architecture
+
+### 4.1 Game State (single source of truth)
+
+```js
+const state = {
+  screen: &#39;title&#39; | &#39;game&#39; | &#39;result&#39;,
+
+  // Run config (set when leaving title)
+  difficulty: &#39;easy&#39; | &#39;normal&#39; | &#39;hard&#39;,
+  category:   &#39;arcade&#39; | &#39;sciTech&#39; | &#39;movies&#39;,
+  level: number,                 // increments each play-again in same session
+
+  // Active word
+  word: string,                  // canonical lower-case
+  revealed: boolean[],           // same length as word; true = position shown
+  guessed: Set&lt;string&gt;,          // letters tried, lower-case
+
+  // Run progress
+  lives: number,                 // starts at 6; 0 = loss
+  outcome: null | &#39;win&#39; | &#39;loss&#39;,
+
+  // Word loading cache
+  wordsCache: {                  // populated lazily per category
+    arcade:  { easy: string[], normal: string[], hard: string[] } | null,
+    sciTech: { ... } | null,
+    movies:  { ... } | null,
+  },
+
+  // Persisted (localStorage key: &#39;pachangman_v1&#39;)
+  streak: number,
+  bestStreak: number,
+  highScore: number,
+  recentWords: string[],         // last 50, rolling
+  settings: {
+    soundEnabled: boolean,       // v1 default false; stub only
+    reducedMotion: boolean,      // mirrors prefers-reduced-motion
+  }
+};
+```
+
+### 4.2 State Transitions
+
+```
+  PLAYING
+   │
+   ├── on guessLetter(L)
+   │     ├── L in word &amp; not guessed   → reveal all positions; if all revealed → WIN
+   │     ├── L not in word &amp; not guessed → lives--; if lives === 0 → LOSS
+   │     └── L already guessed           → no-op (UI ping)
+   │
+   ├── on guessWord(W)
+   │     ├── W === word → WIN
+   │     └── W !== word → lives--; if lives === 0 → LOSS
+   │
+   └── on quit → confirm → TITLE
+
+  WIN  → score = compute(state); streak++; bestStreak = max; highScore = max; save → RESULT
+  LOSS → streak = 0; save → RESULT
+```
+
+Reducer pattern: `reduce(state, action) → state`. No DOM access inside reducer — pure function, unit-testable in Node.
+
+### 4.3 Persistence
+- Key: `pachangman_v1`.
+- Written on every run-end and settings change.
+- Read once at boot; if missing or JSON-parse fails, initialise with defaults.
+- `wordsCache` is NOT persisted (memory-only; fetched fresh each session).
+
+---
+
+## 5. Game Mechanics
+
+### 5.1 Rules (formalised)
+1. Word selected per `difficulty` + `category` at run start; stored as canonical lowercase.
+2. Letter guesses are case-insensitive, A–Z only. Non-letters ignored.
+3. Letter hit → reveal all matching positions.
+4. Letter miss → `lives--`.
+5. Whole-word guess via CTA. Wrong → `lives--`. Correct → WIN.
+6. WIN = all positions revealed before `lives === 0`.
+7. LOSS = `lives === 0`.
+
+### 5.2 Difficulty Parameters
+| Tier | Word length | Lives | Notes |
+|---|---|---|---|
+| Easy | 3–5 | 6 | Common, high-frequency words. |
+| Normal (default) | 6–8 | 6 | Mid-frequency. Sweet spot. |
+| Hard | 9–14 | 6 | Long tail; rare letters permitted. |
+
+Lives are 6 uniformly across all difficulties. Hard mode difficulty comes from word length + rarity alone.
+
+### 5.3 Categories
+
+Three categories. Each ships as `words/&lt;category&gt;.json` with shape `{ easy: string[], normal: string[], hard: string[] }` — 1,000 words per tier, 3,000 per file, 9,000 total.
+
+**Arcade** — retro gaming terms
+
+**Sci-Tech** — science and technology terms
+
+**Movies** — single-word film titles
+
+### 5.4 Word Selection Algorithm
+```js
+async function loadCategory(category) {
+  if (state.wordsCache[category]) return;
+  const data = await fetch(`./words/${category}.json`).then(r =&gt; r.json());
+  state.wordsCache[category] = data;
+}
+
+function pickWord({ difficulty, category, recentWords }) {
+  const pool = state.wordsCache[category][difficulty];
+  const candidates = pool.filter(w =&gt; !recentWords.includes(w));
+  const source = candidates.length &gt; 0 ? candidates : pool;
+  return source[Math.floor(Math.random() * source.length)];
+}
+```
+
+### 5.5 Scoring (lightweight v1)
+```
+score = base(difficulty) × livesRemaining × lengthBonus
+  base: easy=10, normal=20, hard=40
+  lengthBonus: 1 + (wordLength - minLengthForTier) × 0.1
+```
+
+---
+
+## 6. Architecture
+
+### 6.1 File Structure
+```
+hangman/
+├── index.html
+├── styles/
+│   ├── reset.css
+│   ├── theme.css
+│   ├── layout.css
+│   ├── maze.css
+│   ├── sprites.css
+│   ├── game.css
+│   ├── animations.css
+│   └── screens.css
+├── src/
+│   ├── main.js
+│   ├── state.js
+│   ├── game.js
+│   ├── words.js
+│   ├── render/
+│   │   ├── title.js
+│   │   ├── game.js
+│   │   ├── maze.js
+│   │   ├── sprites.js
+│   │   ├── result.js
+│   │   └── shared.js
+│   ├── input.js
+│   ├── persist.js
+│   └── audio.js
+├── assets/
+│   └── sprites.svg
+├── words/
+│   ├── arcade.json
+│   ├── scitech.json
+│   └── movies.json
+└── tools/
+    └── build-wordlists.js
+```
+
+### 6.2 Module Boundaries
+- **Pure logic** (`state.js`, `game.js`, `words.js`): zero DOM access, zero globals → unit-testable in Node.
+- **Render layer** (`render/*.js`): receives `state`, writes to specific DOM subtrees, returns nothing.
+- **Animation layer** (`render/sprites.js`, `animations.css`): read-only on state; side-effects are CSS class toggles only.
+- **Wiring** (`main.js`): `dispatch(action)` → `reduce` → `render` → `persist`.
+- **I/O** (`input.js`, `persist.js`, `audio.js`): isolated adapters; no business logic.
+
+### 6.3 Render Strategy
+- DOM-based, no canvas. Static HTML skeleton in `index.html`; renderers set `textContent` + `className` + `data-*` attributes.
+- Drive visual state via `&lt;body data-screen=&quot;game&quot; data-lives=&quot;4&quot; data-outcome=&quot;&quot;&gt;` — CSS rules keyed on these attributes avoid JavaScript style mutations.
+- Pac-Man/ghost positions driven by CSS custom properties (`--pac-x`, `--pac-y`) set via JS → CSS `transform: translate(var(--pac-x), var(--pac-y))`.
+
+---
+
+## 10. Acceptance Criteria (v1 &quot;playable&quot;)
+
+- [ ] Game runs via `python3 -m http.server 8000` with no console errors.
+- [ ] Title screen: difficulty + category selectors functional.
+- [ ] All 26 letters guessable via keyboard (A–Z keys) and clicking alphabet pellets.
+- [ ] Hit: Pac-Man traverses to the pellet, eats it, letter fills into word display.
+- [ ] Miss: ghost visibly emerges from ghost house and advances each miss.
+- [ ] 6 misses: Pac-Man death animation plays, result screen appears.
+- [ ] Win: maze walls strobe; Pac-Man victory loop; result screen shows streak +1.
+- [ ] Streak + best streak + recent words + high score persist across page reloads.
+- [ ] `prefers-reduced-motion` respected.
+</code></pre>
 </div>
-        <div class="md-artifact" data-md="plan"><h1>plan.md — CSV export</h1>
-<h2>Approach</h2>
-<p>Add a new <code>GET /api/reports/:id/export.csv</code> endpoint that reuses the existing report query. Stream the response when row count exceeds threshold. Front-end adds a button that calls the endpoint with current filter params.</p>
-<h2>Tasks</h2>
-<ol>
-<li><p><strong>Backend: add CSV serializer wrapper</strong></p>
-<ul>
-<li>File: <code>lib/serializers.py</code></li>
-<li>Reuse <code>to_csv()</code>; add <code>stream_csv()</code> for chunked output.</li>
-<li>Acceptance: unit test covers empty, single row, 1k rows, special characters.</li>
-</ul>
-</li>
-<li><p><strong>Backend: add <code>/api/reports/:id/export.csv</code> endpoint</strong></p>
-<ul>
-<li>File: <code>api/reports.py</code></li>
-<li>Reuse existing report query; pass <code>format=&#39;csv&#39;</code> flag.</li>
-<li>Stream when <code>row_count &gt; 50_000</code>.</li>
-<li>Acceptance: integration test against the staging report.</li>
-</ul>
-</li>
-<li><p><strong>Frontend: add Export button</strong></p>
-<ul>
-<li>File: <code>src/dashboard/Toolbar.tsx</code></li>
-<li>Place right of Refresh; uses existing <code>IconButton</code>.</li>
-<li>Triggers <code>&lt;a download&gt;</code> with current filter querystring.</li>
-</ul>
-</li>
-<li><p><strong>Frontend: streaming-aware loading state</strong></p>
-<ul>
-<li>File: <code>src/dashboard/useExport.ts</code> (new)</li>
-<li>Show toast on click; remove on download start.</li>
-<li>Handle error toast.</li>
-</ul>
-</li>
-<li><p><strong>Verify cross-browser</strong></p>
-<ul>
-<li>Chrome, Firefox, Safari latest.</li>
-<li>Verify Excel + Google Sheets open the file cleanly.</li>
-</ul>
-</li>
-</ol>
-<h2>Files to touch</h2>
-<ul>
-<li><code>lib/serializers.py</code> — modify</li>
-<li><code>api/reports.py</code> — modify</li>
-<li><code>src/dashboard/Toolbar.tsx</code> — modify</li>
-<li><code>src/dashboard/useExport.ts</code> — new</li>
-<li><code>tests/api/test_reports_export.py</code> — new</li>
-</ul>
-<h2>Risks</h2>
-<ul>
-<li>120k-row export could exceed default request timeout. Mitigation: streaming + raised timeout for this route.</li>
-</ul>
+        <div class="md-artifact" data-md="plan"><h1>Plan — PacHangman</h1>
+<h2>Prompt</h2>
+<blockquote>
+<p><code>/clear</code></p>
+<p><code>/plan</code></p>
+<p>create an implementation plan for the game. Read the ./planning/hangman_spec.md spec to develop the plan. write the plan to ./planning/plan/hang_implementation_plan.md</p>
+</blockquote>
+<hr>
+<p><strong>Output:</strong> <a href="../demo/plan/hang_implementation_plan.md"><code>./demo/plan/hang_implementation_plan.md</code></a></p>
+<p><a href="../session-replay/Hangman%20-%20Develop%20Implementation%20Plan.html">View session replay →</a></p>
+<hr>
+<h2>hang_implementation_plan.md</h2>
+<pre><code class="language-markdown"># PacHangman — Implementation Plan
+
+&gt; Source of truth: `planning/design/hangman_spec.md` (v2 Draft, 2026-04-27).
+&gt; Scope: v1 only — vanilla stack, zero build step required to play.
+&gt; Ship target: `python3 -m http.server 8000` from repo root, all 14 acceptance criteria from spec §10 passing in Chrome, Firefox, and Safari.
+
+---
+
+## Progress
+
+**46 / 68 steps complete**
+
+`█████████████████████████████░░░░░░░░░░░` 68%
+
+| Phase | Steps | Done |
+|---|---|---|
+| Phase 0 — Repo scaffold | 5 | 5 ✓ |
+| Phase 1 — Pure logic + persistence | 9 | 9 ✓ |
+| Phase 2 — Word list build pipeline | 5 | 5 ✓ |
+| Phase 3 — Theme + screens shell | 10 | 10 ✓ |
+| Phase 4 — Maze + sprite sheet | 7 | 7 ✓ |
+| Phase 5 — Game screen + interactions | 5 | 5 ✓ |
+| Phase 6 — Animations | 6 | 0 |
+| Phase 7 — Audio stub, edge cases, mobile, a11y | 5 | 5 ✓ |
+| Phase 8 — Final acceptance pass | 17 | 0 |
+| **Total** | **69** | **29** |
+
+---
+
+## 1. Pinned Implementation Calls
+
+These resolve the &quot;low-stakes defaults&quot; from spec §9. Do not revisit during build.
+
+| Call | Value |
+|---|---|
+| Module system | Native ES modules — `&lt;script type=&quot;module&quot; src=&quot;src/main.js&quot;&gt;` in `index.html` |
+| `package.json` role | `&quot;type&quot;: &quot;module&quot;` + `&quot;scripts&quot;: { &quot;build-words&quot;: &quot;node tools/build-wordlists.js&quot; }` only. No runtime deps. |
+| Dev server | `python3 -m http.server 8000` |
+| Test runner | Node built-in `node:test` — zero deps, no Jest, no Vitest |
+| Seed file size | ~50 core seeds per category; expand to 200 only if a tier under-fills 900 words |
+| READY! duration | 1.5s |
+| Pac-Man traversal | 300ms per leg (to pellet, back to home) |
+| Ghost emerge | 600ms ease-in-out |
+| Win maze strobe | 6 flashes × 80ms each |
+| Profanity blocklist | LDNOOBW en JSON (download at build time) |
+| Gitignored paths | `tools/cache/` (downloaded source dictionaries) |
+
+---
+
+## 2. Phases
+
+Nine phases, each with a clear verify step before moving to the next.
+
+---
+
+### Phase 0 — Repo scaffold
+
+- [x] **Phase 0 complete**
+
+**Goal:** Clean directory tree + `index.html` shell that loads error-free in a browser.
+
+**Steps:**
+- [x] Create directory tree: `styles/`, `src/render/`, `assets/`, `words/`, `tools/seeds/`, `tools/cache/` (.gitignored), `tests/`
+- [x] `index.html` — skeleton with Press Start 2P link, inline `&lt;svg id=&quot;sprites&quot;&gt;` block, `&lt;div id=&quot;app&quot; data-screen=&quot;title&quot;&gt;` with three screen sections, `sr-announce` region
+- [x] `.gitignore` — `tools/cache/`, `.DS_Store`
+- [x] `package.json` — `&quot;type&quot;: &quot;module&quot;`, `&quot;build-words&quot;` script
+- [x] **Verify:** `python3 -m http.server 8000` → `localhost:8000` renders a blank white page, DevTools console is clean
+
+---
+
+### Phase 1 — Pure logic + persistence
+
+- [x] **Phase 1 complete**
+
+**Goal:** All game rules, state transitions, and persistence coded as pure/isolated modules — no DOM, no globals, unit-tested in Node.
+
+**Steps:**
+- [x] `src/state.js` — `initialState` object + `reduce(state, action) → state` pure reducer
+- [x] `src/game.js` — `guessLetter`, `guessWord`, `isWin`, `isLoss`, `computeScore`
+- [x] `src/words.js` — `loadCategory(category, wordsCache, setCache)`, `pickWord({ difficulty, category, recentWords, wordsCache })`
+- [x] `src/persist.js` — `load() → slice | defaults`, `save(slice) → void` against key `pachangman_v1`
+- [x] `tests/game.test.js` — hit, miss, repeat-letter, win, loss, full-word correct + wrong, score formula
+- [x] `tests/words.test.js` — avoids recentWords, falls back to full pool, returns correct tier
+- [x] `tests/state.test.js` — START_GAME init, GUESS_LETTER flow, QUIT resets streak, reducer is pure
+- [x] `tests/persist.test.js` — load defaults/parse-fail/missing-fields, save shape, wordsCache exclusion, round-trip
+- [x] **Verify:** `npm test` exits 0, all 47 test cases green
+
+---
+
+### Phase 2 — Word list build pipeline
+
+- [x] **Phase 2 complete**
+
+**Goal:** Three populated `words/*.json` files with ≥ 900 words per difficulty tier.
+
+**Steps:**
+- [x] `tools/seeds/arcade.txt` — ~50 seeds from spec §5.3
+- [x] `tools/seeds/scitech.txt` — ~50 seeds from spec §5.3
+- [x] `tools/seeds/movies.txt` — ~50 single-word film titles from spec §5.3
+- [x] `tools/build-wordlists.js` — full build script per spec §5.5 algorithm
+- [x] **Verify:** `npm run build-words` exits 0, `node --test tests/words-output.test.js` exits 0
+
+---
+
+### Phase 3 — Theme + screens shell
+
+- [x] **Phase 3 complete**
+
+**Goal:** Title and Result screens render correctly; `data-screen` switching works; fonts load.
+
+**Steps:**
+- [x] `styles/reset.css`, `styles/theme.css`, `styles/layout.css`, `styles/screens.css`
+- [x] `src/render/shared.js` — `renderHUD(state, container)`
+- [x] `src/render/title.js` — difficulty radios, category select, INSERT COIN button
+- [x] `src/render/result.js` — outcome banner, revealed word, streak update
+- [x] `src/main.js` — boot sequence: load persisted state, detect `prefers-reduced-motion`, render Title
+- [x] `src/input.js` — keyboard + pellet click delegation wired to `dispatch`
+- [x] **Verify:** Title screen renders; INSERT COIN transitions to Game div
+
+---
+
+### Phase 4 — Maze + sprite sheet
+
+- [x] **Phase 4 complete**
+
+**Goal:** Game screen shows the full arcade maze, ghost house, and Pac-Man at home position.
+
+**Steps:**
+- [x] `assets/sprites.svg` — 7 `&lt;symbol&gt;` defs
+- [x] `styles/maze.css`, `styles/sprites.css`
+- [x] `src/render/maze.js`, `src/render/sprites.js`
+- [x] **Verify:** Maze scaffold renders; ghost house and Pac-Man at home visible
+
+---
+
+### Phase 5 — Game screen + interactions
+
+- [x] **Phase 5 complete**
+
+**Goal:** Full playable game loop — letter guessing via keyboard and alphabet pellets.
+
+**Steps:**
+- [x] `styles/game.css` — word display + alphabet pellet states
+- [x] `src/render/game.js` — word slots, 26 alphabet buttons, word-guess `&lt;dialog&gt;`
+- [x] `src/input.js` (complete wiring) — A–Z, Enter, Space, ESC
+- [x] `src/main.js` dispatch loop — `dispatch(action) → reduce → render → persist.save`
+- [x] **Verify:** A–Z key guess works; word-guess modal works
+
+---
+
+### Phase 6 — Animations
+
+- [ ] **Phase 6 complete**
+
+**Goal:** All spec §3.8 animations with `prefers-reduced-motion` support.
+
+**Steps:**
+- [ ] `styles/animations.css` — all `@keyframes` + reduced-motion overrides
+- [ ] Ghost emerge sequencing in `src/render/sprites.js`
+- [ ] READY! interstitial, Win animation, Death animation
+- [ ] **Verify:** Hit → Pac-Man traverses; miss → ghost emerges; win/loss animations play
+
+---
+
+### Phase 7 — Audio stub, edge cases, mobile, accessibility
+
+- [x] **Phase 7 complete**
+
+**Steps:**
+- [x] `src/audio.js` — 7 no-op methods wired at call sites
+- [x] Edge cases — ESC confirm, Tab+Space, resize, JSON load-fail overlay
+- [x] Mobile layout (≤480px) — compact view, 6-col alphabet grid
+- [x] Accessibility — `#sr-announce`, aria attrs, focus rings, touch targets ≥44px
+
+---
+
+### Phase 8 — Final acceptance pass
+
+- [ ] **Phase 8 complete**
+
+**Goal:** All 14 spec §10 acceptance criteria verified in Chrome, Firefox, and Safari.
+
+**Steps:**
+- [ ] AC #1–15: full acceptance matrix
+- [ ] Browser matrix: Chrome, Firefox, Safari
+
+---
+
+## 3. Critical Files Reference
+
+| File | Phase | Spec § |
+|---|---|---|
+| `index.html` | 0 | §6.1, §6.4 |
+| `src/state.js` | 1 | §4.1, §4.2 |
+| `src/game.js` | 1 | §5.1, §5.4, §5.6 |
+| `src/words.js` | 1 | §5.4 |
+| `src/persist.js` | 1 | §4.3 |
+| `styles/theme.css` | 3 | §3.1, §3.2 |
+| `src/render/maze.js` | 4 | §3.4 |
+| `src/render/sprites.js` | 4, 6 | §3.3, §3.5, §3.7 |
+| `styles/game.css` | 5 | §3.6, §3.7 |
+| `styles/animations.css` | 6 | §3.8 |
+| `src/audio.js` | 7 | §7 |
+
+---
+
+## 4. Out of Scope (v1)
+
+- Real audio — `audio.js` stub only
+- Daily challenge, hint power-pellets, multi-theme switcher
+- Stats screen, achievements, leaderboard, share-result
+- gzip word bundle compression, accounts, backend, multiplayer
+
+---
+
+## 5. End-to-End Verification Recipe
+
+1. `python3 -m http.server 8000` → open `http://localhost:8000`
+2. Happy path — Easy/Arcade win: confirm maze strobe + victory loop + streak = 1
+3. Happy path — Normal/SciTech loss: confirm death animation + streak resets to 0
+4. Happy path — Hard/Movies word-guess: press Enter, type correct word, confirm WIN
+5. Streak persistence: reload page, confirm streak preserved
+6. Reduce motion: System Settings → Reduce Motion ON → no traversal animations
+7. Mobile: DevTools 375×667 → no horizontal scroll, 6-col alphabet grid
+8. `node --test tests/` → all pass
+</code></pre>
 </div>
         <div class="md-artifact" data-md="implement"><h1>Implementation notes</h1>
 <p>Atomic commits, one per task in the plan. The agent walks tasks in order; each commit is reviewable on its own.</p>

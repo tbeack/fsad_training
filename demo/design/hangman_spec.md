@@ -1,21 +1,3 @@
-# Spec — PacHangman
-
-## Prompt
-
-> `/plan`
-> Next create a design document to develop the overall app experience and design choices. write the design/requirements to `./planning/design/hangman_spec.md`.
-
----
-
-**Output:** [`./demo/design/hangman_spec.md`](../demo/design/hangman_spec.md)
-
-[View session replay →](../session-replay/Hangman%20-%20Start%20the%20Research%20and%20Spec.html)
-
----
-
-## hangman_spec.md
-
-````markdown
 # PacHangman — Design Specification
 
 > Design + requirements for **PacHangman**, a Pac-Man–inspired browser Hangman.
@@ -338,13 +320,29 @@ Lives are 6 uniformly across all difficulties. Hard mode difficulty comes from w
 Three categories. Each ships as `words/<category>.json` with shape `{ easy: string[], normal: string[], hard: string[] }` — 1,000 words per tier, 3,000 per file, 9,000 total.
 
 **Arcade** — retro gaming terms
+- Seeds: `pacman, tetris, pinball, joystick, asteroid, frogger, galaga, sprite, pixel, arcade, atari, nintendo, donkey, pong, breakout, centipede, defender, galaxis, tempest, zaxxon, mame, rom, bios, cheat, combo, respawn, loot, hitbox, vector, raster, cabinet, marquee, bezel, trackball, flipper, plunger, bumper, paddle, quarter, token, highscore…`
+- Build: filter `dwyl` dictionary by stem-match against seed list + gaming-related suffixes; bucket by length.
 
 **Sci-Tech** — science and technology terms
+- Seeds: `electron, quantum, neuron, satellite, pixel, kernel, photon, capacitor, algorithm, binary, matrix, circuit, voltage, genome, protein, catalyst, osmosis, entropy, isotope, fractal, topology, compiler, bandwidth, latency, firmware, semiconductor, transistor, telescope, microscope, polymer, polymer, alloy, neutron, proton…`
+- Build: filter `dwyl` by STEM/science domain patterns; bucket by length.
 
 **Movies** — single-word film titles
+- Seeds: `alien, jaws, frozen, gladiator, inception, matrix, avatar, oppenheimer, beetlejuice, grease, tenet, dune, prey, heat, leon, speed, signs, crash, up, it, us, ed, se7en, whiplash, parasite, uncut, clue, misery, psycho, grease, rocky, fargo, oldboy, joker, moonlight, nomadland, spotlight, arrival, logan, solo, thor, hulk, blade…`
+- **Single-word titles only.** Multi-word titles (v2).
+- Build: hand-curated list of single-word titles; filter by length tiers (3–5 / 6–8 / 9–14); supplement with `dwyl` words that are known as film titles.
+
+**File layout:**
+```
+words/
+  arcade.json      // { easy: [...1000], normal: [...1000], hard: [...1000] }  ~50KB
+  scitech.json     // same structure                                           ~50KB
+  movies.json      // same structure                                           ~50KB
+```
 
 ### 5.4 Word Selection Algorithm
 ```js
+// Runtime
 async function loadCategory(category) {
   if (state.wordsCache[category]) return;
   const data = await fetch(`./words/${category}.json`).then(r => r.json());
@@ -358,54 +356,76 @@ function pickWord({ difficulty, category, recentWords }) {
   return source[Math.floor(Math.random() * source.length)];
 }
 ```
+- `recentWords` capped at 50 (rolling).
+- Profanity filtering applied at **build time**, not runtime.
 
-### 5.5 Scoring (lightweight v1)
+### 5.5 Word List Build Script (dev-time only, not shipped)
+
+`tools/build-wordlists.js` — Node script, run once during development:
+
+1. Download `dwyl/english-words` `words_dictionary.json` (~479k words) to `tools/cache/`.
+2. Download `first20hours/google-10000-english` frequency list to `tools/cache/`.
+3. For each category, read seed file from `tools/seeds/<category>.txt`.
+4. Filter `dwyl` dictionary: keep words whose stems/substrings match any seed (edit-distance-1 or exact substring).
+5. Bucket by length into `easy` (3–5), `normal` (6–8), `hard` (9–14).
+6. Apply LDNOOBW profanity blocklist (filter out matches).
+7. If a tier has fewer than 1,000 candidates: backfill from `google-10000-english` filtered to matching length, ensuring no duplicates.
+8. Shuffle each tier, cap at 1,000.
+9. Write `words/arcade.json`, `words/scitech.json`, `words/movies.json`.
+
+### 5.6 Scoring (lightweight v1)
 ```
 score = base(difficulty) × livesRemaining × lengthBonus
   base: easy=10, normal=20, hard=40
   lengthBonus: 1 + (wordLength - minLengthForTier) × 0.1
 ```
+High score persisted; displayed in HUD. No dedicated stats screen (v3).
 
 ---
 
 ## 6. Architecture
 
-### 6.1 File Structure
+### 6.1 File Structure (vanilla, zero build step)
 ```
 hangman/
-├── index.html
+├── index.html                    ← entry point; inline <svg id="sprites"> at top
 ├── styles/
 │   ├── reset.css
-│   ├── theme.css
-│   ├── layout.css
-│   ├── maze.css
-│   ├── sprites.css
-│   ├── game.css
-│   ├── animations.css
-│   └── screens.css
+│   ├── theme.css                 ← CSS custom properties (palette, type scale)
+│   ├── layout.css                ← grid, flex, viewport units
+│   ├── maze.css                  ← wall divs, ghost house, pellet positions
+│   ├── sprites.css               ← SVG use element sizing + Pac-Man/ghost animations
+│   ├── game.css                  ← word display, alphabet pellet states
+│   ├── animations.css            ← @keyframes: chomp, death, strobe, emerge, pellet-eat
+│   └── screens.css               ← title + result screens
 ├── src/
-│   ├── main.js
-│   ├── state.js
-│   ├── game.js
-│   ├── words.js
+│   ├── main.js                   ← bootstrap; wire DOM ↔ dispatch; load fonts
+│   ├── state.js                  ← initial state + pure reducer(state, action)
+│   ├── game.js                   ← guessLetter, guessWord, isWin, isLoss, computeScore
+│   ├── words.js                  ← loadCategory (fetch + cache), pickWord
 │   ├── render/
-│   │   ├── title.js
-│   │   ├── game.js
-│   │   ├── maze.js
-│   │   ├── sprites.js
-│   │   ├── result.js
-│   │   └── shared.js
-│   ├── input.js
-│   ├── persist.js
-│   └── audio.js
+│   │   ├── title.js              ← title screen render
+│   │   ├── game.js               ← word, alphabet pellets, HUD
+│   │   ├── maze.js               ← maze walls + ghost house (mostly static; re-renders on screen change)
+│   │   ├── sprites.js            ← Pac-Man + ghost SVG instances + animation triggers
+│   │   ├── result.js             ← result screen render
+│   │   └── shared.js             ← HUD (score, streak, level, category)
+│   ├── input.js                  ← keyboard + click handlers → dispatch
+│   ├── persist.js                ← localStorage read/write (persisted slice only)
+│   └── audio.js                  ← stub (all methods no-ops in v1; real in v2)
 ├── assets/
-│   └── sprites.svg
+│   └── sprites.svg               ← referenced inline into index.html at build or just inline
 ├── words/
-│   ├── arcade.json
+│   ├── arcade.json               ← { easy, normal, hard } 1000 words each
 │   ├── scitech.json
 │   └── movies.json
-└── tools/
-    └── build-wordlists.js
+└── tools/                        ← dev-time only; not served
+    ├── build-wordlists.js
+    ├── seeds/
+    │   ├── arcade.txt
+    │   ├── scitech.txt
+    │   └── movies.txt
+    └── cache/                    ← downloaded source dictionaries (gitignored)
 ```
 
 ### 6.2 Module Boundaries
@@ -419,18 +439,128 @@ hangman/
 - DOM-based, no canvas. Static HTML skeleton in `index.html`; renderers set `textContent` + `className` + `data-*` attributes.
 - Drive visual state via `<body data-screen="game" data-lives="4" data-outcome="">` — CSS rules keyed on these attributes avoid JavaScript style mutations.
 - Pac-Man/ghost positions driven by CSS custom properties (`--pac-x`, `--pac-y`) set via JS → CSS `transform: translate(var(--pac-x), var(--pac-y))`.
+- Web Animations API for sequenced animations (emerge path); CSS `@keyframes` for loops (chomp, idle).
+
+### 6.4 Boot Sequence
+1. `DOMContentLoaded` fires; `main.js` wires all event listeners.
+2. `persist.js` loads `pachangman_v1` from `localStorage` (or returns initial state).
+3. Detect `prefers-reduced-motion`; set `state.settings.reducedMotion`.
+4. `render/title.js` paints Title screen.
+5. When user picks a category → `words.loadCategory(category)` fires a `fetch('./words/<category>.json')` in the background; result cached in `state.wordsCache`. If still loading when "INSERT COIN" clicked, show "LOADING…" until resolved.
+6. On "INSERT COIN" → `pickWord` → `dispatch({ type: 'START_GAME' })` → "READY!" interstitial → Game screen.
+
+---
+
+## 7. Audio Design (v2-bound — stub wired in v1)
+
+`audio.js` exposes these methods; all are no-ops in v1:
+
+| Method | Event | SFX (v2) |
+|---|---|---|
+| `audio.chomp()` | Letter hit | Pac-Man chomp (CC0, Freesound) |
+| `audio.miss()` | Letter miss | Low siren blip |
+| `audio.win()` | Game win | Intermission jingle (CC0 or original) |
+| `audio.loss()` | Game loss | Death wail |
+| `audio.ready()` | READY! interstitial | "Waka" startup blip |
+| `audio.tick()` | Alphabet hover | Soft tick |
+| `audio.bgm(play)` | Title screen | 8s looping chiptune |
+
+Mute toggle (top-right HUD), persisted in `state.settings.soundEnabled`.
+
+---
+
+## 8. Accessibility
+
+Required for v1:
+
+- **Keyboard:** A–Z keys guess letters; Enter opens word-guess input; Esc confirms quit. Tab order on Title: difficulty → category → INSERT COIN. Tab order in Game: alphabet pellets (A–Z) → GUESS WORD → QUIT.
+- **Focus rings:** `2px solid var(--pac)` — never hidden without replacement.
+- **Contrast:** white on black passes WCAG AA. `--dot` peach on black: 3.1:1 — used only as decorative background on pellets, not primary text. Bump letter text to white on non-default pellet states.
+- **Screen reader:**
+  - `<div aria-live="polite" aria-atomic="true" class="sr-only">` announces results: "Letter E found — 2 positions revealed. 4 letters remaining." or "Letter Q not in word. 5 lives remaining."
+  - Pac-Man traversal animation is decorative only (`aria-hidden="true"` on sprite elements).
+  - Win/loss announced: "You win! The word was JOYSTICK." or "Game over. The word was JOYSTICK."
+  - Alphabet `<button>` elements: `aria-label="Letter A"`, `aria-pressed="true"` when guessed, `aria-disabled="true"` when guessed.
+- **Reduced motion:** `@media (prefers-reduced-motion: reduce)` disables Pac-Man traversal (instant eat), maze strobe (instant colour flip), death rotation (instant hide), ghost emerge (instant position). Result is still visually clear.
+- **Touch targets:** alphabet pellet buttons ≥ 44×44 px CSS. GUESS WORD + QUIT ≥ 44px height.
+
+---
+
+## 9. Resolved Decisions
+
+All open questions from the previous draft are now answered:
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| Word source | `dwyl/english-words` + hand-curated category seed files | 479k-word pool; seeds guide category tagging without a paid API. |
+| Categories | **Arcade, Sci-Tech, Movies** (3 total) | Cohesive for arcade-enthusiast audience; manageable curation. |
+| Words per category | 1,000 per difficulty × 3 = 3,000 per category, **9,000 total** | Large enough for variety; small enough as plain JSON (~150KB). |
+| Art format | **SVG sprite sheet** (`assets/sprites.svg`) | Animatable via CSS; scalable; single file. |
+| Font | **Google Fonts CDN** (Press Start 2P) | One `<link>` tag; cached after first load. |
+| Lives model | **6 uniformly** across all difficulties | Standard hangman; ghosts double-up (misses 1+2 = Blinky, 3+4 = Pinky, 5+6 = Inky). |
+| Movies content | **Single-word titles only** at v1 | Avoids multi-word UX complexity; multi-word deferred to v2. |
+| Word file format | **Plain JSON, lazy-loaded per category** | Simplest; ~50KB per fetch; no DecompressionStream complexity. |
+
+### Remaining implementation calls (low-stakes, use these defaults unless objection)
+| Call | Default |
+|---|---|
+| Seed file size per category | ~50 core seeds; expand to 200 if a tier under-fills. |
+| READY! interstitial duration | 1.5s. |
+| Pac-Man traversal duration | 300ms per leg. |
+| Ghost emerge duration | 600ms. |
+| Maze strobe cycle count (win) | 6 flashes × 80ms each. |
+| Profanity blocklist | LDNOOBW JSON (en). |
 
 ---
 
 ## 10. Acceptance Criteria (v1 "playable")
 
-- [ ] Game runs via `python3 -m http.server 8000` with no console errors.
-- [ ] Title screen: difficulty + category selectors functional.
-- [ ] All 26 letters guessable via keyboard (A–Z keys) and clicking alphabet pellets.
-- [ ] Hit: Pac-Man traverses to the pellet, eats it, letter fills into word display.
+The build is done when **all** of these hold:
+
+- [ ] Game runs via `python3 -m http.server 8000` → `localhost:8000` in Chrome/Firefox/Safari with no console errors.
+- [ ] Title screen: difficulty + category selectors functional. Category JSON begins fetching on selection.
+- [ ] "INSERT COIN" starts game; "READY!" text appears for 1.5s, then play begins.
+- [ ] All 26 letters guessable via keyboard (A–Z keys) **and** clicking alphabet pellets.
+- [ ] Hit: Pac-Man visibly traverses to the pellet, eats it, letter fills into word display.
 - [ ] Miss: ghost visibly emerges from ghost house and advances each miss.
 - [ ] 6 misses: Pac-Man death animation plays, result screen appears.
+- [ ] Word-guess CTA (Enter/click): correct → WIN; wrong → 1 miss.
 - [ ] Win: maze walls strobe; Pac-Man victory loop; result screen shows streak +1.
 - [ ] Streak + best streak + recent words + high score persist across page reloads.
-- [ ] `prefers-reduced-motion` respected.
-````
+- [ ] Guessing an already-guessed letter produces a UI ping, no penalty.
+- [ ] Each of the 3 category JSON files contains at least 900 words per tier (documented if under 1,000).
+- [ ] Game playable on 375×667 viewport — simplified mobile layout, no horizontal scroll.
+- [ ] `prefers-reduced-motion` respected: all CSS transitions and keyframe animations disabled.
+- [ ] Pure-logic modules (`state.js`, `game.js`, `words.js`) have unit tests covering: hit, miss, repeat-letter, win, loss, full-word (correct + wrong), `pickWord` avoiding `recentWords`.
+
+---
+
+## 11. Roadmap
+
+### v1 — retro Pac-Man hangman (this spec)
+Maze playfield, SVG sprites, ghost house lives, 3 categories × 3 difficulties, streak persistence, accessibility baseline.
+
+### v2 — sound, hints, daily challenge, more content
+- Audio (chomp, miss, win, loss, title chiptune) per §7.
+- Power-pellet hint system: **frightened-ghost mode** — 4 ghost hints mapped to Blinky/Pinky/Inky/Clyde personalities (research §5.7).
+- Daily challenge: deterministic word seeded by UTC date; shareable result grid.
+- Synthwave + Modern Cute themes (CSS variable swap).
+- Multi-word movie titles.
+- Random category (pulls from all three pools).
+- gzip compression on word bundles if 150KB plain becomes slow over a real network.
+
+### v3 — depth + share
+- Stats screen (win rate, avg guesses, fastest win, letter heatmap).
+- Achievements / badges.
+- Share-result emoji grid (Wordle-style).
+- Optional: tiny serverless leaderboard.
+
+---
+
+## 12. Source References
+- Research doc: `planning/research/hangman_research.md`
+- Pac-Man palette: [SchemeColor](https://www.schemecolor.com/pac-man-game-colors.php), [Lospec Pac-Man 10](https://lospec.com/palette-list/pac-man-10)
+- Hangman rules: [Hasbro](https://instructions.hasbro.com/en-us/instruction/hangman-game-instructions), [Wikipedia](https://en.wikipedia.org/wiki/Hangman_(game))
+- Word lists: [dwyl/english-words](https://github.com/dwyl/english-words), [google-10000-english](https://github.com/first20hours/google-10000-english)
+- Profanity filter: [LDNOOBW](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words)
+- Letter frequency strategy: [Datagenetics](https://datagenetics.com/blog/april12012/), [Wolfram blog](https://blog.wolfram.com/2010/08/13/25-best-hangman-words/)
