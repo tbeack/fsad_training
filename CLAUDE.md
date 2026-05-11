@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An HTML training app for the most intensive lecture block of a 3-day workshop on spec-driven and agentic development with Claude Code. Used live by the presenter and shipped as a self-contained takeaway artifact.
 
-Sibling app to `fsad_playbook` (at `~/Desktop/AI/fsad_playbook/`) — same vanilla stack, same visual language, same single-file distribution model. The playbook is the design source of truth.
+Sibling app to `fsad_playbook` (at `~/repo/fsad_playbook/`) — same vanilla stack, same visual language, same single-file distribution model. The playbook is the design source of truth.
 
 ## Commands
 
