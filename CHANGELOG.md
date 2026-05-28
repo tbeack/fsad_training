@@ -4,6 +4,16 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.9 — 2026-05-28
+
+**Vercel deployment config (FSD_Train-019)**
+
+Adds `vercel.json` at the repo root so the training app can be deployed to Vercel as a hosted instance, mirroring the approach used by `fsad_playbook`.
+
+- **FSD_Train-019 — Vercel config.** `vercel.json` created with `outputDirectory: "dist"` and a catch-all rewrite routing `/(.*) → /fsad-training.html`. No build command is configured — Vercel serves the pre-built `dist/fsad-training.html` that is already committed to the repo. To deploy: import `tbeack/fsad_training` at vercel.com/new, set Framework Preset to Other, leave build command blank.
+
+---
+
 ### v1.8 — 2026-04-27
 
 **Section 2 basics: "How to manage your context window" subsection (FSD_Train-015)**

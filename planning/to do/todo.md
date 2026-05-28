@@ -15,3 +15,7 @@
 - [x] `FSD_Train-013` - Add an example `Claude.md` section to the `Claude Code Basic` section
 - [x] `FSD_Train-014` - Append the `Status Line` section with an example prompt to create/modify the status line in claude → [task-fsd_train-014.md](../completed/task-fsd_train-014.md)
 - [x] `FSD_Train-015` - How to track your Context usage. Show the command the example output. → [task-fsd_train-015.md](../completed/task-fsd_train-015.md)
+- [ ] `FSD_Train-016` — Add in an example how to create the testing and verification plan during implementation planning. Add in markdown files and session reaply.
+- [ ] `FSD_Train-017` — Move the multi-agent verification example to the Implementation planning step.
+- [ ] `FSD_Train-018` — Create an example of the verification step/agentic output, and session replay.
+- [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](task-fsd_train-019.md)
