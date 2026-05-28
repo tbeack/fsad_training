@@ -1,6 +1,5 @@
 {
-  "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/fsad-training.html" }
+    { "source": "/(.*)", "destination": "/dist/fsad-training.html" }
   ]
 }
