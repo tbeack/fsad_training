@@ -1,5 +1,7 @@
 {
+  "outputDirectory": "dist",
+  "buildCommand": "cp -r demo session-replay dist/",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/dist/fsad-training.html" }
+    { "source": "/(.*)", "destination": "/fsad-training.html" }
   ]
 }
