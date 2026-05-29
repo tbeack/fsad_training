@@ -81,9 +81,23 @@ Adding a new step means: new `.md` file in `src/markdown/`, new `<button class="
 - `planning/design/training_spec.md` — what we're building and why
 - `planning/plan/fsad_implementation_plan.md` — how it was built; build sequence; explicit "do not do" list
 
+### Version bump checklist
+
+When cutting a new version, update **all three** of these locations in `fsad-training.html` — they must always agree:
+
+1. **`<title>` tag** (line ~6) — `FSAD Training (vX.XX.X)`
+2. **Sidebar brand badge** (search for `sidebar-brand`) — `· vX.XX.X` inside the `<a>` tag
+3. **In-app changelog modal** (search for `changelogModal`) — add a new `<section>` block above the previous latest version, matching the format:
+   ```html
+   <section>
+     <h3>vX.XX.X <span class="changelog-date">· YYYY-MM-DD</span></h3>
+     <p><strong>Summary sentence.</strong> Detail sentences.</p>
+   </section>
+   ```
+
 ## Things to avoid
 
-- Adding a runtime markdown library (defeats `file://` distribution and breaks the matching with `fsad_playbook`)
+- Adding a runtime markdown library (defeats `file://` distribution and breaks the matching with `fsad_training`)
 - Splitting CSS/JS out of `src/index.html` (the playbook keeps everything embedded; match that)
 - Adding any framework, bundler, preprocessor, or TypeScript
 - Putting `dist/` in `.gitignore` (attendees may not have Node)
