@@ -20,3 +20,4 @@
 - [ ] `FSD_Train-018` — Create an example of the verification step/agentic output, and session replay.
 - [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](../completed/task-fsd_train-019.md)
 - [x] `FSD_Train-020` — Add entry to left nav: `FSAD Playbook`. Link to: `https://fsad-playbook.vercel.app/` → [task-fsd_train-020.md](../completed/task-fsd_train-020.md)
+- [x] `FSD_Train-021` — replace the search function in the training playbook with the approach taken in the "FSAD Playbook". Replicate plan in `/Users/theobeack/Repo/fsad_playbook/markdown/to do/completed/task-cbp-148.md` → [task-fsd_train-021.md](completed/task-fsd_train-021.md)
