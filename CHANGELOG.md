@@ -4,6 +4,14 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.11 — 2026-05-29
+
+**Two-tier natural language search (FSD_Train-021)**
+
+Replaces the plain `String.includes()` keyword filter with a two-tier search system. **Tier 1 — MiniSearch v7.1.1** (MIT, ~19 KB, fully inlined): BM25-ranked fuzzy search with prefix matching and field weighting — typo-tolerant queries like "effor level" and "claud md" return correct sections immediately with no CDN dependency. **Tier 2 — Transformers.js semantic layer** (progressive enhancement): lazy-loads `Xenova/all-MiniLM-L6-v2` from CDN and embeds section text chunks at runtime; queries ≥3 words or containing `?` blend keyword and semantic results, with semantic matches badged `✦`; vectors cache in IndexedDB. Also fixes a pre-existing navigation bug where search result clicks used a stale playbook `sectionToPageMap` — navigation now derives parent page from DOM. Graceful degradation: status indicator shows "Loading smart search…" / "Smart search ready" / "Using keyword search".
+
+---
+
 ### v1.10 — 2026-05-29
 
 **FSAD Playbook link in sidebar nav (FSD_Train-020)**
