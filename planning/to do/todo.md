@@ -18,4 +18,5 @@
 - [ ] `FSD_Train-016` — Add in an example how to create the testing and verification plan during implementation planning. Add in markdown files and session reaply.
 - [ ] `FSD_Train-017` — Move the multi-agent verification example to the Implementation planning step.
 - [ ] `FSD_Train-018` — Create an example of the verification step/agentic output, and session replay.
-- [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](task-fsd_train-019.md)
+- [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](../completed/task-fsd_train-019.md)
+- [x] `FSD_Train-020` — Add entry to left nav: `FSAD Playbook`. Link to: `https://fsad-playbook.vercel.app/` → [task-fsd_train-020.md](../completed/task-fsd_train-020.md)

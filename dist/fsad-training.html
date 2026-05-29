@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.8)</title>
+<title>FSAD Training (v1.10)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -503,6 +503,23 @@
     font-size: 0.68rem;
     color: var(--text-muted);
   }
+
+  /* External link entry in sidebar nav (e.g. FSAD Playbook) */
+  .nav-external-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.4rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+  }
+  .nav-external-link:hover { color: var(--text-primary); }
 
   /* Mobile toggle */
   .sidebar-toggle {
@@ -2038,7 +2055,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.8</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.10</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -2124,6 +2141,12 @@
         <a class="nav-sub-item" href="#compare/compare-specdriven" onclick="scrollToSection('compare-specdriven')">Inside an FSAD flow</a>
       </div>
     </div>
+
+    <!-- External resource: FSAD Playbook -->
+    <a class="nav-external-link" href="https://fsad-playbook.vercel.app/" target="_blank" rel="noopener noreferrer">
+      <span class="nav-icon" aria-hidden="true">◆</span>
+      FSAD Playbook ↗
+    </a>
 
   </nav>
 
