@@ -4,6 +4,14 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.10 — 2026-05-29
+
+**FSAD Playbook link in sidebar nav (FSD_Train-020)**
+
+Adds an "FSAD Playbook ↗" external-link entry at the bottom of the sidebar nav — below the Compare section, above the footer — giving attendees a one-click path to the companion reference at `https://fsad-playbook.vercel.app/`.
+
+---
+
 ### v1.9 — 2026-05-28
 
 **Vercel deployment config (FSD_Train-019)**
