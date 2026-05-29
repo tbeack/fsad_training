@@ -504,6 +504,23 @@
     color: var(--text-muted);
   }
 
+  /* External link entry in sidebar nav (e.g. FSAD Playbook) */
+  .nav-external-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.4rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.15s;
+  }
+  .nav-external-link:hover { color: var(--text-primary); }
+
   /* Mobile toggle */
   .sidebar-toggle {
     display: none;
@@ -2124,6 +2141,12 @@
         <a class="nav-sub-item" href="#compare/compare-specdriven" onclick="scrollToSection('compare-specdriven')">Inside an FSAD flow</a>
       </div>
     </div>
+
+    <!-- External resource: FSAD Playbook -->
+    <a class="nav-external-link" href="https://fsad-playbook.vercel.app/" target="_blank" rel="noopener noreferrer">
+      <span class="nav-icon" aria-hidden="true">◆</span>
+      FSAD Playbook ↗
+    </a>
 
   </nav>
 
