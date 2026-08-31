@@ -4,7 +4,7 @@
 
 Theo is leading a 3-day workshop introducing software engineers and PMs to spec-driven and agentic development with Claude Code. The most intensive lecture block needs an HTML app that: (a) drives the lecture live from a single browser tab, (b) doubles as a self-contained takeaway artifact attendees revisit afterward, (c) reads as a sibling to the existing `fsad_playbook` app (matching its visual identity and architectural pattern).
 
-The full design spec is at `/Users/theobeack/Desktop/AI/fsad_training/planning/design/training_spec.md`. This plan implements that spec.
+The full design spec is at `/Users/theobeack/Repo/fsad_training/planning/design/training_spec.md`. This plan implements that spec.
 
 **Distribution constraint:** attendees must be able to clone the repo and double-click an HTML file to view it. `fetch()` over `file://` is blocked by Chrome, so any markdown content must reach the browser already inlined as HTML — i.e. via a build step that pre-renders sibling `.md` files into a single self-contained output.
 
@@ -21,7 +21,7 @@ Vanilla HTML/CSS/JS app shell mirroring `fsad_playbook` patterns, with a tiny No
 ### Directory layout (final)
 
 ```
-/Users/theobeack/Desktop/AI/fsad_training/
+/Users/theobeack/Repo/fsad_training/
 ├── package.json                 # type:"module"; scripts: bundle, dev
 ├── package-lock.json
 ├── .gitignore                   # node_modules/, .DS_Store  (NOT dist/)
@@ -56,7 +56,7 @@ Approx 35 lines. Add chokidar watch mode later only if authoring loop feels slow
 
 ### Patterns inherited from `fsad_playbook`
 
-Confirmed against `/Users/theobeack/Desktop/AI/fsad_playbook/fsad-playbook.html`:
+Confirmed against `/Users/theobeack/Repo/fsad_playbook/fsad-playbook.html`:
 
 - Body: `<aside class="sidebar">` (~290px, hand-coded nav HTML) + `<div class="main">` containing all pages in DOM, one shown via `.page.active`
 - Hash routing `#pageId/sectionId`; `handleRoute()` → `switchPage()` swaps visible page (~lines 7646–7737 in playbook)
@@ -93,7 +93,7 @@ Six steps (Research → Spec → Plan → Implement → Verify → Iterate), eac
 Implementation is sequential — each step lands a working artifact before the next begins.
 
 1. **Scaffold + bundler first.** Create `package.json` (npm, ESM, single dep `marked`), `scripts/bundle.mjs`, `.gitignore`, `README.md`. Stub `src/index.html` with one `<!-- @@MD:hello -->` placeholder and `src/markdown/hello.md` containing a heading. Run `npm run bundle`; confirm `dist/fsad-training.html` opens in a browser and shows the heading. Locks the build pipeline before any UI work.
-2. **Port playbook shell.** Copy `/Users/theobeack/Desktop/AI/fsad_playbook/fsad-playbook.html` to `src/index.html`. Strip page-content `<div class="page">` blocks but keep: `<head>` (fonts, meta, all CSS), top progress bar markup, `.page-indicator` markup, `<aside class="sidebar">` shell, all `<script>` block routing/observer logic. Replace sidebar nav-group HTML with 5 training-section entries. Add 5 empty `<div class="page" id="page-{id}">` stubs. Bundle, open, verify routing works between empty pages and the chrome looks right.
+2. **Port playbook shell.** Copy `/Users/theobeack/Repo/fsad_playbook/fsad-playbook.html` to `src/index.html`. Strip page-content `<div class="page">` blocks but keep: `<head>` (fonts, meta, all CSS), top progress bar markup, `.page-indicator` markup, `<aside class="sidebar">` shell, all `<script>` block routing/observer logic. Replace sidebar nav-group HTML with 5 training-section entries. Add 5 empty `<div class="page" id="page-{id}">` stubs. Bundle, open, verify routing works between empty pages and the chrome looks right.
 3. **Section 1 + Section 2 content.** Workflow orientation + Claude Code basics. Pure prose, diagrams, callouts, code blocks. Lowest-risk; shakes out typography and primitives in the new app.
 4. **Section 3 content.** Slash command reference table or card grid. Static, mostly mechanical.
 5. **Section 4 UX scaffolding.** Build the stepper + split-pane layout with placeholder content for each step. Wire keyboard navigation and mobile collapse. Verify visual feel before authoring artifact content.
@@ -127,13 +127,13 @@ This is a documentation reconciliation only; the spec's intent is preserved.
 
 ## Critical files
 
-- `/Users/theobeack/Desktop/AI/fsad_playbook/fsad-playbook.html` — architecture reference (read-only; copy patterns)
-- `/Users/theobeack/Desktop/AI/fsad_training/planning/design/training_spec.md` — requirements (update post-approval per above)
-- `/Users/theobeack/Desktop/AI/fsad_training/package.json` — to create
-- `/Users/theobeack/Desktop/AI/fsad_training/scripts/bundle.mjs` — to create
-- `/Users/theobeack/Desktop/AI/fsad_training/src/index.html` — to create (port playbook shell)
-- `/Users/theobeack/Desktop/AI/fsad_training/src/markdown/*.md` — to create (6 artifacts)
-- `/Users/theobeack/Desktop/AI/fsad_training/dist/fsad-training.html` — generated; committed
+- `/Users/theobeack/Repo/fsad_playbook/fsad-playbook.html` — architecture reference (read-only; copy patterns)
+- `/Users/theobeack/Repo/fsad_training/planning/design/training_spec.md` — requirements (update post-approval per above)
+- `/Users/theobeack/Repo/fsad_training/package.json` — to create
+- `/Users/theobeack/Repo/fsad_training/scripts/bundle.mjs` — to create
+- `/Users/theobeack/Repo/fsad_training/src/index.html` — to create (port playbook shell)
+- `/Users/theobeack/Repo/fsad_training/src/markdown/*.md` — to create (6 artifacts)
+- `/Users/theobeack/Repo/fsad_training/dist/fsad-training.html` — generated; committed
 
 ## Verification
 
