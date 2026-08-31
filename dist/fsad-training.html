@@ -1969,25 +1969,27 @@
   .md-artifact { display: none; }
   .md-artifact.active { display: block; }
   .md-artifact-wrap .md-artifact { display: block; }
-  .md-artifact h1, .md-artifact h2, .md-artifact h3 {
+  .md-artifact h1, .md-artifact h2, .md-artifact h3,
+  .skill-artifact h1, .skill-artifact h2, .skill-artifact h3 {
     margin-top: 1rem;
     margin-bottom: 0.55rem;
     color: var(--text-primary);
   }
   .md-artifact > :first-child { margin-top: 0; }
-  .md-artifact h1 { font-size: 1.18rem; font-weight: 600; }
-  .md-artifact h2 { font-size: 1.02rem; font-weight: 600; }
-  .md-artifact h3 { font-size: 0.92rem; font-weight: 600; color: var(--text-secondary); }
-  .md-artifact p { font-size: 0.86rem; color: var(--text-secondary); margin: 0.55rem 0; line-height: 1.72; }
-  .md-artifact ul, .md-artifact ol {
+  .md-artifact h1, .skill-artifact h1 { font-size: 1.18rem; font-weight: 600; }
+  .md-artifact h2, .skill-artifact h2 { font-size: 1.02rem; font-weight: 600; }
+  .md-artifact h3, .skill-artifact h3 { font-size: 0.92rem; font-weight: 600; color: var(--text-secondary); }
+  .md-artifact p, .skill-artifact p, .skill-description { font-size: 0.86rem; color: var(--text-secondary); margin: 0.55rem 0; line-height: 1.72; }
+  .md-artifact ul, .md-artifact ol,
+  .skill-artifact ul, .skill-artifact ol {
     font-size: 0.86rem;
     color: var(--text-secondary);
     padding-left: 1.4rem;
     line-height: 1.75;
     margin: 0.5rem 0;
   }
-  .md-artifact li { margin: 0.25rem 0; }
-  .md-artifact code {
+  .md-artifact li, .skill-artifact li { margin: 0.25rem 0; }
+  .md-artifact code, .skill-artifact code {
     font-family: var(--font-mono);
     font-size: 0.78rem;
     background: var(--bg);
@@ -1995,7 +1997,7 @@
     border-radius: 4px;
     color: var(--text-primary);
   }
-  .md-artifact pre {
+  .md-artifact pre, .skill-artifact pre {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -2003,22 +2005,22 @@
     overflow-x: auto;
     margin: 0.7rem 0;
   }
-  .md-artifact pre code {
+  .md-artifact pre code, .skill-artifact pre code {
     background: transparent;
     padding: 0;
     font-size: 0.76rem;
     color: var(--text-secondary);
     line-height: 1.7;
   }
-  .md-artifact blockquote {
+  .md-artifact blockquote, .skill-artifact blockquote {
     border-left: 2px solid var(--accent-violet);
     padding-left: 1rem;
     margin: 0.7rem 0;
     color: var(--text-secondary);
     font-style: italic;
   }
-  .md-artifact strong { color: var(--text-primary); font-weight: 600; }
-  .md-artifact hr { border: 0; border-top: 1px solid var(--border); margin: 1rem 0; }
+  .md-artifact strong, .skill-artifact strong { color: var(--text-primary); font-weight: 600; }
+  .md-artifact hr, .skill-artifact hr { border: 0; border-top: 1px solid var(--border); margin: 1rem 0; }
 
   .deepdive-controls {
     display: flex;
