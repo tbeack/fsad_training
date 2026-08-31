@@ -2156,6 +2156,19 @@
       </div>
     </div>
 
+    <!-- GROUP 6: Skills library -->
+    <div class="nav-group">
+      <button class="nav-group-toggle" onclick="navigateTo('skills', this)" data-page="skills">
+        <span class="nav-icon" aria-hidden="true">◆</span>
+        Skills Library
+        <span class="nav-chevron">›</span>
+      </button>
+      <div class="nav-sub-items" data-group="skills">
+        <a class="nav-sub-item" href="#skills/skills-library" onclick="scrollToSection('skills-library')">Overview</a>
+        <a class="nav-sub-item" href="#skills/skills-definitions" onclick="scrollToSection('skills-definitions')">Definitions</a>
+      </div>
+    </div>
+
     <!-- External resource: FSAD Playbook -->
     <a class="nav-external-link" href="https://fsad-playbook.vercel.app/" target="_blank" rel="noopener noreferrer">
       <span class="nav-icon" aria-hidden="true">◆</span>
@@ -3414,6 +3427,262 @@ claude</code></pre></div>
 
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 6: SKILLS LIBRARY
+     ═══════════════════════════════════════════════════════ -->
+<div class="page" id="page-skills">
+
+  <div class="hero" id="skills-hero">
+    <div class="hero-badge">FSAD Training · Skills Library</div>
+    <h1>Installable <em>Skills</em></h1>
+    <p>Sixteen skills copied from the <a href="https://fsad-playbook.vercel.app/" target="_blank" rel="noopener noreferrer">FSAD Playbook</a> — the same task-management, planning, and review skills a real FSAD pod installs via the Claude Code plugin system. Each card in the definitions section below renders the actual <code>SKILL.md</code> file copied into this repo's <code>skills/</code> directory.</p>
+  </div>
+
+  <hr class="divider">
+
+  <section id="skills-library">
+    <span class="section-label">01 — Skills in this Repo</span>
+    <h2 class="section-title">The Skill Library</h2>
+    <p class="section-subtitle">Sixteen skills for task management, planning, and review — copied verbatim from the FSAD Playbook's own <code>skills/</code> directory, unchanged. Open the definitions section below to read any skill's full source.</p>
+
+    <span class="section-label" style="display: block; margin-bottom: 0.75rem;">Workflow Management</span>
+    <div class="wf-grid">
+      <div class="wf-card">
+        <span class="wf-card-label">/do-task &lt;ID&gt;</span>
+        <h4>Plan or execute any task</h4>
+        <p>Mode-switching skill: if no task file exists it interviews you and writes the plan; if a plan exists it implements it, verifies every acceptance criterion, and marks the task complete.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">plan mode</span>
+          <span class="wf-chip">execute mode</span>
+          <span class="wf-chip">AC verification</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/add-task [title]</span>
+        <h4>Capture a new task</h4>
+        <p>Auto-detects the current project, finds the next task number, and adds a numbered entry to the todo file — then interviews you one question at a time to write the task detail file.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">auto-numbered</span>
+          <span class="wf-chip">one-at-a-time interview</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/ship-it</span>
+        <h4>Wrap up a finished batch</h4>
+        <p>Four sequential phases: README check, CHANGELOG versioning, completed-task cleanup, then commit + push + PR. Run after <code>do-task</code> marks one or more tasks done.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">version bump</span>
+          <span class="wf-chip">commit</span>
+          <span class="wf-chip">PR</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/ship</span>
+        <h4>Short alias for /ship-it</h4>
+        <p>Wraps up finished work, cuts a version, commits, pushes, and opens a PR — same flow as <code>ship-it</code> under a shorter name.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">alias</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/next</span>
+        <h4>Pick the next open task and run it</h4>
+        <p>Reads the project's todo file, finds the first unchecked item, and hands it straight to <code>do-task</code>. No arguments needed.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">hands off to do-task</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/ac &lt;ID&gt;</span>
+        <h4>Verify acceptance criteria</h4>
+        <p>Walks every unchecked AC in a task file, fans each out to an independent verifier subagent, adversarially refutes each PASS, and marks each passing criterion immediately.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">progressive marks</span>
+          <span class="wf-chip">adversarial refuter</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/estimate</span>
+        <h4>Story point estimation</h4>
+        <p>Estimates work items on a Fibonacci scale (1–21) using a three-factor rubric: complexity, effort, and risk. Accepts bullet lists, numbered lists, or free prose as input.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">Fibonacci scale</span>
+          <span class="wf-chip">complexity + effort + risk</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/set-context</span>
+        <h4>Gather context before planning</h4>
+        <p>Runs a codebase sweep — a graphify build/query when available, a manual repo sweep otherwise — then asks targeted questions and writes a single <code>context.md</code>. Doubles as <code>plan</code>'s mandatory Phase 0.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">context.md</span>
+          <span class="wf-chip">plan Phase 0</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="section-label" style="display: block; margin-top: 2rem; margin-bottom: 0.75rem;">Specification &amp; Planning</span>
+    <div class="wf-grid">
+      <div class="wf-card">
+        <span class="wf-card-label">/plan</span>
+        <h4>Plan a significant project or refactor</h4>
+        <p>Guides a large epic/initiative or codebase refactor through five gated planning artifacts — <code>project.md</code>, <code>architecture.md</code>, <code>roadmap.md</code>, <code>verification.md</code>, <code>instructions.md</code>.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">gated phases</span>
+          <span class="wf-chip">5 artifacts</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/prd [feature title]</span>
+        <h4>Write a PRD or feature spec</h4>
+        <p>Four-phase gated flow: Discovery (Analyst role) → Specify (PM role) → Technical Plan → Task decomposition. Produces <code>spec.md</code>, <code>plan.md</code>, and <code>tasks.md</code> in the project's <code>planning/prd/</code> directory.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">discovery interview</span>
+          <span class="wf-chip">spec.md</span>
+          <span class="wf-chip">tasks.md</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/plan-review</span>
+        <h4>Adversarially review an implementation plan</h4>
+        <p>Reviews a plan (PR, branch, or planning doc) against its baseline spec/ADR — up to 7 parallel lenses, every finding verified against the repo before it survives, then a completeness critic loops until dry.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">7 lenses</span>
+          <span class="wf-chip">baseline-diff</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/spec-review</span>
+        <h4>Adversarially review a spec or proposal</h4>
+        <p>Reviews a written proposal (spec, PRD, RFC, design doc) rather than code — a steelman pass, up to 10 specialist lenses, adversarial validation that defaults to refuting findings, then a loop-until-dry completeness pass.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">10 lenses</span>
+          <span class="wf-chip">defaults to refute</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="section-label" style="display: block; margin-top: 2rem; margin-bottom: 0.75rem;">Review &amp; Security</span>
+    <div class="wf-grid">
+      <div class="wf-card">
+        <span class="wf-card-label">/code-review-team</span>
+        <h4>Multi-agent code review</h4>
+        <p>Dispatches 7 specialist reviewers in parallel (correctness, design, performance, maintainability, testing, API contract, security), then consolidates validator-confirmed findings into a severity-ranked <code>REVIEW-REPORT.md</code> with a merge recommendation.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">7 specialists</span>
+          <span class="wf-chip">adversarial validation</span>
+          <span class="wf-chip">REVIEW-REPORT.md</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/sec-review-team</span>
+        <h4>Multi-agent security review</h4>
+        <p>Picks a specialist roster based on detected stack signals (webapp, IaC, LLM-agent, container, backend, etc.) from a library of 13 specialists. Produces a severity-ranked <code>REPORT.md</code> with deduped root issues.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">13 specialists</span>
+          <span class="wf-chip">stack-signal detection</span>
+          <span class="wf-chip">REPORT.md</span>
+        </div>
+      </div>
+      <div class="wf-card">
+        <span class="wf-card-label">/sec-review-fixes</span>
+        <h4>Apply security fix PRs</h4>
+        <p>Companion to <code>sec-review-team</code>. Takes a <code>REPORT.md</code> or <code>findings.jsonl</code> and produces fix PRs per finding — each with a regression test. Safeguards: branch-only commits, no force-push, clean working tree required.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">per-finding PRs</span>
+          <span class="wf-chip">regression tests</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="section-label" style="display: block; margin-top: 2rem; margin-bottom: 0.75rem;">Prompting</span>
+    <div class="wf-grid">
+      <div class="wf-card">
+        <span class="wf-card-label">/prompt-improver</span>
+        <h4>Strengthen a draft prompt</h4>
+        <p>Rewrites a draft prompt intended for Claude into a stronger, more reliable one — specificity, role/system framing, XML-tag structure, multishot examples, chain-of-thought cues, explicit output formatting.</p>
+        <div class="wf-chips">
+          <span class="wf-chip">prompt engineering</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="skills-definitions">
+    <span class="section-label">02 — Skill Definitions</span>
+    <h2 class="section-title">Skill Definitions</h2>
+    <p class="section-subtitle">Each card below renders the actual <code>SKILL.md</code> source copied into <code>skills/&lt;name&gt;/SKILL.md</code> in this repo.</p>
+
+    <div class="collapsible" id="skill-do-task">
+      <div class="collapsible-header"><h3>/do-task</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:do-task --></div></div>
+    </div>
+    <div class="collapsible" id="skill-add-task">
+      <div class="collapsible-header"><h3>/add-task</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:add-task --></div></div>
+    </div>
+    <div class="collapsible" id="skill-ship-it">
+      <div class="collapsible-header"><h3>/ship-it</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:ship-it --></div></div>
+    </div>
+    <div class="collapsible" id="skill-ship">
+      <div class="collapsible-header"><h3>/ship</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:ship --></div></div>
+    </div>
+    <div class="collapsible" id="skill-next">
+      <div class="collapsible-header"><h3>/next</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:next --></div></div>
+    </div>
+    <div class="collapsible" id="skill-ac">
+      <div class="collapsible-header"><h3>/ac</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:ac --></div></div>
+    </div>
+    <div class="collapsible" id="skill-estimate">
+      <div class="collapsible-header"><h3>/estimate</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:estimate --></div></div>
+    </div>
+    <div class="collapsible" id="skill-set-context">
+      <div class="collapsible-header"><h3>/set-context</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:set-context --></div></div>
+    </div>
+    <div class="collapsible" id="skill-plan">
+      <div class="collapsible-header"><h3>/plan</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:plan --></div></div>
+    </div>
+    <div class="collapsible" id="skill-prd">
+      <div class="collapsible-header"><h3>/prd</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:prd --></div></div>
+    </div>
+    <div class="collapsible" id="skill-plan-review">
+      <div class="collapsible-header"><h3>/plan-review</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:plan-review --></div></div>
+    </div>
+    <div class="collapsible" id="skill-spec-review">
+      <div class="collapsible-header"><h3>/spec-review</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:spec-review --></div></div>
+    </div>
+    <div class="collapsible" id="skill-code-review-team">
+      <div class="collapsible-header"><h3>/code-review-team</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:code-review-team --></div></div>
+    </div>
+    <div class="collapsible" id="skill-sec-review-team">
+      <div class="collapsible-header"><h3>/sec-review-team</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:sec-review-team --></div></div>
+    </div>
+    <div class="collapsible" id="skill-sec-review-fixes">
+      <div class="collapsible-header"><h3>/sec-review-fixes</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:sec-review-fixes --></div></div>
+    </div>
+    <div class="collapsible" id="skill-prompt-improver">
+      <div class="collapsible-header"><h3>/prompt-improver</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><!-- @@SKILL:prompt-improver --></div></div>
+    </div>
+  </section>
+
+</div>
+
 </div><!-- /.main -->
 <script>
 /* MiniSearch v7.1.1 — MIT License — https://github.com/lucaong/minisearch */
@@ -3584,7 +3853,7 @@ claude</code></pre></div>
     document.getElementById('sidebar').classList.remove('open');
     const backdrop = document.getElementById('sidebarBackdrop');
     if (backdrop) backdrop.classList.remove('visible');
-    const pageTitles = { workflow: 'Workflow Orientation', basics: 'Claude Code Basics', commands: 'Slash Commands', deepdive: 'Workflow Deep-Dive', compare: 'Single-shot vs Spec-Driven' };
+    const pageTitles = { workflow: 'Workflow Orientation', basics: 'Claude Code Basics', commands: 'Slash Commands', deepdive: 'Workflow Deep-Dive', compare: 'Single-shot vs Spec-Driven', skills: 'Skills Library' };
     const titleEl = document.getElementById('pageTitle');
     if (titleEl) titleEl.textContent = pageTitles[pageId] || '';
     if (pageId === 'practices' && !window.__currentTopic) {
