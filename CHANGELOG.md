@@ -4,6 +4,14 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.12 — 2026-08-31
+
+**Skills Library section (FSD_Train-009)**
+
+Adds a sixth page — Skills Library — copying 16 first-party skills verbatim from `fsad_playbook/skills/` into this repo's own `skills/` directory and surfacing them in a new in-app section. `#skills-library` presents a categorized card grid (Workflow Management, Specification & Planning, Review & Security, Prompting); `#skills-definitions` renders each skill's actual `SKILL.md` source in a collapsible, pre-rendered at build time by a new `@@SKILL:<name>` pipeline in `scripts/bundle.mjs` (parallel to the existing `@@MD:<id>` markdown pipeline — same frontmatter-aware rendering, same fail-loud-on-missing/warn-on-unused behavior, still no runtime markdown library). Excludes `init`, `playbook-assistant`, and `sync` (out of scope for this training app) and `engineering-skills`/`product-skills` (untracked third-party clones in `fsad_playbook`, not real playbook skills).
+
+---
+
 ### v1.11 — 2026-05-29
 
 **Two-tier natural language search (FSD_Train-021)**
