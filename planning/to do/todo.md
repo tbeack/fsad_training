@@ -22,4 +22,4 @@
 - [x] `FSD_Train-020` — Add entry to left nav: `FSAD Playbook`. Link to: `https://fsad-playbook.vercel.app/` → [task-fsd_train-020.md](completed/task-fsd_train-020.md)
 - [x] `FSD_Train-021` — replace the search function in the training playbook with the approach taken in the "FSAD Playbook". Replicate plan in `/Users/theobeack/Repo/fsad_playbook/markdown/to do/completed/task-cbp-148.md` → [task-fsd_train-021.md](completed/task-fsd_train-021.md)
 - [x] `FSD_Train-022` — copy the updated fsad playbook skills to the training repo, add instructions in the readme section how to setup the local plugin, and create a script to install → [task-fsd_train-022.md](completed/task-fsd_train-022.md)
-- [x] `FSD_Train-023` — fix the formatting issues on the skills page. the formatting of the markdown is too large. review the font size in the fsad_playbook and mirror. → [task-fsd_train-023.md](task-fsd_train-023.md)
+- [x] `FSD_Train-023` — fix the formatting issues on the skills page. the formatting of the markdown is too large. review the font size in the fsad_playbook and mirror. → [task-fsd_train-023.md](completed/task-fsd_train-023.md)
