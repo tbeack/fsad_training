@@ -23,13 +23,14 @@ To preview, open `dist/fsad-training.html` directly (double-click works — `fil
 
 ### The bundling pattern
 
-`scripts/bundle.mjs` is the entire build (~35 lines):
+`scripts/bundle.mjs` is the entire build (~85 lines):
 
 1. Reads `src/markdown/*.md`, strips numeric prefix (`01-foo.md` → id `foo`), pre-renders to HTML via `marked`
-2. Reads `src/index.html`, replaces every `<!-- @@MD:<id> -->` with `<div class="md-artifact" data-md="<id>">…rendered HTML…</div>`
-3. Writes the result to `dist/fsad-training.html`
+2. Reads every `skills/<name>/SKILL.md`, strips the YAML frontmatter, pre-renders the body (plus the frontmatter's `description:` as a subtitle) to HTML
+3. Reads `src/index.html`, replaces every `<!-- @@MD:<id> -->` with `<div class="md-artifact" data-md="<id>">…rendered HTML…</div>` and every `<!-- @@SKILL:<name> -->` with `<div class="skill-artifact" data-skill="<name>">…rendered HTML…</div>`
+4. Writes the result to `dist/fsad-training.html`
 
-Bundler errors loudly on a placeholder with no matching `.md` file; warns on an unused `.md` file.
+Bundler errors loudly on a placeholder with no matching `.md` file or skill; warns on an unused `.md` file or skill.
 
 The output ships **no markdown library** — pre-rendering at build time is intentional so the dist file works from `file://` (where `fetch()` is blocked) and matches `fsad_playbook`'s "pure HTML" character.
 
@@ -37,6 +38,7 @@ The output ships **no markdown library** — pre-rendering at build time is inte
 
 - `src/index.html` — app shell. Embedded CSS in `<style>`, embedded JS in `<script>` at end of body. Hand-edited.
 - `src/markdown/*.md` — example artifacts surfaced in Section 4. Hand-edited.
+- `skills/<name>/SKILL.md` — installable skills copied verbatim from `fsad_playbook/skills/`, surfaced in the Skills Library page. Not hand-edited — re-sync from `fsad_playbook` if a skill changes upstream.
 - `dist/fsad-training.html` — generated single self-contained file. **Committed to the repo** so attendees with no toolchain can clone and double-click. Treat re-bundles like generated lockfiles.
 
 `.gitignore` excludes `node_modules/` and `.DS_Store` only. `dist/` is intentionally tracked.
@@ -55,7 +57,7 @@ Some JS functions came across that target playbook-specific DOM (`showPhase`, `s
 
 Patched on import: default landing page (`navigateTo('workflow')`), `pageTitles` map, `scrollToSection` now derives parent page from DOM rather than the playbook's `sectionToPageMap`.
 
-### Five sections (pages)
+### Six sections (pages)
 
 | Page id | Section | Notes |
 |---|---|---|
@@ -64,6 +66,7 @@ Patched on import: default landing page (`navigateTo('workflow')`), `pageTitles`
 | `commands` | Slash Commands | Static — grouped reference cards |
 | `deepdive` | Workflow Deep-Dive | **Interactive** — see Section 4 stepper below |
 | `compare` | Single-shot vs Spec-Driven | Placeholder — infographic concept TBD |
+| `skills` | Skills Library | Static — cloned from `fsad_playbook`'s Skills Library page; categorized card grid + full `SKILL.md` source for 16 copied skills |
 
 ### Section 4 stepper (the one piece of bespoke logic)
 
