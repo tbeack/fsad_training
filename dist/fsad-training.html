@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSAD Training (v1.12)</title>
+<title>FSAD Training (v1.13)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════════════
@@ -2068,7 +2068,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.12</span></span>
+    <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.13</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
       <div class="sidebar-search-input-wrap">
@@ -5233,7 +5233,7 @@ Phase 8 is verified when **all** of the following hold:
 
     <div class="collapsible" id="skill-do-task">
       <div class="collapsible-header"><h3>/do-task</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="do-task"><p class="skill-description">Execute or plan a task in any of your local projects. Auto-detects the current project from the working directory, reads conventions from <code>~/.claude/commands/fsd/projects.yaml</code>, and either drafts a missing task plan (plan mode) or implements the existing one (execute mode). Always creates a task-detail file before executing — even for lightweight projects. Use when the user says &quot;do CBP-087&quot;, &quot;work on FSD-031&quot;, &quot;execute task 12&quot;, or similar.</p><h1>fsd:do-task — multi-project task executor</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="do-task"><p class="skill-description">Execute or plan a task in any of your local projects. Auto-detects the current project from the working directory, reads conventions from <code>~/.claude/commands/fsd/projects.yaml</code>, and either drafts a missing task plan (plan mode) or implements the existing one (execute mode). Always creates a task-detail file before executing — even for lightweight projects. Use when the user says &quot;do CBP-087&quot;, &quot;work on FSD-031&quot;, &quot;execute task 12&quot;, or similar.</p><h1>fsad-harness:do-task — multi-project task executor</h1>
 <p>You help the user make progress on a single task in any registered project. The skill is <strong>mode-switching</strong>:</p>
 <ul>
 <li><strong>Plan mode</strong> — task entry exists in the todo file but no task-detail file exists yet. Draft the plan; stop.</li>
@@ -5248,7 +5248,7 @@ Phase 8 is verified when **all** of the following hold:
 <li>If a project matches, refer to its entry as <code>cfg</code> and the resolved project root as <code>project_root</code>. Proceed.</li>
 <li>If <strong>no project matches</strong>:<ul>
 <li>Tell the user the project is not registered.</li>
-<li>Suggest running <code>/fsd:add-task</code> from the project to register it, or offer to register it now.</li>
+<li>Suggest running <code>/fsad-harness:add-task</code> from the project to register it, or offer to register it now.</li>
 <li>Stop.</li>
 </ul>
 </li>
@@ -5268,7 +5268,7 @@ Phase 8 is verified when **all** of the following hold:
 <ul>
 <li>The current working directory (project root).</li>
 <li>The single task ID assigned to that agent.</li>
-<li>The full instruction to run the complete <code>fsd:do-task</code> flow for that ID — entering plan mode if no task-detail file exists yet, or execute mode if it does. The agent must follow all steps (Step 0 through the relevant terminal step) exactly as this skill describes, operating on its one assigned ID only.</li>
+<li>The full instruction to run the complete <code>fsad-harness:do-task</code> flow for that ID — entering plan mode if no task-detail file exists yet, or execute mode if it does. The agent must follow all steps (Step 0 through the relevant terminal step) exactly as this skill describes, operating on its one assigned ID only.</li>
 <li>An explicit note: <strong>do NOT write or delete <code>.pmon-session-task</code></strong> — badge ownership belongs to the orchestrator.</li>
 <li>An explicit note: <strong>do NOT edit <code>{project_root}/{cfg.todo_file}</code> yourself</strong> — completing agents must not write the shared main-tree todo file concurrently with siblings. Instead, return <code>todo_marked: false</code> in the structured result below and let the orchestrator batch the edit after every agent has returned.</li>
 <li>The exact structured-return contract (below) — the agent&#39;s final message must be only this structure, not free text.</li>
@@ -5296,7 +5296,7 @@ Phase 8 is verified when **all** of the following hold:
 TBS-013   execute mode  4/4 ACs verified, CHANGELOG updated, todo.md marked — changes isolated in worktree branch
 TBS-014   execute mode  2/3 ACs verified, blocked: refuted AC after 2 repair attempts — todo.md NOT marked
 </code></pre>
-<p>Then remove the badge file and tell the user: &quot;Each agent&#39;s changes are in an isolated worktree branch. Run <code>fsd:ship-it</code> to merge them sequentially into your working tree before committing.&quot;</p>
+<p>Then remove the badge file and tell the user: &quot;Each agent&#39;s changes are in an isolated worktree branch. Run <code>fsad-harness:ship-it</code> to merge them sequentially into your working tree before committing.&quot;</p>
 <pre><code>rm -f &quot;{project_root}/.pmon-session-task&quot;
 </code></pre>
 </li>
@@ -5344,7 +5344,7 @@ TBS-014   execute mode  2/3 ACs verified, blocked: refuted AC after 2 repair att
 </code></pre>
 <p>Use the resolved absolute path for <code>{todo_file_path}</code> and quote it to handle spaces.</p>
 <ul>
-<li><strong>Not found</strong> — Tell the user the task isn&#39;t in the tracker. Suggest <code>/fsd:add-task [title]</code> to create it first. Stop.</li>
+<li><strong>Not found</strong> — Tell the user the task isn&#39;t in the tracker. Suggest <code>/fsad-harness:add-task [title]</code> to create it first. Stop.</li>
 <li><strong>Already checked (<code>- [x]</code>)</strong> — Tell the user it&#39;s already marked complete. Ask whether to re-execute (rare). Default: stop.</li>
 <li><strong>Open (<code>- [ ]</code>)</strong> — Continue.</li>
 </ul>
@@ -5398,7 +5398,7 @@ TBS-014   execute mode  2/3 ACs verified, blocked: refuted AC after 2 repair att
 </code></pre>
 <p>Then update the todo entry to link the new task file. Match the existing linked-entry style in <code>cfg.todo_file</code> (em-dash, backtick-wrapped identifier, parenthesized link). Use <code>Edit</code> with unique surrounding context. Do not rewrite the whole file.</p>
 <p>If <code>cfg.notes</code> mentions style cues (e.g. &quot;reference task-cbp-030.md&quot;), peek at that file first and match its tone.</p>
-<p><strong>Stop here.</strong> Tell the user the plan is ready and that they can re-invoke <code>/fsd:do-task {ID}</code> to execute it. Do <strong>not</strong> start implementing.</p>
+<p><strong>Stop here.</strong> Tell the user the plan is ready and that they can re-invoke <code>/fsad-harness:do-task {ID}</code> to execute it. Do <strong>not</strong> start implementing.</p>
 <h2>Step 5 — Execute mode: implement the plan</h2>
 <h3>5a. Review critically before touching anything</h3>
 <p>Read the task file end-to-end. Identify concerns — ambiguous steps, missing context, factual claims about the codebase that no longer hold (file paths moved, exports renamed, etc.). Raise anything unclear before starting. Do not guess.</p>
@@ -5484,10 +5484,10 @@ TBS-014   execute mode  2/3 ACs verified, blocked: refuted AC after 2 repair att
 <h3>5f. Optional code review</h3>
 <p>All ACs have passed. Ask the user exactly once:</p>
 <blockquote>
-<p>&quot;All acceptance criteria passed. Would you like to run <code>/fsd:code-review-team</code> on this diff before wrapping up?&quot;</p>
+<p>&quot;All acceptance criteria passed. Would you like to run <code>/fsad-harness:code-review-team</code> on this diff before wrapping up?&quot;</p>
 </blockquote>
 <ul>
-<li><strong>Yes</strong> — Invoke the <code>fsd:code-review-team</code> skill (via <code>Skill</code> tool). Wait for it to complete. The skill writes <code>REVIEW-REPORT.md</code>; note any critical findings in the handoff message. Then continue to 5g.</li>
+<li><strong>Yes</strong> — Invoke the <code>fsad-harness:code-review-team</code> skill (via <code>Skill</code> tool). Wait for it to complete. The skill writes <code>REVIEW-REPORT.md</code>; note any critical findings in the handoff message. Then continue to 5g.</li>
 <li><strong>No / no response</strong> — Skip directly to 5g. Do not run the review.</li>
 </ul>
 <p>Do not run the review without explicit user confirmation.</p>
@@ -5542,7 +5542,7 @@ ACs verified: N/M
 <p>Open the handoff message with a bold header on its own line:</p>
 <pre><code>**{ID} — {title}**
 </code></pre>
-<p>Then provide a concise summary covering: what was implemented, which ACs were verified, which files changed, whether the CHANGELOG was updated, whether the todo entry was marked done, whether a version was bumped (or why it was skipped), whether the code review was run (e.g., &quot;Code review report written to <code>REVIEW-REPORT.md</code>&quot;) or skipped. Include the worktree branch name (e.g., <code>worktree-task-tbs-024</code>) and tell the user their changes are isolated on that branch. Suggest running <code>fsd:ship-it</code> (or <code>git merge &lt;branch&gt;</code>) to bring the changes into the main branch before pushing. <strong>Wait for the user to say &quot;commit&quot;</strong> before doing so.</p>
+<p>Then provide a concise summary covering: what was implemented, which ACs were verified, which files changed, whether the CHANGELOG was updated, whether the todo entry was marked done, whether a version was bumped (or why it was skipped), whether the code review was run (e.g., &quot;Code review report written to <code>REVIEW-REPORT.md</code>&quot;) or skipped. Include the worktree branch name (e.g., <code>worktree-task-tbs-024</code>) and tell the user their changes are isolated on that branch. Suggest running <code>fsad-harness:ship-it</code> (or <code>git merge &lt;branch&gt;</code>) to bring the changes into the main branch before pushing. <strong>Wait for the user to say &quot;commit&quot;</strong> before doing so.</p>
 <h2>Conventions to honour</h2>
 <ul>
 <li><strong>Identifier format:</strong> always canonical <code>PREFIX-NNN</code> (zero-padded, exact prefix casing) in messages, file names, and edits.</li>
@@ -5575,7 +5575,7 @@ ACs verified: N/M
     </div>
     <div class="collapsible" id="skill-add-task">
       <div class="collapsible-header"><h3>/add-task</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="add-task"><p class="skill-description">Add a new task to any of your local projects. Auto-detects the current project from the working directory and conforms to that project&#39;s conventions — prefix, numbering, todo-file layout, task-file template. Reads conventions from <code>~/.claude/commands/fsd/projects.yaml</code>. Use when the user wants to add a task, capture a TODO, or track a new idea.</p><h1>fsd:add-task — multi-project task adder</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="add-task"><p class="skill-description">Add a new task to any of your local projects. Auto-detects the current project from the working directory and conforms to that project&#39;s conventions — prefix, numbering, todo-file layout, task-file template. Reads conventions from <code>~/.claude/commands/fsd/projects.yaml</code>. Use when the user wants to add a task, capture a TODO, or track a new idea.</p><h1>fsad-harness:add-task — multi-project task adder</h1>
 <p>You add a new task entry (and, where the project warrants it, a per-task detail file) in whichever local project the user is currently working in. Project-specific conventions are defined in <code>~/.claude/commands/fsd/projects.yaml</code> — always read that file before doing anything else.</p>
 <p><code>$ARGUMENTS</code> (if present) is the brief task title.</p>
 <p><strong>What &quot;done&quot; means for a task-creation run:</strong></p>
@@ -5743,7 +5743,7 @@ ACs verified: N/M
     </div>
     <div class="collapsible" id="skill-ship-it">
       <div class="collapsible-header"><h3>/ship-it</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ship-it"><p class="skill-description">Wrap up a finished round of work — verify README and CHANGELOG are current, cut a version if warranted, move completed task files into the completed/ folder, then create a feature branch if needed, commit, push, and open a PR. Run after <code>/fsd:do-task</code> has marked one or more tasks done. Takes no arguments.</p><h1>fsd:ship-it — wrap up and ship</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ship-it"><p class="skill-description">Wrap up a finished round of work — verify README and CHANGELOG are current, cut a version if warranted, move completed task files into the completed/ folder, then create a feature branch if needed, commit, push, and open a PR. Run after <code>/fsad-harness:do-task</code> has marked one or more tasks done. Takes no arguments.</p><h1>fsad-harness:ship-it — wrap up and ship</h1>
 <p>You run four sequential phases to close out a batch of completed work: worktree merge (Step 0.5), pre-flight audits — README/CHANGELOG/version/completed-task cleanup (Step 1), commit + push + PR (Step 2), and verify-shipped (Step 3). Do not skip phases or reorder them.</p>
 <p>&quot;Shipped&quot; means all three of the following verifiable predicates hold — not that a phase list was walked:</p>
 <ol>
@@ -5760,7 +5760,7 @@ ACs verified: N/M
 <li>If a project matches, refer to its entry as <code>cfg</code> and the resolved project root as <code>project_root</code>. Proceed.</li>
 <li>If <strong>no project matches</strong>:<ul>
 <li>Tell the user the project is not registered.</li>
-<li>Suggest running <code>/fsd:add-task</code> from the project to register it.</li>
+<li>Suggest running <code>/fsad-harness:add-task</code> from the project to register it.</li>
 <li>Stop.</li>
 </ul>
 </li>
@@ -5785,7 +5785,7 @@ c. If the merge produces a conflict: <strong>stop immediately</strong>. Tell the
 <li>Edit the file to keep the correct content and remove all conflict markers.</li>
 <li>Stage each resolved file: <code>git add &lt;file&gt;</code>.</li>
 <li>Complete the merge commit: <code>git commit</code>.</li>
-<li>Re-run <code>fsd:ship-it</code> to continue from where it left off.
+<li>Re-run <code>fsad-harness:ship-it</code> to continue from where it left off.
    Do not proceed to Step 1. Do not remove the worktree — it may still hold the only copy of unmerged work.
 d. <strong>Verify the merge landed before removing anything</strong>: run <code>git merge-base --is-ancestor &lt;branch&gt; HEAD</code>. Exit code <code>0</code> means the branch tip is now reachable from <code>HEAD</code> — the merge is confirmed in the main tree.</li>
 </ol>
@@ -5925,7 +5925,7 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 &lt;CHANGELOG content for this version, or a bullet-list summary if no version was cut&gt;
 
 ## Test plan
-- [ ] Skill files deployed and appear in `/fsd:*` command list
+- [ ] Skill files deployed and appear in `/fsad-harness:*` command list
 - [ ] README skills table is accurate
 - [ ] CHANGELOG entry is present and correctly formatted
 
@@ -5954,13 +5954,13 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
     </div>
     <div class="collapsible" id="skill-ship">
       <div class="collapsible-header"><h3>/ship</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ship"><p class="skill-description">Short alias for /fsd:ship-it. Wrap up finished work, cut a version, commit, push, and open a PR.</p><p>Alias for <code>/fsd:ship-it</code>. Invoke the Skill tool with skill name <code>fsd:ship-it</code> and pass <code>$ARGUMENTS</code> unchanged.</p>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ship"><p class="skill-description">Short alias for /fsad-harness:ship-it. Wrap up finished work, cut a version, commit, push, and open a PR.</p><p>Alias for <code>/fsad-harness:ship-it</code>. Invoke the Skill tool with skill name <code>fsad-harness:ship-it</code> and pass <code>$ARGUMENTS</code> unchanged.</p>
 </div></div></div>
     </div>
     <div class="collapsible" id="skill-next">
       <div class="collapsible-header"><h3>/next</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="next"><p class="skill-description">Pick the next open task from the current project&#39;s todo file and invoke <code>/fsd:do-task</code> with that task ID. Ranks candidates by readiness (has a task-detail file, no stated unmet dependency) and reports why one was chosen. Accepts an optional count (<code>/fsd:next 3</code>) to hand off multiple ranked candidates to <code>do-task</code>&#39;s concurrent multi-task dispatch. Auto-detects the current project from the working directory using the same YAML config as other fsd skills. Use when the user says &quot;do the next task&quot;, &quot;what&#39;s next&quot;, &quot;next task&quot;, &quot;next 3 tasks&quot;, or similar.</p><h1>fsd:next — pick the next ready task and hand off to do-task</h1>
-<p>You find the most <strong>ready</strong> unchecked task(s) in the current project&#39;s todo file and invoke <code>fsd:do-task</code> with the chosen ID(s). Readiness — not file order — decides which candidate wins.</p>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="next"><p class="skill-description">Pick the next open task from the current project&#39;s todo file and invoke <code>/fsad-harness:do-task</code> with that task ID. Ranks candidates by readiness (has a task-detail file, no stated unmet dependency) and reports why one was chosen. Accepts an optional count (<code>/fsad-harness:next 3</code>) to hand off multiple ranked candidates to <code>do-task</code>&#39;s concurrent multi-task dispatch. Auto-detects the current project from the working directory using the same YAML config as other fsd skills. Use when the user says &quot;do the next task&quot;, &quot;what&#39;s next&quot;, &quot;next task&quot;, &quot;next 3 tasks&quot;, or similar.</p><h1>fsad-harness:next — pick the next ready task and hand off to do-task</h1>
+<p>You find the most <strong>ready</strong> unchecked task(s) in the current project&#39;s todo file and invoke <code>fsad-harness:do-task</code> with the chosen ID(s). Readiness — not file order — decides which candidate wins.</p>
 <h2>Step 0 — Detect the project</h2>
 <ol>
 <li>Determine the current working directory.</li>
@@ -5969,7 +5969,7 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <li>If a project matches, refer to its entry as <code>cfg</code> and the resolved project root as <code>project_root</code>. Proceed.</li>
 <li>If <strong>no project matches</strong>:<ul>
 <li>Tell the user the project is not registered.</li>
-<li>Suggest running <code>/fsd:add-task</code> from the project to register it.</li>
+<li>Suggest running <code>/fsad-harness:add-task</code> from the project to register it.</li>
 <li>Stop.</li>
 </ul>
 </li>
@@ -5979,7 +5979,7 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <ul>
 <li>Empty → <code>N = 1</code>.</li>
 <li>A positive integer → <code>N</code> = that value.</li>
-<li>Anything else (non-numeric, zero, negative) → tell the user: &quot;Expected an optional count, e.g. <code>/fsd:next</code> or <code>/fsd:next 3</code>.&quot; Stop.</li>
+<li>Anything else (non-numeric, zero, negative) → tell the user: &quot;Expected an optional count, e.g. <code>/fsad-harness:next</code> or <code>/fsad-harness:next 3</code>.&quot; Stop.</li>
 </ul>
 <h2>Step 2 — Find candidate open tasks (targeted grep, not a full-file Read)</h2>
 <p>Run a targeted grep against the todo file instead of reading it in full:</p>
@@ -6023,22 +6023,22 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <ul>
 <li><p><strong><code>N = 1</code></strong>: Tell the user which task was selected and why, e.g.:</p>
 <blockquote>
-<p>Next task: <strong>TBS-006</strong> — &quot;Add a new skill <code>fsd:next</code>&quot; (Tier 1 — ready). Handing off to <code>fsd:do-task</code>…</p>
+<p>Next task: <strong>TBS-006</strong> — &quot;Add a new skill <code>fsad-harness:next</code>&quot; (Tier 1 — ready). Handing off to <code>fsad-harness:do-task</code>…</p>
 </blockquote>
-<p>Then invoke <code>fsd:do-task</code> via the Skill tool, passing the single canonical task identifier as the argument.</p>
+<p>Then invoke <code>fsad-harness:do-task</code> via the Skill tool, passing the single canonical task identifier as the argument.</p>
 </li>
 <li><p><strong><code>N &gt; 1</code></strong>: Tell the user the full ranked list being dispatched, e.g.:</p>
 <blockquote>
-<p>Dispatching 3 ready tasks to <code>fsd:do-task</code>: <strong>TBS-042, TBS-044, TBS-046</strong>.</p>
+<p>Dispatching 3 ready tasks to <code>fsad-harness:do-task</code>: <strong>TBS-042, TBS-044, TBS-046</strong>.</p>
 </blockquote>
-<p>Then invoke <code>fsd:do-task</code> via the Skill tool, passing all selected canonical identifiers space-separated as a single argument string (e.g. <code>TBS-042 TBS-044 TBS-046</code>). <code>do-task</code>&#39;s own Step 0.5 multi-task dispatch takes over from there — each ID is planned/executed concurrently in its own isolated worktree.</p>
+<p>Then invoke <code>fsad-harness:do-task</code> via the Skill tool, passing all selected canonical identifiers space-separated as a single argument string (e.g. <code>TBS-042 TBS-044 TBS-046</code>). <code>do-task</code>&#39;s own Step 0.5 multi-task dispatch takes over from there — each ID is planned/executed concurrently in its own isolated worktree.</p>
 </li>
 </ul>
 </div></div></div>
     </div>
     <div class="collapsible" id="skill-ac">
       <div class="collapsible-header"><h3>/ac</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ac"><p class="skill-description">Verify acceptance criteria for a task. Reads the task&#39;s detail file, fans every unchecked AC out to an independent verifier subagent, adversarially refutes each PASS before marking it, and inserts a &quot;All criteria verified&quot; timestamp when all pass. Use when you want to run or re-run ACs independently of task execution — e.g. after implementation, in a follow-up session, or to get an honest mid-task progress check.</p><h1>fsd:ac — acceptance criteria verifier</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ac"><p class="skill-description">Verify acceptance criteria for a task. Reads the task&#39;s detail file, fans every unchecked AC out to an independent verifier subagent, adversarially refutes each PASS before marking it, and inserts a &quot;All criteria verified&quot; timestamp when all pass. Use when you want to run or re-run ACs independently of task execution — e.g. after implementation, in a follow-up session, or to get an honest mid-task progress check.</p><h1>fsad-harness:ac — acceptance criteria verifier</h1>
 <p>Fan every unchecked AC in a task file out to an independent verifier subagent, adversarially refute each claimed PASS before marking it, and let only the orchestrator edit the task file.</p>
 <h2>Step 0 — Detect the project</h2>
 <ol>
@@ -6047,7 +6047,7 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <li>Match cwd against each project&#39;s <code>match_paths</code> (expand <code>~</code>). Prefer the longest match if multiple match.</li>
 <li>If a project matches, use its entry as <code>cfg</code> and resolve <code>project_root</code>. Proceed.</li>
 <li>If <strong>no project matches</strong>:<ul>
-<li>Tell the user: &quot;This directory isn&#39;t registered. Run <code>/fsd:add-task</code> from the project to register it.&quot;</li>
+<li>Tell the user: &quot;This directory isn&#39;t registered. Run <code>/fsad-harness:add-task</code> from the project to register it.&quot;</li>
 <li>Stop.</li>
 </ul>
 </li>
@@ -6069,13 +6069,13 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <pre><code>{project_root}/{cfg.task_dir}/{rendered cfg.task_filename_template}
 </code></pre>
 <ul>
-<li><strong>File not found</strong>: Tell the user the task file doesn&#39;t exist. Suggest running <code>/fsd:do-task {ID}</code> to create it first. Stop.</li>
+<li><strong>File not found</strong>: Tell the user the task file doesn&#39;t exist. Suggest running <code>/fsad-harness:do-task {ID}</code> to create it first. Stop.</li>
 <li><strong>File found</strong>: Read it end-to-end. Continue.</li>
 </ul>
 <h2>Step 3 — Find the Acceptance Criteria section</h2>
 <p>Scan the task file for a <code>## Acceptance Criteria</code> heading.</p>
 <ul>
-<li><strong>Section absent</strong>: Tell the user: &quot;No <code>## Acceptance Criteria</code> section found in <code>{task_file_path}</code>. Add one before running <code>/fsd:ac</code>.&quot; Stop.</li>
+<li><strong>Section absent</strong>: Tell the user: &quot;No <code>## Acceptance Criteria</code> section found in <code>{task_file_path}</code>. Add one before running <code>/fsad-harness:ac</code>.&quot; Stop.</li>
 <li><strong>Section present but all items already <code>[x]</code></strong>: Tell the user all ACs are already checked. Check whether the &quot;All criteria verified&quot; timestamp line exists above the list. If it&#39;s missing, add it (Step 7). Otherwise report: &quot;All ACs already verified — nothing to do.&quot; Stop.</li>
 <li><strong>At least one <code>- [ ]</code> item present</strong>: Continue.</li>
 </ul>
@@ -6156,7 +6156,7 @@ Return <code>{ac_id, refuter_verdict: CONFIRMED|REFUTED, reason}</code>.</li>
 <p>Then:</p>
 <ul>
 <li>If <strong>all passed</strong>: &quot;All ACs verified. Timestamp added to task file. Ready to commit.&quot;</li>
-<li>If <strong>any failed</strong>: List each failing AC — including any refuter-downgraded ones with the refuter&#39;s reason — and what evidence was missing. Tell the user: &quot;Fix the failing ACs and re-run <code>/fsd:ac {ID}</code>.&quot;</li>
+<li>If <strong>any failed</strong>: List each failing AC — including any refuter-downgraded ones with the refuter&#39;s reason — and what evidence was missing. Tell the user: &quot;Fix the failing ACs and re-run <code>/fsad-harness:ac {ID}</code>.&quot;</li>
 <li>If <strong>any unclear</strong>: List each <code>UNCLEAR</code> AC with the reason and wait for the user&#39;s direction before re-running.</li>
 </ul>
 <h2>Guardrails</h2>
@@ -6180,7 +6180,7 @@ Return <code>{ac_id, refuter_verdict: CONFIRMED|REFUTED, reason}</code>.</li>
 <h2>Goal</h2>
 <p>The point of an estimation pass is <strong>relative consistency within the batch</strong>, not absolute accuracy against some external truth. Two comparably-scoped items should land on comparable point values, and the process should surface — not hide — the cases where that&#39;s genuinely hard to call. Everything below (the judge panel, the spread flag, the adversarial consistency pass) exists in service of that one goal.</p>
 <h2>Input</h2>
-<p>The user provides work items after invoking <code>/fsd:estimate</code>. Items can be in any format:</p>
+<p>The user provides work items after invoking <code>/fsad-harness:estimate</code>. Items can be in any format:</p>
 <ul>
 <li>Bullet list</li>
 <li>Numbered list</li>
@@ -6336,7 +6336,7 @@ Return <code>{ac_id, refuter_verdict: CONFIRMED|REFUTED, reason}</code>.</li>
     </div>
     <div class="collapsible" id="skill-set-context">
       <div class="collapsible-header"><h3>/set-context</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="set-context"><p class="skill-description">Gather codebase and initiative context before planning starts — runs a graphify build or query when graphify is available locally, falls back to a manual repo sweep otherwise, then asks targeted questions and writes a single context.md. Invocable standalone or as fsd:plan&#39;s mandatory Phase 0. Use when the user says &quot;set context&quot;, &quot;gather context&quot;, or as the first step of fsd:plan.</p><h1>fsd:set-context — Context-Gathering Subskill</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="set-context"><p class="skill-description">Gather codebase and initiative context before planning starts — runs a graphify build or query when graphify is available locally, falls back to a manual repo sweep otherwise, then asks targeted questions and writes a single context.md. Invocable standalone or as fsad-harness:plan&#39;s mandatory Phase 0. Use when the user says &quot;set context&quot;, &quot;gather context&quot;, or as the first step of fsad-harness:plan.</p><h1>fsad-harness:set-context — Context-Gathering Subskill</h1>
 <p>Gather everything a downstream planning pass needs — codebase shape plus the initiative&#39;s own
 boundaries — and emit it as a single <code>context.md</code> file. Nothing else reads or writes to disk in
 this skill besides that one file (and, when graphify runs, whatever <code>graphify-out/</code> it produces).</p>
@@ -6397,7 +6397,7 @@ Context and note explicitly that no graphify graph was used.</li>
 Ask <strong>one at a time</strong>, not as a form. Record every answer in <code>context.md</code> — a question asked but
 never carried into the file is not actually gathered.</p>
 <ol>
-<li><strong>Initiative slug/name</strong> — the name used to derive the output directory (see <code>fsd:plan</code>&#39;s Step
+<li><strong>Initiative slug/name</strong> — the name used to derive the output directory (see <code>fsad-harness:plan</code>&#39;s Step
 4 slug-transform algorithm: lowercase, non-alphanumeric runs collapsed to a single hyphen,
 leading/trailing hyphens trimmed — e.g. &quot;Auth Service Refactor!&quot; → <code>auth-service-refactor</code>).</li>
 <li><strong>Scope boundaries</strong> — what&#39;s in scope for this initiative, and what&#39;s explicitly out.</li>
@@ -6416,11 +6416,11 @@ only in the conversation and not in the file.</p>
 <h2>Step 4 — Emit context.md</h2>
 <p>Write a single structured <code>context.md</code> to <code>planning/plan/&lt;slug&gt;/</code> (using the slug from Step 3.1
 and the transform above), or to a scratch location — e.g. the repo root — if that directory
-doesn&#39;t exist yet (it&#39;s created once the initiative is confirmed, in <code>fsd:plan</code>&#39;s Phase 0).</p>
-<p><strong>Why a file, not an in-memory handoff:</strong> every downstream drafting agent (<code>fsd:plan</code>&#39;s Phase
+doesn&#39;t exist yet (it&#39;s created once the initiative is confirmed, in <code>fsad-harness:plan</code>&#39;s Phase 0).</p>
+<p><strong>Why a file, not an in-memory handoff:</strong> every downstream drafting agent (<code>fsad-harness:plan</code>&#39;s Phase
 1-4.5) is a separately-dispatched <code>Agent</code>-tool subagent with no memory of this skill&#39;s own turn —
 only a file survives across that boundary. Every downstream drafting agent&#39;s dispatch prompt must
-reference this file&#39;s path rather than re-deriving context independently; that&#39;s on <code>fsd:plan</code>,
+reference this file&#39;s path rather than re-deriving context independently; that&#39;s on <code>fsad-harness:plan</code>,
 not this skill, but it&#39;s why this file&#39;s shape has to be complete on its own.</p>
 <p>Template:</p>
 <pre><code class="language-markdown"># Context — {initiative name}
@@ -6456,7 +6456,7 @@ structure.</li>
     </div>
     <div class="collapsible" id="skill-plan">
       <div class="collapsible-header"><h3>/plan</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="plan"><p class="skill-description">Guide the user through planning a significant project, a large epic/initiative spanning multiple epics, or a codebase refactor. Produces five planning artifacts (project.md, architecture.md, roadmap.md, verification.md, instructions.md), gated phase by phase like fsd:prd. Use when the user says &quot;plan this project&quot;, &quot;plan this refactor&quot;, &quot;help me plan this epic&quot;, or similar.</p><h1>fsd:plan — Large-Initiative Planning Agent</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="plan"><p class="skill-description">Guide the user through planning a significant project, a large epic/initiative spanning multiple epics, or a codebase refactor. Produces five planning artifacts (project.md, architecture.md, roadmap.md, verification.md, instructions.md), gated phase by phase like fsad-harness:prd. Use when the user says &quot;plan this project&quot;, &quot;plan this refactor&quot;, &quot;help me plan this epic&quot;, or similar.</p><h1>fsad-harness:plan — Large-Initiative Planning Agent</h1>
 <p>Follow these phases in order. Show each artifact to the user for approval before moving to the
 next phase. Never generate all five documents unattended — each phase checkpoints.</p>
 <h2>Role files</h2>
@@ -6474,7 +6474,7 @@ from this skill&#39;s directory — this skill needs its role-brief files presen
 from the skill&#39;s source, then re-run this command.&quot;</em> Do not improvise a persona for a missing role
 file.</p>
 <h2>Phase 0 — Context (mandatory, not skippable)</h2>
-<p>Invoke the <code>fsd:set-context</code> skill now (as a subskill — see its own SKILL.md for its invocation
+<p>Invoke the <code>fsad-harness:set-context</code> skill now (as a subskill — see its own SKILL.md for its invocation
 model: it runs inline, not as a fire-and-forget subagent). <strong>If a target repo path was supplied
 as this skill&#39;s second argument, pass it through as <code>set-context</code>&#39;s explicit path argument</strong> so
 it resolves the target from that path rather than the current working directory; otherwise
@@ -6554,11 +6554,11 @@ parallelizing, and running them one at a time avoids three agents editing relate
 once.</p>
 <p>Show the user a one-line summary of what was backfilled in each document before continuing.</p>
 <h2>Phase 5 — Offer adversarial review</h2>
-<p>Offer to invoke <code>fsd:plan-review</code> against the five generated documents as a final adversarial pass,
+<p>Offer to invoke <code>fsad-harness:plan-review</code> against the five generated documents as a final adversarial pass,
 writing <code>plan_review.md</code> alongside them: <em>&quot;All five documents are drafted and reconciled. Want me
-to run <code>fsd:plan-review</code> against them before you start implementing?&quot;</em></p>
+to run <code>fsad-harness:plan-review</code> against them before you start implementing?&quot;</em></p>
 <ul>
-<li><strong>Yes</strong> — invoke the <code>fsd:plan-review</code> skill (via the <code>Skill</code> tool), with <code>source</code> set to the
+<li><strong>Yes</strong> — invoke the <code>fsad-harness:plan-review</code> skill (via the <code>Skill</code> tool), with <code>source</code> set to the
 <code>planning/plan/&lt;slug&gt;/</code> directory and <code>target</code> set to <code>planning/plan/&lt;slug&gt;/plan_review.md</code>.</li>
 <li><strong>No</strong> — skip it. Do not run the review without explicit confirmation.</li>
 </ul>
@@ -6585,7 +6585,7 @@ files above) rather than improvising the persona.</li>
     </div>
     <div class="collapsible" id="skill-prd">
       <div class="collapsible-header"><h3>/prd</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="prd"><p class="skill-description">Guide the user through writing a Product Requirements Document or feature spec. Uses a four-phase gated flow (Discovery → Specify → Plan → Tasks) to produce spec.md, plan.md, and tasks.md in the project&#39;s planning/prd/ directory. Use when the user says &quot;write a PRD&quot;, &quot;write a spec&quot;, &quot;spec out this feature&quot;, &quot;help me define requirements&quot;, or similar.</p><h1>fsd:prd — PRD &amp; Spec Writing Agent</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="prd"><p class="skill-description">Guide the user through writing a Product Requirements Document or feature spec. Uses a four-phase gated flow (Discovery → Specify → Plan → Tasks) to produce spec.md, plan.md, and tasks.md in the project&#39;s planning/prd/ directory. Use when the user says &quot;write a PRD&quot;, &quot;write a spec&quot;, &quot;spec out this feature&quot;, &quot;help me define requirements&quot;, or similar.</p><h1>fsad-harness:prd — PRD &amp; Spec Writing Agent</h1>
 <p>Follow these phases in order. Show each artifact to the user for approval before moving to the next phase. Never skip a gate.</p>
 <h2>Role definitions</h2>
 <p>This skill uses two role briefs embedded below:</p>
@@ -6741,7 +6741,7 @@ files above) rather than improvising the persona.</li>
 <li><code>plan.md</code> — how</li>
 <li><code>tasks.json</code> / <code>tasks.md</code> — ordered implementation tasks with ACs</li>
 </ul>
-<p>To execute: pick up tasks in order with <code>/fsd:do-task</code> or import them into your tracker with <code>/fsd:add-task</code>.&quot;</p>
+<p>To execute: pick up tasks in order with <code>/fsad-harness:do-task</code> or import them into your tracker with <code>/fsad-harness:add-task</code>.&quot;</p>
 </blockquote>
 <h2>Guardrails</h2>
 <ul>
@@ -6839,9 +6839,9 @@ files above) rather than improvising the persona.</li>
     </div>
     <div class="collapsible" id="skill-plan-review">
       <div class="collapsible-header"><h3>/plan-review</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="plan-review"><p class="skill-description">Run a detailed, adversarial multi-agent review of an implementation plan — a GitHub PR, a branch, or a planning document — against the baseline spec, ADR, or prior plan it is meant to honour. Reviews the plan, not the code. Builds a shared inventory, runs up to 7 independent lenses in parallel (completeness, consistency, logic, feasibility, assumptions, testability, baseline-diff), verifies every finding against the repository so that anything without a path:line or a runnable command is dropped, adjudicates by severity, then loops a completeness critic until dry. Writes a findings document to a caller-specified target. Use when the user says &quot;review this plan&quot;, &quot;review this PR&#39;s plan&quot;, &quot;does this plan match the spec&quot;, &quot;red team this implementation plan&quot;, &quot;what&#39;s missing from this plan&quot;, &quot;check this plan against the ADR&quot;, &quot;plan review&quot;, or similar. Review-only — never edits the plan, the PR, or any source file.</p><h1>fsd:plan-review — Adversarial Implementation-Plan Review</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="plan-review"><p class="skill-description">Run a detailed, adversarial multi-agent review of an implementation plan — a GitHub PR, a branch, or a planning document — against the baseline spec, ADR, or prior plan it is meant to honour. Reviews the plan, not the code. Builds a shared inventory, runs up to 7 independent lenses in parallel (completeness, consistency, logic, feasibility, assumptions, testability, baseline-diff), verifies every finding against the repository so that anything without a path:line or a runnable command is dropped, adjudicates by severity, then loops a completeness critic until dry. Writes a findings document to a caller-specified target. Use when the user says &quot;review this plan&quot;, &quot;review this PR&#39;s plan&quot;, &quot;does this plan match the spec&quot;, &quot;red team this implementation plan&quot;, &quot;what&#39;s missing from this plan&quot;, &quot;check this plan against the ADR&quot;, &quot;plan review&quot;, or similar. Review-only — never edits the plan, the PR, or any source file.</p><h1>fsad-harness:plan-review — Adversarial Implementation-Plan Review</h1>
 <p><strong>What this optimizes for:</strong> catching the thing that makes the plan unbuildable <em>before</em> anyone starts building it. A plan is cheap to change and expensive to have half-built, so the review is worth running exactly once — here — and its value comes from measuring the plan against two things it cannot check for itself: the baseline it promised to honour, and the repository it will actually land in. What that yields in practice is defined per lens in <code>lenses.md</code>, not here.</p>
-<p>This is the <strong>plan-stage gate</strong>. It runs before the code-stage gates (<code>fsd:code-review-team</code>, <code>fsd:sec-review-team</code>) — there is no code yet.</p>
+<p>This is the <strong>plan-stage gate</strong>. It runs before the code-stage gates (<code>fsad-harness:code-review-team</code>, <code>fsad-harness:sec-review-team</code>) — there is no code yet.</p>
 <p>Review-only. The skill writes exactly two things: the findings document at <code>target</code>, and the run directory (<code>run_dir</code>, defaulting beside <code>target</code> — see Parameters). Nothing else on disk is touched.</p>
 <hr>
 <h2>Parameters</h2>
@@ -6897,7 +6897,7 @@ files above) rather than improvising the persona.</li>
 <p>Say so and stop, rather than producing a report that pads a non-problem:</p>
 <ul>
 <li><strong>Single-step plans.</strong> One step, one file, one acceptance criterion. There is no sequencing to audit, no cross-reference graph, and no baseline drift to measure. A normal read is cheaper and just as good.</li>
-<li><strong>Plans with no baseline and no cross-references.</strong> If nothing resolves as <code>baseline</code> and the plan cites no ADRs, no sibling documents, no numbered artefacts, and no source files, then five of the seven lenses have nothing to check against — the review degenerates into proofreading. Offer <code>fsd:spec-review</code> instead, which judges a document on its own terms.</li>
+<li><strong>Plans with no baseline and no cross-references.</strong> If nothing resolves as <code>baseline</code> and the plan cites no ADRs, no sibling documents, no numbered artefacts, and no source files, then five of the seven lenses have nothing to check against — the review degenerates into proofreading. Offer <code>fsad-harness:spec-review</code> instead, which judges a document on its own terms.</li>
 <li><strong>Pure-copy edits.</strong> Wording, formatting, typo, or link-text changes to an existing plan. Diff the prose; do not convene a review team.</li>
 </ul>
 <p>If the user asks anyway after being told, run it — say what the reduced roster will be first.</p>
@@ -7194,11 +7194,11 @@ files above) rather than improvising the persona.</li>
 <hr>
 <h2>Non-goals</h2>
 <ul>
-<li><strong>Not a code review.</strong> There is no implementation yet. Use <code>fsd:code-review-team</code> once there is.</li>
-<li><strong>Not a security review.</strong> Threat modelling of the built system is <code>fsd:sec-review-team</code>&#39;s job.</li>
+<li><strong>Not a code review.</strong> There is no implementation yet. Use <code>fsad-harness:code-review-team</code> once there is.</li>
+<li><strong>Not a security review.</strong> Threat modelling of the built system is <code>fsad-harness:sec-review-team</code>&#39;s job.</li>
 <li><strong>Not an approval.</strong> The document is input to the plan owner&#39;s decision, not a merge verdict rendered on their behalf.</li>
 <li><strong>Not a rewrite service.</strong> It never edits the plan and never opens a PR.</li>
-<li><strong>Not a proposal critique.</strong> Judging a document on its own merits, with no baseline to honour, is <code>fsd:spec-review</code>.</li>
+<li><strong>Not a proposal critique.</strong> Judging a document on its own merits, with no baseline to honour, is <code>fsad-harness:spec-review</code>.</li>
 <li><strong>Not exhaustive by default.</strong> <code>quick</code> and <code>standard</code> are bounded on purpose; every bound is logged in Coverage.</li>
 </ul>
 <hr>
@@ -7214,35 +7214,35 @@ files above) rather than improvising the persona.</li>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>fsd:spec-review</code></td>
+<td><code>fsad-harness:spec-review</code></td>
 <td>Proposal</td>
 <td>A spec, PRD, RFC, or design doc</td>
 <td>Its own internal consistency</td>
 <td><code>SPEC-REVIEW.md</code> beside the document</td>
 </tr>
 <tr>
-<td><strong><code>fsd:plan-review</code></strong></td>
+<td><strong><code>fsad-harness:plan-review</code></strong></td>
 <td><strong>Plan</strong></td>
 <td><strong>An implementation plan — PR, branch, or planning doc</strong></td>
 <td><strong>The baseline spec/ADR it must honour, and the repository</strong></td>
 <td><strong>A caller-specified <code>target</code></strong></td>
 </tr>
 <tr>
-<td><code>fsd:code-review-team</code></td>
+<td><code>fsad-harness:code-review-team</code></td>
 <td>Code</td>
 <td>A diff or path</td>
 <td>Correctness, design, performance, maintainability, testing, API contract</td>
 <td><code>REVIEW-REPORT.md</code></td>
 </tr>
 <tr>
-<td><code>fsd:sec-review-team</code></td>
+<td><code>fsad-harness:sec-review-team</code></td>
 <td>Code</td>
 <td>A codebase or diff</td>
 <td>A stack-selected security specialist roster</td>
 <td><code>REPORT.md</code> + <code>known-findings.jsonl</code></td>
 </tr>
 </tbody></table>
-<p>Run them in that order. <code>fsd:plan-review</code> catches what would otherwise be found in code review at ten times the cost.</p>
+<p>Run them in that order. <code>fsad-harness:plan-review</code> catches what would otherwise be found in code review at ten times the cost.</p>
 <hr>
 <h2>Guardrails</h2>
 <ul>
@@ -7262,7 +7262,7 @@ files above) rather than improvising the persona.</li>
     </div>
     <div class="collapsible" id="skill-spec-review">
       <div class="collapsible-header"><h3>/spec-review</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="spec-review"><p class="skill-description">Run a detailed, adversarial multi-agent review of a written proposal or specification (spec.md, PRD, RFC, design doc, architecture proposal, business case) — reviews the document, not code. Runs a steelman/inventory pass, then up to 10 specialist lenses (logic, assumptions, evidence, completeness, feasibility, alternatives, consistency, stakeholders, testability, risk), then adversarial validation that defaults to refuting each finding unless it survives, then a loop-until-dry completeness pass. Writes a single severity-ranked SPEC-REVIEW.md next to the document. Use when the user says &quot;review this spec&quot;, &quot;adversarial review&quot;, &quot;poke holes in this proposal&quot;, &quot;red team this PRD&quot;, &quot;critique this design doc&quot;, &quot;what&#39;s wrong with this RFC&quot;, &quot;stress test this plan&quot;, or similar. Review-only — never edits the document.</p><h1>fsd:spec-review — Adversarial Document Review</h1>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="spec-review"><p class="skill-description">Run a detailed, adversarial multi-agent review of a written proposal or specification (spec.md, PRD, RFC, design doc, architecture proposal, business case) — reviews the document, not code. Runs a steelman/inventory pass, then up to 10 specialist lenses (logic, assumptions, evidence, completeness, feasibility, alternatives, consistency, stakeholders, testability, risk), then adversarial validation that defaults to refuting each finding unless it survives, then a loop-until-dry completeness pass. Writes a single severity-ranked SPEC-REVIEW.md next to the document. Use when the user says &quot;review this spec&quot;, &quot;adversarial review&quot;, &quot;poke holes in this proposal&quot;, &quot;red team this PRD&quot;, &quot;critique this design doc&quot;, &quot;what&#39;s wrong with this RFC&quot;, &quot;stress test this plan&quot;, or similar. Review-only — never edits the document.</p><h1>fsad-harness:spec-review — Adversarial Document Review</h1>
 <p><strong>What this optimizes for:</strong> a report the author trusts, not one that merely looks thorough. A finding only earns a place in the report if it survives independent adversarial validation (Phase 3) against the actual document text; anything that can&#39;t be confirmed that way goes to &quot;Considered and dropped,&quot; visible but not counted. A short report on a genuinely solid document is success, not under-delivery — a padded report is the failure mode this skill exists to avoid.</p>
 <p>Follow these phases in order. Review-only. Never edit the document under review — the skill writes exactly one file, the report.</p>
 <h2>Step 0 — Resolve arguments</h2>
@@ -7825,7 +7825,7 @@ Cite <code>file:line</code>. Do not infer from naming — verify against the act
 <li>If <code>re_review_mode</code>: <code>&lt;P&gt; previously-reported issues still open (not repeated above — see known-findings.jsonl), &lt;Q&gt; nits suppressed</code> — if any of <code>&lt;P&gt;</code> are legacy entries counted per the still-open re-verification step&#39;s step 2 (predating <code>file</code>/<code>evidence_snippet</code> tracking), append <code>(&lt;L&gt; of these counted without re-verification — ledger entry predates file/evidence tracking)</code>; if any critical/major entries hit step 4&#39;s unverified branch, append a separate line: <code>&lt;M&gt; critical/major previously-reported issues could not be re-verified this run — status unknown, recommend manual check</code></li>
 <li>Tooling caveats (linters unavailable, specialists errored)</li>
 </ul>
-<p>Do NOT apply fixes. Fix workflow: open the relevant file, address findings manually, re-run <code>/fsd:code-review-team diff vs main</code> to verify.</p>
+<p>Do NOT apply fixes. Fix workflow: open the relevant file, address findings manually, re-run <code>/fsad-harness:code-review-team diff vs main</code> to verify.</p>
 <hr>
 <h2>Related</h2>
 <ul>
@@ -8298,7 +8298,7 @@ Cite <code>file:line</code>. Do not infer from naming or pattern-matching alone 
 <li>Tooling caveats (scanners unavailable, fallbacks taken, specialists errored)</li>
 <li>Coverage completeness score</li>
 </ul>
-<p>Do NOT apply fixes. Fix workflow → companion skill <code>/fsd:sec-review-fixes</code> (CBP-070).</p>
+<p>Do NOT apply fixes. Fix workflow → companion skill <code>/fsad-harness:sec-review-fixes</code> (CBP-070).</p>
 <hr>
 <h2>Related</h2>
 <ul>
