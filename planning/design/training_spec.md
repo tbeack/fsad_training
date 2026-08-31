@@ -51,7 +51,7 @@ Sibling app to `fsad_playbook` — inherits its visual language and technical st
 
 ## UX & Visual Design
 
-Design language inherited from `fsad_playbook` — see `./desktop/ai/fsad_playbook/fsad-playbook.html` for the source of truth.
+Design language inherited from `fsad_playbook` — see `./Repo/fsad_playbook/fsad-playbook.html` for the source of truth.
 
 - **Theme:** dark, premium. Background `#08080c`, surfaces `#0f0f14` / `#16161e`
 - **Primary accent:** desaturated purple `#6f6fb5` for links, active nav, primary actions

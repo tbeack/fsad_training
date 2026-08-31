@@ -1,23 +1,23 @@
 # FSAD Training — Todo
 
-- [x] `FSD_Train-001` Build Section 5 infographic: single-shot vs spec-driven, context-managed agentic coding → [task-fsd_train-001.md](../completed/task-fsd_train-001.md)
-- [x] `FSD_Train-002` Add in the technical flows representing the two approaches; link up with detailed flow descriptions in markdown files. → [task-fsd_train-002.md](../completed/task-fsd_train-002.md)
-- [x] `FSD_Train-003` Add a the `hangman_research.md` file to the `Research` step in section 4 → [task-fsd_train-003.md](../completed/task-fsd_train-003.md)
-- [x] `FSD_Train-004` Add the `hangman_spec.md` file to the `Spec` step in section 4 → [task-fsd_train-004.md](../completed/task-fsd_train-004.md)
-- [x] `FSD_Train-005` Add a the `hangman_plan.md` file to the `Plan` step in section 4 → [task-fsd_train-005.md](../completed/task-fsd_train-005.md)
-- [x] `FSD_Train-006` Add a the replay of the implement step to the `Implement` step in section 4 → [task-fsd_train-006.md](../completed/task-fsd_train-006.md)
-- [x] `FSD_Train-007` Add a the replay of the verify step to the `Implement` step in section 4 → [task-fsd_train-007.md](../completed/task-fsd_train-007.md)
-- [x] `FSD_Train-008` Add a the `todo.md` step to the `Iterate` step in section 4 → [task-fsd_train-008.md](../completed/task-fsd_train-008.md)
+- [x] `FSD_Train-001` Build Section 5 infographic: single-shot vs spec-driven, context-managed agentic coding → [task-fsd_train-001.md](completed/task-fsd_train-001.md)
+- [x] `FSD_Train-002` Add in the technical flows representing the two approaches; link up with detailed flow descriptions in markdown files. → [task-fsd_train-002.md](completed/task-fsd_train-002.md)
+- [x] `FSD_Train-003` Add a the `hangman_research.md` file to the `Research` step in section 4 → [task-fsd_train-003.md](completed/task-fsd_train-003.md)
+- [x] `FSD_Train-004` Add the `hangman_spec.md` file to the `Spec` step in section 4 → [task-fsd_train-004.md](completed/task-fsd_train-004.md)
+- [x] `FSD_Train-005` Add a the `hangman_plan.md` file to the `Plan` step in section 4 → [task-fsd_train-005.md](completed/task-fsd_train-005.md)
+- [x] `FSD_Train-006` Add a the replay of the implement step to the `Implement` step in section 4 → [task-fsd_train-006.md](completed/task-fsd_train-006.md)
+- [x] `FSD_Train-007` Add a the replay of the verify step to the `Implement` step in section 4 → [task-fsd_train-007.md](completed/task-fsd_train-007.md)
+- [x] `FSD_Train-008` Add a the `todo.md` step to the `Iterate` step in section 4 → [task-fsd_train-008.md](completed/task-fsd_train-008.md)
 - [x] `FSD_Train-009` Add a skills section to the training material → [task-fsd_train-009.md](completed/task-fsd_train-009.md)
 - [x] `FSD_Train-010` Add an example `CLAUDE.md` file to the training section
 - [x] `FSD_Train-011` Link the `FSAD Training` material with the `FSAD Playbook`
-- [x] `FSD_Train-012` Reduce the amount of wasted white space at the top of every section → [task-fsd_train-012.md](../completed/task-fsd_train-012.md)
+- [x] `FSD_Train-012` Reduce the amount of wasted white space at the top of every section → [task-fsd_train-012.md](completed/task-fsd_train-012.md)
 - [x] `FSD_Train-013` - Add an example `Claude.md` section to the `Claude Code Basic` section
-- [x] `FSD_Train-014` - Append the `Status Line` section with an example prompt to create/modify the status line in claude → [task-fsd_train-014.md](../completed/task-fsd_train-014.md)
-- [x] `FSD_Train-015` - How to track your Context usage. Show the command the example output. → [task-fsd_train-015.md](../completed/task-fsd_train-015.md)
+- [x] `FSD_Train-014` - Append the `Status Line` section with an example prompt to create/modify the status line in claude → [task-fsd_train-014.md](completed/task-fsd_train-014.md)
+- [x] `FSD_Train-015` - How to track your Context usage. Show the command the example output. → [task-fsd_train-015.md](completed/task-fsd_train-015.md)
 - [ ] `FSD_Train-016` — Add in an example how to create the testing and verification plan during implementation planning. Add in markdown files and session reaply.
 - [ ] `FSD_Train-017` — Move the multi-agent verification example to the Implementation planning step.
 - [ ] `FSD_Train-018` — Create an example of the verification step/agentic output, and session replay.
-- [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](../completed/task-fsd_train-019.md)
-- [x] `FSD_Train-020` — Add entry to left nav: `FSAD Playbook`. Link to: `https://fsad-playbook.vercel.app/` → [task-fsd_train-020.md](../completed/task-fsd_train-020.md)
+- [x] `FSD_Train-019` — Setup the training material as a Vercel instance. copy the approach taken with the FSAD Playbook. → [task-fsd_train-019.md](completed/task-fsd_train-019.md)
+- [x] `FSD_Train-020` — Add entry to left nav: `FSAD Playbook`. Link to: `https://fsad-playbook.vercel.app/` → [task-fsd_train-020.md](completed/task-fsd_train-020.md)
 - [x] `FSD_Train-021` — replace the search function in the training playbook with the approach taken in the "FSAD Playbook". Replicate plan in `/Users/theobeack/Repo/fsad_playbook/markdown/to do/completed/task-cbp-148.md` → [task-fsd_train-021.md](completed/task-fsd_train-021.md)

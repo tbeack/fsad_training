@@ -105,7 +105,7 @@ Check IDs follow `<MODULE>-NN`. Phase 7 has no Node unit tests; each entry speci
 **FILE-01 — `src/audio.js` exists**
 
 ```bash
-ls /Users/theobeack/Desktop/AI/hangman/src/audio.js
+ls /Users/theobeack/Repo/hangman/src/audio.js
 ```
 
 Expected: file listed with no error.
@@ -116,7 +116,7 @@ Expected: file listed with no error.
 
 ```bash
 for method in chomp miss win loss ready tick bgm; do
-  grep -q "$method" /Users/theobeack/Desktop/AI/hangman/src/audio.js \
+  grep -q "$method" /Users/theobeack/Repo/hangman/src/audio.js \
     && echo "PASS: $method" || echo "FAIL: $method missing"
 done
 ```
@@ -134,15 +134,15 @@ Each check verifies: (a) the method is exported on the `audio` object, and (b) a
 **AUDIO-01 — `audio.chomp()` defined and wired**
 
 ```bash
-grep -n 'chomp' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.chomp' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'chomp' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.chomp' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: first grep shows a method definition; second grep shows at least one call site (fires on letter hit).
 
 No-op verification — method body must contain no non-trivial statements:
 ```bash
-grep -A 3 'chomp' /Users/theobeack/Desktop/AI/hangman/src/audio.js
+grep -A 3 'chomp' /Users/theobeack/Repo/hangman/src/audio.js
 ```
 Expected: body is `{}` or equivalent empty function; no `fetch`, `Audio`, `localStorage`, or DOM access inside the body.
 
@@ -151,8 +151,8 @@ Expected: body is `{}` or equivalent empty function; no `fetch`, `Audio`, `local
 **AUDIO-02 — `audio.miss()` defined and wired**
 
 ```bash
-grep -n 'miss' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.miss' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'miss' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.miss' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; call site fires on letter miss.
@@ -162,8 +162,8 @@ Expected: definition present; call site fires on letter miss.
 **AUDIO-03 — `audio.win()` defined and wired**
 
 ```bash
-grep -n '\bwin\b' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.win' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n '\bwin\b' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.win' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; call site fires on game win event.
@@ -173,8 +173,8 @@ Expected: definition present; call site fires on game win event.
 **AUDIO-04 — `audio.loss()` defined and wired**
 
 ```bash
-grep -n 'loss' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.loss' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'loss' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.loss' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; call site fires on game loss event.
@@ -184,8 +184,8 @@ Expected: definition present; call site fires on game loss event.
 **AUDIO-05 — `audio.ready()` defined and wired**
 
 ```bash
-grep -n 'ready' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.ready' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'ready' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.ready' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; call site fires on READY! interstitial entry.
@@ -195,8 +195,8 @@ Expected: definition present; call site fires on READY! interstitial entry.
 **AUDIO-06 — `audio.tick()` defined and wired**
 
 ```bash
-grep -n 'tick' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.tick' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'tick' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.tick' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; call site fires on alphabet button hover/focus.
@@ -206,8 +206,8 @@ Expected: definition present; call site fires on alphabet button hover/focus.
 **AUDIO-07 — `audio.bgm()` defined and wired**
 
 ```bash
-grep -n 'bgm' /Users/theobeack/Desktop/AI/hangman/src/audio.js
-grep -n 'audio\.bgm' /Users/theobeack/Desktop/AI/hangman/src/main.js
+grep -n 'bgm' /Users/theobeack/Repo/hangman/src/audio.js
+grep -n 'audio\.bgm' /Users/theobeack/Repo/hangman/src/main.js
 ```
 
 Expected: definition present; accepts a boolean `play` parameter in its signature; call site fires on title screen entry (or exit).
@@ -215,7 +215,7 @@ Expected: definition present; accepts a boolean `play` parameter in its signatur
 No-op purity check across the whole file:
 ```bash
 grep -n 'fetch\|localStorage\|document\.\|window\.\|new Audio\|XMLHttpRequest' \
-  /Users/theobeack/Desktop/AI/hangman/src/audio.js
+  /Users/theobeack/Repo/hangman/src/audio.js
 ```
 Expected: zero matches. The stub must be side-effect-free.
 
@@ -230,8 +230,8 @@ Expected: zero matches. The stub must be side-effect-free.
 Static check:
 ```bash
 grep -n 'dialog\|showModal' \
-  /Users/theobeack/Desktop/AI/hangman/src/input.js \
-  /Users/theobeack/Desktop/AI/hangman/src/main.js
+  /Users/theobeack/Repo/hangman/src/input.js \
+  /Users/theobeack/Repo/hangman/src/main.js
 ```
 Expected: at least one reference to `<dialog` element creation or `showModal()`.
 
@@ -270,7 +270,7 @@ Expected: exactly one guess fired — no double-dispatch, no console error.
 
 Source check — `input.js` must guard Space to prevent both the keydown handler and the button's natural click from triggering:
 ```bash
-grep -n 'Space\| === " "\|key === " "' /Users/theobeack/Desktop/AI/hangman/src/input.js
+grep -n 'Space\| === " "\|key === " "' /Users/theobeack/Repo/hangman/src/input.js
 ```
 Expected: logic present that either calls `preventDefault()` on the keydown or defers to the button's native click only.
 
@@ -281,11 +281,11 @@ Expected: logic present that either calls `preventDefault()` on the keydown or d
 Static check:
 ```bash
 grep -n "'resize'\|\"resize\"" \
-  /Users/theobeack/Desktop/AI/hangman/src/main.js \
-  /Users/theobeack/Desktop/AI/hangman/src/input.js
+  /Users/theobeack/Repo/hangman/src/main.js \
+  /Users/theobeack/Repo/hangman/src/input.js
 grep -n 'setPacPos' \
-  /Users/theobeack/Desktop/AI/hangman/src/main.js \
-  /Users/theobeack/Desktop/AI/hangman/src/input.js
+  /Users/theobeack/Repo/hangman/src/main.js \
+  /Users/theobeack/Repo/hangman/src/input.js
 ```
 Expected: `'resize'` listener registration and `setPacPos` call both present.
 
@@ -317,7 +317,7 @@ document.querySelector('.error-overlay').textContent.toUpperCase().includes('NET
 Source check — `title.js` must handle the fetch `catch` path:
 ```bash
 grep -n 'error-overlay\|catch\|NETWORK ERROR' \
-  /Users/theobeack/Desktop/AI/hangman/src/render/title.js
+  /Users/theobeack/Repo/hangman/src/render/title.js
 ```
 Expected: all three strings present.
 
@@ -333,7 +333,7 @@ Using Snippet G (Slow 3G throttle):
 
 Source check — `title.js` must use a `setTimeout` of 150:
 ```bash
-grep -n 'setTimeout\|150\|LOADING' /Users/theobeack/Desktop/AI/hangman/src/render/title.js
+grep -n 'setTimeout\|150\|LOADING' /Users/theobeack/Repo/hangman/src/render/title.js
 ```
 Expected: `setTimeout` with `150` and the string "LOADING" (or "LOADING…") all present.
 
@@ -360,9 +360,9 @@ window.__state?.lives  // or however state is exposed for debugging
 Source check:
 ```bash
 grep -n 'already\|ALREADY\|already-guessed\|ping' \
-  /Users/theobeack/Desktop/AI/hangman/src/render/game.js \
-  /Users/theobeack/Desktop/AI/hangman/src/input.js \
-  /Users/theobeack/Desktop/AI/hangman/src/main.js 2>/dev/null
+  /Users/theobeack/Repo/hangman/src/render/game.js \
+  /Users/theobeack/Repo/hangman/src/input.js \
+  /Users/theobeack/Repo/hangman/src/main.js 2>/dev/null
 ```
 Expected: at least one match covering the visual ping and the no-state-change guard.
 
@@ -394,7 +394,7 @@ Browser check:
 **MOBILE-01 — `@media (max-width: 480px)` block present in `layout.css`**
 
 ```bash
-grep -n 'max-width.*480\|480px' /Users/theobeack/Desktop/AI/hangman/styles/layout.css
+grep -n 'max-width.*480\|480px' /Users/theobeack/Repo/hangman/styles/layout.css
 ```
 Expected: at least one match.
 
@@ -403,7 +403,7 @@ Expected: at least one match.
 **MOBILE-02 — 6-column alphabet grid in the mobile media query**
 
 ```bash
-grep -A 30 'max-width.*480px' /Users/theobeack/Desktop/AI/hangman/styles/layout.css \
+grep -A 30 'max-width.*480px' /Users/theobeack/Repo/hangman/styles/layout.css \
   | grep -i 'grid\|column\|col'
 ```
 Expected: a rule setting the alphabet grid to 6 columns (e.g. `grid-template-columns: repeat(6, ...)` or `columns: 6`).
@@ -413,7 +413,7 @@ Expected: a rule setting the alphabet grid to 6 columns (e.g. `grid-template-col
 **MOBILE-03 — Ghost house at top, word in middle in mobile layout**
 
 ```bash
-grep -A 40 'max-width.*480px' /Users/theobeack/Desktop/AI/hangman/styles/layout.css
+grep -A 40 'max-width.*480px' /Users/theobeack/Repo/hangman/styles/layout.css
 ```
 Expected: layout rules that place the ghost house (`.ghost-house` or equivalent) at the top of the stacking order and the word display (`.word-display` or equivalent) in the middle, above the alphabet grid.
 
@@ -437,8 +437,8 @@ Also visually confirm no content is cut off or triggering horizontal overflow.
 Static check — mobile flag or `reducedMotion` must gate WAAPI traversal:
 ```bash
 grep -n 'mobile\|isMobile\|reducedMotion\|matchMedia' \
-  /Users/theobeack/Desktop/AI/hangman/src/main.js \
-  /Users/theobeack/Desktop/AI/hangman/src/input.js
+  /Users/theobeack/Repo/hangman/src/main.js \
+  /Users/theobeack/Repo/hangman/src/input.js
 ```
 Expected: a mobile detection flag (screen width check, pointer check, or similar) and a branch that disables WAAPI traversal animation when the flag is true.
 
@@ -461,7 +461,7 @@ const el = document.getElementById('sr-announce');
 
 Static check:
 ```bash
-grep -n 'sr-announce\|aria-live\|aria-atomic' /Users/theobeack/Desktop/AI/hangman/index.html
+grep -n 'sr-announce\|aria-live\|aria-atomic' /Users/theobeack/Repo/hangman/index.html
 ```
 Expected: all three strings present in `index.html`.
 
@@ -516,9 +516,9 @@ document.getElementById('sr-announce').textContent
 
 Static check:
 ```bash
-grep -c 'aria-hidden="true"' /Users/theobeack/Desktop/AI/hangman/index.html
+grep -c 'aria-hidden="true"' /Users/theobeack/Repo/hangman/index.html
 # Cross-check: count <use> elements
-grep -c '<use' /Users/theobeack/Desktop/AI/hangman/index.html
+grep -c '<use' /Users/theobeack/Repo/hangman/index.html
 ```
 Expected: counts match (every `<use>` has `aria-hidden="true"`).
 
@@ -544,8 +544,8 @@ const guessed = [...document.querySelectorAll('.pellet-row button')]
 Static check:
 ```bash
 grep -n 'aria-label\|aria-pressed\|aria-disabled' \
-  /Users/theobeack/Desktop/AI/hangman/src/render/game.js \
-  /Users/theobeack/Desktop/AI/hangman/src/render/shared.js 2>/dev/null
+  /Users/theobeack/Repo/hangman/src/render/game.js \
+  /Users/theobeack/Repo/hangman/src/render/shared.js 2>/dev/null
 ```
 Expected: all three attribute names present in the render source.
 
@@ -555,8 +555,8 @@ Expected: all three attribute names present in the render source.
 
 Static check:
 ```bash
-grep -n 'focus-visible\|outline' /Users/theobeack/Desktop/AI/hangman/styles/layout.css \
-  /Users/theobeack/Desktop/AI/hangman/styles/screens.css 2>/dev/null
+grep -n 'focus-visible\|outline' /Users/theobeack/Repo/hangman/styles/layout.css \
+  /Users/theobeack/Repo/hangman/styles/screens.css 2>/dev/null
 ```
 Expected: a rule matching `:focus-visible` with `outline: 2px solid var(--pac)` and `outline-offset: 2px`.
 

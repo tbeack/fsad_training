@@ -355,4 +355,4 @@ Do NOT apply fixes. Fix workflow → companion skill `/sec-review-fixes`.
 - **Schemas:** `schema/finding.schema.json`, `schema/coverage.schema.json`
 - **Consolidation template:** `docs/consolidation-template.md`
 - **Design tradeoffs:** `docs/tradeoffs.md`
-- **Upstream skill:** ported from `fsad_playbook` (see `~/Desktop/AI/fsad_playbook/.claude/skills/sec-review-team/` for the canonical prompt source, validation notes, and improvement history)
+- **Upstream skill:** ported from `fsad_playbook` (see `~/Repo/fsad_playbook/.claude/skills/sec-review-team/` for the canonical prompt source, validation notes, and improvement history)
