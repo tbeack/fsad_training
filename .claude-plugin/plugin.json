@@ -1,0 +1,10 @@
+{
+  "name": "fsad-training-harness",
+  "description": "FSAD Training Harness — the fsad_playbook skill set mirrored into the FSAD Training app's own repo, for local install alongside the training material (task planning, execution, review, and shipping).",
+  "version": "0.1.0",
+  "author": {
+    "name": "Theo Beack"
+  },
+  "license": "MIT",
+  "keywords": ["fsad", "skills", "workflow", "task-management", "training"]
+}
