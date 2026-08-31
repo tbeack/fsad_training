@@ -4,6 +4,14 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.13 — 2026-08-31
+
+**Skill sync + local plugin packaging (FSD_Train-022)**
+
+Re-syncs the 14 of 16 skills copied by FSD_Train-009 whose content had drifted upstream in `fsad_playbook` since (`prompt-improver` and `sec-review-fixes` were unchanged). Packages this repo itself as an installable Claude Code plugin — `.claude-plugin/plugin.json` (`fsad-training-harness`) and `.claude-plugin/marketplace.json` (`fsad-training`), named distinctly from `fsad_playbook`'s own `fsad-harness`/`fsad-playbook` so both can be registered without a naming collision. Adds a "Local Plugin Setup" section to `README.md` and ships `scripts/fsad_harness_install.sh`, a location-independent installer verified end-to-end (install → `claude plugin list` confirmation → clean uninstall).
+
+---
+
 ### v1.12 — 2026-08-31
 
 **Skills Library section (FSD_Train-009)**

@@ -6,7 +6,7 @@ HTML app for the most intensive lecture block of a 3-day FSAD workshop. Sibling 
 
 | Field | Value |
 |-------|-------|
-| **Current version** | v1.12 |
+| **Current version** | v1.13 |
 | **Date updated** | 2026-08-31 |
 | **File** | `dist/fsad-training.html` |
 
