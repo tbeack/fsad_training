@@ -3,7 +3,7 @@ description: Verify acceptance criteria for a task. Reads the task's detail file
 argument-hint: `<PREFIX-NNN | NNN>`
 ---
 
-# fsad-harness:ac — acceptance criteria verifier
+# fsad-harness:verify-ac — acceptance criteria verifier
 
 Fan every unchecked AC in a task file out to an independent verifier subagent, adversarially refute each claimed PASS before marking it, and let only the orchestrator edit the task file.
 
@@ -44,7 +44,7 @@ Resolve the path using the same rules as `do-task`:
 
 Scan the task file for a `## Acceptance Criteria` heading.
 
-- **Section absent**: Tell the user: "No `## Acceptance Criteria` section found in `{task_file_path}`. Add one before running `/fsad-harness:ac`." Stop.
+- **Section absent**: Tell the user: "No `## Acceptance Criteria` section found in `{task_file_path}`. Add one before running `/fsad-harness:verify-ac`." Stop.
 - **Section present but all items already `[x]`**: Tell the user all ACs are already checked. Check whether the "All criteria verified" timestamp line exists above the list. If it's missing, add it (Step 7). Otherwise report: "All ACs already verified — nothing to do." Stop.
 - **At least one `- [ ]` item present**: Continue.
 
@@ -138,7 +138,7 @@ AC                                                     Verdict
 Then:
 
 - If **all passed**: "All ACs verified. Timestamp added to task file. Ready to commit."
-- If **any failed**: List each failing AC — including any refuter-downgraded ones with the refuter's reason — and what evidence was missing. Tell the user: "Fix the failing ACs and re-run `/fsad-harness:ac {ID}`."
+- If **any failed**: List each failing AC — including any refuter-downgraded ones with the refuter's reason — and what evidence was missing. Tell the user: "Fix the failing ACs and re-run `/fsad-harness:verify-ac {ID}`."
 - If **any unclear**: List each `UNCLEAR` AC with the reason and wait for the user's direction before re-running.
 
 ## Guardrails
