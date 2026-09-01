@@ -24,4 +24,4 @@
 - [x] `FSD_Train-022` — copy the updated fsad playbook skills to the training repo, add instructions in the readme section how to setup the local plugin, and create a script to install → [task-fsd_train-022.md](completed/task-fsd_train-022.md)
 - [x] `FSD_Train-023` — fix the formatting issues on the skills page. the formatting of the markdown is too large. review the font size in the fsad_playbook and mirror. → [task-fsd_train-023.md](completed/task-fsd_train-023.md)
 - [x] `FSD_Train-024` rename skill "ac" to "verify-ac", update the skills section (and anywhere) the "ac" skill is referenced. → [task-fsd_train-024.md](completed/task-fsd_train-024.md)
-- [x] `FSD_Train-025` Add the word "context" to Step 1 in the workflow, renaming it "Research & Creating Context" in both "The Loop" section and the "Workflow Deep-Dive" section → [task-fsd_train-025.md](task-fsd_train-025.md)
+- [x] `FSD_Train-025` Add the word "context" to Step 1 in the workflow, renaming it "Research & Creating Context" in both "The Loop" section and the "Workflow Deep-Dive" section → [task-fsd_train-025.md](completed/task-fsd_train-025.md)
