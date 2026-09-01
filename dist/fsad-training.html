@@ -5111,7 +5111,7 @@ Phase 8 is verified when **all** of the following hold:
         </div>
       </div>
       <div class="wf-card">
-        <span class="wf-card-label">/ac &lt;ID&gt;</span>
+        <span class="wf-card-label">/verify-ac &lt;ID&gt;</span>
         <h4>Verify acceptance criteria</h4>
         <p>Walks every unchecked AC in a task file, fans each out to an independent verifier subagent, adversarially refutes each PASS, and marks each passing criterion immediately.</p>
         <div class="wf-chips">
@@ -6038,9 +6038,9 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 </ul>
 </div></div></div>
     </div>
-    <div class="collapsible" id="skill-ac">
-      <div class="collapsible-header"><h3>/ac</h3><span class="collapsible-chevron">▾</span></div>
-      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="ac"><p class="skill-description">Verify acceptance criteria for a task. Reads the task&#39;s detail file, fans every unchecked AC out to an independent verifier subagent, adversarially refutes each PASS before marking it, and inserts a &quot;All criteria verified&quot; timestamp when all pass. Use when you want to run or re-run ACs independently of task execution — e.g. after implementation, in a follow-up session, or to get an honest mid-task progress check.</p><h1>fsad-harness:ac — acceptance criteria verifier</h1>
+    <div class="collapsible" id="skill-verify-ac">
+      <div class="collapsible-header"><h3>/verify-ac</h3><span class="collapsible-chevron">▾</span></div>
+      <div class="collapsible-body"><div class="collapsible-content"><div class="skill-artifact" data-skill="verify-ac"><p class="skill-description">Verify acceptance criteria for a task. Reads the task&#39;s detail file, fans every unchecked AC out to an independent verifier subagent, adversarially refutes each PASS before marking it, and inserts a &quot;All criteria verified&quot; timestamp when all pass. Use when you want to run or re-run ACs independently of task execution — e.g. after implementation, in a follow-up session, or to get an honest mid-task progress check.</p><h1>fsad-harness:verify-ac — acceptance criteria verifier</h1>
 <p>Fan every unchecked AC in a task file out to an independent verifier subagent, adversarially refute each claimed PASS before marking it, and let only the orchestrator edit the task file.</p>
 <h2>Step 0 — Detect the project</h2>
 <ol>
@@ -6077,7 +6077,7 @@ c. After each retry, re-check <code>git ls-remote</code> against the (possibly u
 <h2>Step 3 — Find the Acceptance Criteria section</h2>
 <p>Scan the task file for a <code>## Acceptance Criteria</code> heading.</p>
 <ul>
-<li><strong>Section absent</strong>: Tell the user: &quot;No <code>## Acceptance Criteria</code> section found in <code>{task_file_path}</code>. Add one before running <code>/fsad-harness:ac</code>.&quot; Stop.</li>
+<li><strong>Section absent</strong>: Tell the user: &quot;No <code>## Acceptance Criteria</code> section found in <code>{task_file_path}</code>. Add one before running <code>/fsad-harness:verify-ac</code>.&quot; Stop.</li>
 <li><strong>Section present but all items already <code>[x]</code></strong>: Tell the user all ACs are already checked. Check whether the &quot;All criteria verified&quot; timestamp line exists above the list. If it&#39;s missing, add it (Step 7). Otherwise report: &quot;All ACs already verified — nothing to do.&quot; Stop.</li>
 <li><strong>At least one <code>- [ ]</code> item present</strong>: Continue.</li>
 </ul>
@@ -6158,7 +6158,7 @@ Return <code>{ac_id, refuter_verdict: CONFIRMED|REFUTED, reason}</code>.</li>
 <p>Then:</p>
 <ul>
 <li>If <strong>all passed</strong>: &quot;All ACs verified. Timestamp added to task file. Ready to commit.&quot;</li>
-<li>If <strong>any failed</strong>: List each failing AC — including any refuter-downgraded ones with the refuter&#39;s reason — and what evidence was missing. Tell the user: &quot;Fix the failing ACs and re-run <code>/fsad-harness:ac {ID}</code>.&quot;</li>
+<li>If <strong>any failed</strong>: List each failing AC — including any refuter-downgraded ones with the refuter&#39;s reason — and what evidence was missing. Tell the user: &quot;Fix the failing ACs and re-run <code>/fsad-harness:verify-ac {ID}</code>.&quot;</li>
 <li>If <strong>any unclear</strong>: List each <code>UNCLEAR</code> AC with the reason and wait for the user&#39;s direction before re-running.</li>
 </ul>
 <h2>Guardrails</h2>
