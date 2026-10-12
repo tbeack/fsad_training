@@ -1354,7 +1354,7 @@
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 900px) {
-    .sidebar { transform: translateX(-100%); }
+    .sidebar { transform: translateX(-100%); width: 290px; }
     .sidebar.open { transform: translateX(0); }
     .sidebar-toggle { display: flex; }
     .main { margin-left: 0; }
@@ -1365,6 +1365,54 @@
     .pod-visual { flex-direction: column; }
     .principle-strip { flex-direction: column; }
     section { padding: 3rem 1.2rem; }
+  }
+
+
+  /* ─── SIDEBAR RESIZE / COLLAPSE (desktop only) ─── */
+  .sidebar-resizer, .sidebar-collapse-btn, .sidebar-expand-btn { display: none; }
+  @media (min-width: 901px) {
+    .sidebar { transition: transform 0.3s, width 0.2s, border-width 0.2s; }
+    .main { transition: margin-left 0.2s; }
+    .progress-container, .page-indicator { transition: left 0.2s; }
+    body.sidebar-resizing .sidebar,
+    body.sidebar-resizing .main,
+    body.sidebar-resizing .progress-container,
+    body.sidebar-resizing .page-indicator { transition: none; }
+    body.sidebar-resizing { cursor: col-resize; user-select: none; }
+
+    .sidebar-resizer {
+      display: block;
+      position: fixed; top: 0; bottom: 0;
+      left: calc(var(--sidebar-w) - 3px);
+      width: 6px; z-index: 201;
+      cursor: col-resize;
+      background: transparent;
+      transition: left 0.2s, background 0.15s;
+    }
+    body.sidebar-resizing .sidebar-resizer { transition: none; }
+    .sidebar-resizer:hover, .sidebar-resizer:focus-visible,
+    body.sidebar-resizing .sidebar-resizer { background: var(--gradient-brand); outline: none; }
+
+    .sidebar-collapse-btn, .sidebar-expand-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text-primary);
+      font-size: 1rem; line-height: 1; cursor: pointer;
+    }
+    .sidebar-collapse-btn { position: absolute; top: 1rem; right: 0.9rem; }
+    .sidebar-collapse-btn:hover, .sidebar-expand-btn:hover { border-color: var(--accent-violet); }
+    .sidebar-expand-btn {
+      position: fixed; top: 12px; left: 12px; z-index: 300;
+      visibility: hidden; opacity: 0; transition: opacity 0.2s;
+    }
+
+    body.sidebar-collapsed { --sidebar-w: 0px; }
+    body.sidebar-collapsed .sidebar {
+      visibility: hidden; overflow: hidden; border-right-width: 0;
+    }
+    body.sidebar-collapsed .sidebar-resizer { display: none; }
+    body.sidebar-collapsed .sidebar-expand-btn { visibility: visible; opacity: 1; }
   }
 
   @media (max-width: 600px) {
@@ -2070,6 +2118,7 @@
      ═══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">«</button>
     <span class="sidebar-brand">FSAD Training <span style="color: var(--text-muted); font-weight: 400; -webkit-text-fill-color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.12em;" title="See CHANGELOG.md for release history">· v1.13</span></span>
     <span class="sidebar-tagline">Workshop Companion</span>
     <div class="sidebar-search">
@@ -2183,6 +2232,8 @@
     Spec-driven &amp; agentic development with Claude Code
   </div>
 </aside>
+<div class="sidebar-resizer" id="sidebarResizer" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" tabindex="0"></div>
+<button class="sidebar-expand-btn" id="sidebarExpandBtn" type="button" aria-label="Expand sidebar" title="Expand sidebar">»</button>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <!-- ═══════════════════════════════════════
      MAIN CONTENT
@@ -3713,7 +3764,8 @@ claude</code></pre></div>
 
   // ─── THEME TOGGLE ───
   function getEffectiveTheme() {
-    const saved = localStorage.getItem('theme');
+    let saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) { /* storage blocked: follow OS */ }
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   }
@@ -3730,7 +3782,7 @@ claude</code></pre></div>
   function cycleTheme() {
     // 2-state toggle (Phase 3): light ↔ dark. Default on first load follows OS.
     const current = getEffectiveTheme();
-    localStorage.setItem('theme', current === 'light' ? 'dark' : 'light');
+    try { localStorage.setItem('theme', current === 'light' ? 'dark' : 'light'); } catch (e) { /* storage blocked: theme applies for this visit only */ }
     applyTheme();
   }
 
@@ -4532,6 +4584,70 @@ claude</code></pre></div>
 
     setActive(0);
   })();
+</script>
+
+<!-- Separate script so an error elsewhere cannot stop the sidebar resizer -->
+<script>
+(function sidebarResizer() {
+  const DEFAULT_W = 290, MIN_W = 220, MAX_W = 520, STEP = 16;
+  const root = document.documentElement;
+  const handle = document.getElementById('sidebarResizer');
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+  const expandBtn = document.getElementById('sidebarExpandBtn');
+  if (!handle || !collapseBtn || !expandBtn) return;
+
+  const store = (key, value) => { try { localStorage.setItem(key, value); } catch (e) { /* storage blocked */ } };
+  const load = (key) => { try { return localStorage.getItem(key); } catch (e) { return null; } };
+  const clamp = (w) => Math.min(MAX_W, Math.max(MIN_W, Math.round(w)));
+  const currentW = () => parseInt(root.style.getPropertyValue('--sidebar-w'), 10) || DEFAULT_W;
+
+  function setWidth(w, persist) {
+    const v = clamp(w);
+    root.style.setProperty('--sidebar-w', v + 'px');
+    handle.setAttribute('aria-valuenow', v);
+    handle.setAttribute('aria-valuemin', MIN_W);
+    handle.setAttribute('aria-valuemax', MAX_W);
+    if (persist) store('fsad-sidebar-w', v);
+  }
+
+  function setCollapsed(collapsed) {
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+    store('fsad-sidebar-collapsed', collapsed ? '1' : '0');
+  }
+
+  // Restore saved state
+  const savedW = parseInt(load('fsad-sidebar-w'), 10);
+  setWidth(Number.isFinite(savedW) ? savedW : DEFAULT_W, false);
+  if (load('fsad-sidebar-collapsed') === '1') document.body.classList.add('sidebar-collapsed');
+
+  handle.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
+    document.body.classList.add('sidebar-resizing');
+  });
+  handle.addEventListener('pointermove', (e) => {
+    if (!document.body.classList.contains('sidebar-resizing')) return;
+    setWidth(e.clientX, false);
+  });
+  const endDrag = (e) => {
+    if (!document.body.classList.contains('sidebar-resizing')) return;
+    document.body.classList.remove('sidebar-resizing');
+    try { handle.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    store('fsad-sidebar-w', currentW());
+  };
+  handle.addEventListener('pointerup', endDrag);
+  handle.addEventListener('pointercancel', endDrag);
+
+  handle.addEventListener('dblclick', () => setWidth(DEFAULT_W, true));
+  handle.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    setWidth(currentW() + (e.key === 'ArrowRight' ? STEP : -STEP), true);
+  });
+
+  collapseBtn.addEventListener('click', () => setCollapsed(true));
+  expandBtn.addEventListener('click', () => setCollapsed(false));
+})();
 </script>
 <!-- BACK TO TOP -->
 <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">↑</button>
