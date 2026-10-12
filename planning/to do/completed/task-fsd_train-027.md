@@ -59,3 +59,5 @@ All criteria verified 2026-10-12 before commit.
 - 2026-10-12 — **Question:** Which project config applies, since the working directory is `fsad_playbook`? **Decision:** Use the `fsad_training` entry. **Why:** The user named the `fsad_training` repo as the target.
 - 2026-10-12 — **Question:** Which ID does the task take? **Decision:** `FSD_Train-027`. **Why:** The highest existing number is 026.
 - 2026-10-12 — **Question:** Port 8000 was taken by another server. **Decision:** Serve `dist/` on port 8027. **Why:** The plan names no fixed port.
+- 2026-10-12 — **Question:** Which branch name holds the worktree merge? **Decision:** `task/fsd_train-027`, later renamed `release/v1.13.1`. **Why:** Step 0.4 and Step 2.0 fix both names.
+- 2026-10-12 — **Question:** Which version bump? **Decision:** Patch, v1.13.1. **Why:** Plan step 10 names a patch bump.

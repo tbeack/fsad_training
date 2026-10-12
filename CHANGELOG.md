@@ -4,7 +4,7 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
-### Unreleased
+### v1.13.1 — 2026-10-12
 
 **Collapsible, resizable left nav (FSD_Train-027)**
 

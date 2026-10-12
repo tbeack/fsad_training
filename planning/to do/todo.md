@@ -25,3 +25,5 @@
 - [x] `FSD_Train-023` — fix the formatting issues on the skills page. the formatting of the markdown is too large. review the font size in the fsad_playbook and mirror. → [task-fsd_train-023.md](completed/task-fsd_train-023.md)
 - [x] `FSD_Train-024` rename skill "ac" to "verify-ac", update the skills section (and anywhere) the "ac" skill is referenced. → [task-fsd_train-024.md](completed/task-fsd_train-024.md)
 - [x] `FSD_Train-025` Add the word "context" to Step 1 in the workflow, renaming it "Research & Creating Context" in both "The Loop" section and the "Workflow Deep-Dive" section → [task-fsd_train-025.md](completed/task-fsd_train-025.md)
+- [ ] `FSD_Train-026` Redo the UI using the design conventions on https://diataxis.fr/tutorials/, retaining the top-left name, version, changelog reference, and search → [task-fsd_train-026.md](task-fsd_train-026.md)
+- [x] `FSD_Train-027` Make the left nav collapsible and resizable (port of fsad_playbook CBP-680 and CBP-681) → [task-fsd_train-027.md](completed/task-fsd_train-027.md)
