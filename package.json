@@ -1,6 +1,6 @@
 {
   "name": "fsad-training",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "HTML training app for the FSAD workshop intensive lecture block.",
   "type": "module",
   "private": true,

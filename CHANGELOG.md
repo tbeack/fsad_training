@@ -4,6 +4,14 @@ All notable changes to the FSAD Training app are recorded here. Newest first. Th
 
 ## Changes in This Version
 
+### v1.13.1 — 2026-10-12
+
+**Collapsible, resizable left nav (FSD_Train-027)**
+
+Ports `fsad_playbook` CBP-680 and CBP-681. On desktop (901px and wider) a drag handle on the sidebar edge sets the width between 220px and 520px. Double-click resets it to 290px. Left and Right arrow keys move it by 16px. A « button collapses the sidebar and a » button expands it. The app saves both choices in `localStorage`. The theme toggle and the sidebar now work when `localStorage` is blocked. Below 901px the sidebar stays an off-canvas drawer.
+
+---
+
 ### v1.13 — 2026-08-31
 
 **Skill sync + local plugin packaging (FSD_Train-022)**
